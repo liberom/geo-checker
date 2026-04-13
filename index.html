@@ -733,11 +733,11 @@
                   try {
                     const parsed = JSON.parse(line.slice(6));
                     if (parsed.error) {
-                      if (parsed.error.includes('paste the text manually') || parsed.error.includes('Connection Blocked') || parsed.error.includes('proxy failed')) {
-                        logDiv.innerHTML = `<div class="text-red-400 font-bold mb-4 flex items-center gap-2"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> Connection Blocked!</div>
-                        <p class="text-slate-300 mb-6">${parsed.error}</p>
+                      if (parsed.error === 'SCRAPE_FAILED' || parsed.error.includes('paste the text manually') || parsed.error.includes('Connection Blocked') || parsed.error.includes('proxy failed')) {
+                        logDiv.innerHTML = `<div class="text-red-400 font-bold mb-4 flex items-center gap-2"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> Security Shield Detected!</div>
+                        <p class="text-slate-300 mb-6">The target site's security is blocking our automated crawler. To continue, please copy the text from the site and paste it here.</p>
                         <textarea id="manual-paste-area" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-sm text-slate-300 h-64 focus:border-blue-500 outline-none" placeholder="Paste the website's text content here..."></textarea>
-                        <button id="btn-manual-submit" class="mt-4 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition shadow-lg shadow-blue-500/20">Analyze Pasted Text</button>`;
+                        <button id="btn-manual-submit" class="mt-4 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition shadow-lg shadow-blue-500/20">Run Manual Audit</button>`;
                         
                         document.getElementById('btn-manual-submit').addEventListener('click', () => {
                            const manualText = document.getElementById('manual-paste-area').value;

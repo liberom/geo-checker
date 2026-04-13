@@ -57,28 +57,34 @@ module.exports = async function (req, res) {
   try {
     const fetchSite = async (urlStr, charLimit) => {
       let htmlContent = '';
+      let fetchSuccess = false;
+
+      // 1. Primary: Direct Fetch Spoofing
       try {
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(urlStr)}`;
-        const siteCall = await fetch(proxyUrl);
-        if (!siteCall.ok) throw new Error('Primary proxy failed');
-        
-        const proxyData = await siteCall.json();
-        htmlContent = proxyData.contents || '';
-      } catch (err) {
-        // Fallback to direct fetch mimicking user agent if cross-origin proxy fails
-        try {
-          const directCall = await fetch(urlStr, {
-            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Vynix/1.0' }
-          });
-          if (!directCall.ok) throw new Error('Direct fetch failed');
+        const directUrl = new URL(urlStr).toString();
+        const directCall = await fetch(directUrl, {
+          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Vynix/1.0' }
+        });
+        if (directCall.ok) {
           htmlContent = await directCall.text();
-        } catch (fbErr) {
-          throw new Error('Connection Blocked');
+          if (htmlContent && htmlContent.length >= 250) fetchSuccess = true;
         }
+      } catch (err) {}
+
+      // 2. Fallback: Proxy Fetch
+      if (!fetchSuccess) {
+        try {
+          const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(urlStr)}`;
+          const siteCall = await fetch(proxyUrl);
+          if (siteCall.ok) {
+            const proxyData = await siteCall.json();
+            htmlContent = proxyData.contents || '';
+          }
+        } catch (err) {}
       }
 
       if (!htmlContent || htmlContent.length < 250) {
-        throw new Error('Site protected by bot-blocker. Please paste the text manually.');
+        throw new Error('SCRAPE_FAILED');
       }
       
       const titleMatch = htmlContent.match(/<title[^>]*>([^<]+)<\/title>/i);
@@ -197,11 +203,14 @@ Finally, output a strict JSON block containing granular scores (0-100) and your 
       res.write(chunk); // Output guaranteed string maintaining standard SSE format (data: ...\n\n) from OpenRouter
     }
     
-    res.write('data: [DONE]\n\n'); // Explicit explicit stream termination block to be safe
+    res.write('data: [DONE]\n\n'); 
     res.end();
   } catch (error) {
-    // Send standard SSE error chunk if something fails
-    res.write(`data: {"error": "${error.message}"}\n\n`);
+    if (error.message === 'SCRAPE_FAILED') {
+      res.write(`data: {"error": "SCRAPE_FAILED", "message": "Security Shield Detected"}\n\n`);
+    } else {
+      res.write(`data: {"error": "${error.message}"}\n\n`);
+    }
     res.end();
   }
 };
