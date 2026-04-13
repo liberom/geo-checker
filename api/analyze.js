@@ -51,11 +51,16 @@ module.exports = async function (req, res) {
 
     let systemPrompt = `You are an expert SEO, AEO (Answer Engine Optimization), and GEO (Generative Engine Optimization) auditor.
 First, provide 3 paragraphs of verbal analysis regarding the SEO, AEO, and GEO potential of the content.
-Finally, output a strict JSON block containing granular scores (0-100) exactly in this format:
+Finally, output a strict JSON block containing granular scores (0-100) and your top 3 specific, actionable priorities exactly in this format:
 {
   "seo": { "meta": 80, "headers": 70, "mobile": 90 },
   "aeo": { "directness": 60, "schema": 50 },
-  "geo": { "citability": 65, "authority": 70 }
+  "geo": { "citability": 65, "authority": 70 },
+  "priorities": [
+    "Fix missing primary H1 tags to establish clear information hierarchy...",
+    "Inject schema.org FAQ modules to assist Answer Engine extraction...",
+    "Increase brand citability by acquiring digital PR links..."
+  ]
 }`;
 
     const isRetry = req.query.retry === 'true' || (req.body && req.body.retry === 'true');

@@ -197,8 +197,18 @@
         </div>
       </div>
     </div>
+
+    <div id="strategic-roadmap" class="mt-12 glass-card p-10 rounded-3xl border border-blue-500/30">
+      <h3 class="text-2xl font-extrabold mb-6 text-white flex items-center gap-3">
+        <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        Strategic Roadmap: Top 3 Priorities
+      </h3>
+      <ul id="priorities-list" class="space-y-4 text-slate-300 font-medium">
+        <!-- Rendered items go here -->
+      </ul>
+    </div>
     
-    <div class="mt-16 flex justify-center pb-4">
+    <div class="mt-12 flex justify-center pb-4">
       <button id="btn-copy-report" class="bg-slate-800 hover:bg-slate-700 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-3 backdrop-blur-md shadow-lg shadow-black/20 group">
         <svg class="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
         Copy Report to Clipboard
@@ -397,6 +407,21 @@
                   }
                 }
 
+                // Map Priorities List
+                const prioritiesList = document.getElementById('priorities-list');
+                prioritiesList.innerHTML = '';
+                let compiledPrioritiesString = '';
+                if (results.priorities && Array.isArray(results.priorities)) {
+                  compiledPrioritiesString = '\n\n## Top 3 Priorities:\n';
+                  results.priorities.forEach((priority, i) => {
+                    prioritiesList.innerHTML += `<li class="flex items-start gap-4 bg-slate-900/50 p-5 rounded-2xl border border-slate-700/50 hover:border-blue-500/50 transition">
+                      <span class="flex-shrink-0 w-8 h-8 mt-0.5 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">${i + 1}</span>
+                      <p class="pt-1 text-base leading-relaxed text-slate-200">${priority}</p>
+                    </li>`;
+                    compiledPrioritiesString += `${i + 1}. ${priority}\n`;
+                  });
+                }
+
                 // Strip the exact raw JSON block from the screen log to keep the UI clean and conversational
                 const textAnalysis = logDiv.innerText.replace(match[0], '').trim();
                 logDiv.innerHTML = logDiv.innerHTML.replace(match[0], '<br/><br/><span class="text-blue-500 italic">Analysis successfully parsed. Metrics populated below.</span>');
@@ -410,7 +435,7 @@
                     if (shareTxt !== 'Probing...') cShareAdd = `\n## LLM Citation Share: ${shareTxt}\n`;
                   }
                   
-                  const reportData = `# Vynix Analytics AI Report\n**Target URL:** ${targetUrl}\n\n## AI Analysis\n${textAnalysis}\n\n${scoresText}${cShareAdd}`;
+                  const reportData = `# Vynix Analytics AI Report\n**Target URL:** ${targetUrl}\n\n## AI Analysis\n${textAnalysis}${compiledPrioritiesString}\n\n${scoresText}${cShareAdd}`;
                   
                   navigator.clipboard.writeText(reportData);
                   const btnNode = document.getElementById('btn-copy-report');
