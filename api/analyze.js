@@ -99,7 +99,7 @@ module.exports = async function (req, res) {
       const structuredDataMatches = [...htmlContent.matchAll(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
       let schemaStr = '';
       if (structuredDataMatches.length > 0) {
-        schemaStr = '[STRUCTURED DATA/SCHEMA]:\n' + structuredDataMatches.map(m => m[1].trim()).join('\n---\n') + '\n\n';
+        schemaStr = '==== START TECHNICAL SCHEMA ====\n' + structuredDataMatches.map(m => m[1].trim()).join('\n---\n') + '\n==== END TECHNICAL SCHEMA ====\n\n';
       }
       
       const seoMetaStr = `[META TITLE]: ${title}\n[META DESCRIPTION]: ${description}\n[H1 TAGS]: ${h1Matches.join(' | ')}\n[IMAGE ALTS]: ${altMatches.slice(0, 10).join(' | ')}\n\n${schemaStr}[PAGE TEXT]:\n`;
@@ -129,50 +129,104 @@ module.exports = async function (req, res) {
     let userPrompt = '';
 
     if (competitorUrl && isMidMarket) {
-      systemPrompt = `You are a highly aggressive SEO, AEO, and GEO gap-analysis auditor.
-First, provide 3 paragraphs identifying specific 'Semantic Gaps' where the Target is missing technical authority and exactly why the Competitor is more likely to be cited by Gemini or AI Answer Engines.
-Pay close attention to the [STRUCTURED DATA] section to verify if Schema.org (like FAQPage or LocalBusiness) is actually implemented before marking it as a gap.
-Finally, output a strict JSON block exactly in this multi-site format:
+      systemPrompt = `You are a world-class SEO, AEO, and GEO strategic consultant. This is a $3,000/month premium engagement. Your deliverable is a 10-item Comprehensive Action Plan that demonstrates enterprise-grade expertise.
+
+FIRST: Cross-reference the TECHNICAL SCHEMA block (delimited by ==== START TECHNICAL SCHEMA ==== and ==== END TECHNICAL SCHEMA ====). You MUST check this block before auditing. If a schema type (e.g., FAQPage, LocalBusiness, Organization, Product) is present in that block, you are STRICTLY FORBIDDEN from flagging it as a "Missing Gap" in your analysis. Only flag schema elements that are ACTUALLY ABSENT from the TECHNICAL SCHEMA block.
+
+Provide 3 paragraphs of strategic analysis identifying Semantic Gaps and competitive positioning for AI citation.
+
+FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categorized into these EXACT buckets:
 {
   "target": { "seo": { "meta": 80, "headers": 70, "mobile": 90 }, "aeo": { "directness": 60, "schema": 50 }, "geo": { "citability": 65, "authority": 70 } },
   "competitor": { "seo": { "meta": 85, "headers": 80, "mobile": 95 }, "aeo": { "directness": 75, "schema": 60 }, "geo": { "citability": 90, "authority": 85 } },
-  "priorities": [
-    "Strategic Action Plan 1...",
-    "Strategic Action Plan 2...",
-    "Strategic Action Plan 3..."
-  ]
+  "priorities": {
+    "immediateTechnicalFixes": [
+      "Technical fix 1...",
+      "Technical fix 2...",
+      "Technical fix 3..."
+    ],
+    "answerEngineOptimization": [
+      "AEO action 1...",
+      "AEO action 2...",
+      "AEO action 3..."
+    ],
+    "localAuthorityGEO": [
+      "GEO action 1...",
+      "GEO action 2..."
+    ],
+    "quickWins": [
+      "Quick win 1...",
+      "Quick win 2..."
+    ]
+  }
 }`;
       userPrompt = `Analyze and compare these two websites:\n\n=== TARGET [${targetUrl}] ===\n${targetText}\n\n=== COMPETITOR [${competitorUrl}] ===\n${compText}`;
     } else if (isMidMarket) {
-      systemPrompt = `You are a highly aggressive SEO, AEO, and GEO auditor.
-First, provide 3 paragraphs identifying specific 'Semantic Gaps' where the site is missing technical authority and exactly why it might be ignored by Answer Engines.
-Pay close attention to the [STRUCTURED DATA] section to verify if Schema.org (like FAQPage or LocalBusiness) is actually implemented before marking it as a gap.
-Finally, output a strict JSON block containing granular scores (0-100) and your 'Top 3 Strategic Action Plan' exactly in this format:
+      systemPrompt = `You are a world-class SEO, AEO, and GEO strategic consultant. This is a $3,000/month premium engagement. Your deliverable is a 10-item Comprehensive Action Plan that demonstrates enterprise-grade expertise.
+
+FIRST: Cross-reference the TECHNICAL SCHEMA block (delimited by ==== START TECHNICAL SCHEMA ==== and ==== END TECHNICAL SCHEMA ====). You MUST check this block before auditing. If a schema type (e.g., FAQPage, LocalBusiness, Organization, Product) is present in that block, you are STRICTLY FORBIDDEN from flagging it as a "Missing Gap" in your analysis. Only flag schema elements that are ACTUALLY ABSENT from the TECHNICAL SCHEMA block.
+
+Provide 3 paragraphs of strategic analysis identifying Semantic Gaps and Answer Engine positioning.
+
+FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categorized into these EXACT buckets:
 {
   "seo": { "meta": 80, "headers": 70, "mobile": 90 },
   "aeo": { "directness": 60, "schema": 50 },
   "geo": { "citability": 65, "authority": 70 },
-  "priorities": [
-    "Strategic Action Plan 1...",
-    "Strategic Action Plan 2...",
-    "Strategic Action Plan 3..."
-  ]
+  "priorities": {
+    "immediateTechnicalFixes": [
+      "Technical fix 1...",
+      "Technical fix 2...",
+      "Technical fix 3..."
+    ],
+    "answerEngineOptimization": [
+      "AEO action 1...",
+      "AEO action 2...",
+      "AEO action 3..."
+    ],
+    "localAuthorityGEO": [
+      "GEO action 1...",
+      "GEO action 2..."
+    ],
+    "quickWins": [
+      "Quick win 1...",
+      "Quick win 2..."
+    ]
+  }
 }`;
       userPrompt = `Analyze this website content:\n\n${targetText}`;
     } else {
-      systemPrompt = `You are an expert SEO, AEO (Answer Engine Optimization), and GEO (Generative Engine Optimization) auditor.
-First, provide 3 paragraphs of verbal analysis regarding the SEO, AEO, and GEO potential of the content.
-Pay close attention to the [STRUCTURED DATA] section to verify if Schema.org (like FAQPage or LocalBusiness) is actually implemented before marking it as a gap.
-Finally, output a strict JSON block containing granular scores (0-100) and your top 3 specific, actionable priorities exactly in this format:
+      systemPrompt = `You are a world-class SEO, AEO, and GEO strategic consultant. This is a $3,000/month premium engagement. Your deliverable is a 10-item Comprehensive Action Plan that demonstrates enterprise-grade expertise.
+
+FIRST: Cross-reference the TECHNICAL SCHEMA block (delimited by ==== START TECHNICAL SCHEMA ==== and ==== END TECHNICAL SCHEMA ====). You MUST check this block before auditing. If a schema type (e.g., FAQPage, LocalBusiness, Organization, Product) is present in that block, you are STRICTLY FORBIDDEN from flagging it as a "Missing Gap" in your analysis. Only flag schema elements that are ACTUALLY ABSENT from the TECHNICAL SCHEMA block.
+
+Provide 3 paragraphs of strategic analysis regarding SEO, AEO, and GEO potential.
+
+FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categorized into these EXACT buckets:
 {
   "seo": { "meta": 80, "headers": 70, "mobile": 90 },
   "aeo": { "directness": 60, "schema": 50 },
   "geo": { "citability": 65, "authority": 70 },
-  "priorities": [
-    "Fix missing primary H1 tags to establish clear information hierarchy...",
-    "Inject schema.org FAQ modules to assist Answer Engine extraction...",
-    "Increase brand citability by acquiring digital PR links..."
-  ]
+  "priorities": {
+    "immediateTechnicalFixes": [
+      "Technical fix 1...",
+      "Technical fix 2...",
+      "Technical fix 3..."
+    ],
+    "answerEngineOptimization": [
+      "AEO action 1...",
+      "AEO action 2...",
+      "AEO action 3..."
+    ],
+    "localAuthorityGEO": [
+      "GEO action 1...",
+      "GEO action 2..."
+    ],
+    "quickWins": [
+      "Quick win 1...",
+      "Quick win 2..."
+    ]
+  }
 }`;
       userPrompt = `Analyze this website content:\n\n${targetText}`;
     }

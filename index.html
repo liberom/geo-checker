@@ -54,6 +54,7 @@
         margin: 0.75in;
       }
 
+      /* Print Reset: Force white background and black text */
       body {
         background: white !important;
         color: black !important;
@@ -61,6 +62,12 @@
         padding-bottom: 60px;
       }
 
+      *, *::before, *::after {
+        background: white !important;
+        color: black !important;
+      }
+
+      /* Hide non-essential elements */
       #app-header,
       .hero-section,
       #features,
@@ -68,6 +75,51 @@
       .no-print,
       #auditForm {
         display: none !important;
+      }
+
+      /* Force visibility for dashboard sections */
+      #results-dashboard,
+      #results-dashboard-comp {
+        display: block !important;
+        opacity: 1 !important;
+        border: none !important;
+        padding-top: 0 !important;
+        background: white !important;
+      }
+
+      #strategic-roadmap {
+        display: block !important;
+        opacity: 1 !important;
+        page-break-before: always;
+        break-before: page;
+        margin-top: 0 !important;
+        padding-top: 2rem !important;
+        border: none !important;
+        background: white !important;
+      }
+
+      /* Remove backdrop-filter and glass-card effects */
+      .glass-card {
+        background: white !important;
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        break-inside: avoid;
+        color: black !important;
+      }
+
+      /* Force SVG gauge strokes visible */
+      #svg-seo,
+      #svg-aeo,
+      #svg-geo {
+        stroke: #2563eb !important;
+      }
+
+      /* Also fix competitor gauge SVGs */
+      #svg-seo-comp,
+      #svg-aeo-comp,
+      #svg-geo-comp {
+        stroke: #2563eb !important;
       }
 
       #analysis-log {
@@ -79,14 +131,6 @@
         padding: 1rem !important;
       }
 
-      .glass-card {
-        background: transparent !important;
-        border: 1px solid #ccc !important;
-        box-shadow: none !important;
-        break-inside: avoid;
-        color: black !important;
-      }
-
       h1,
       h2,
       h3,
@@ -94,10 +138,6 @@
       span,
       div {
         color: black !important;
-      }
-
-      svg circle.text-slate-800 {
-        stroke: #e5e5e5 !important;
       }
 
       .print-header {
@@ -110,6 +150,7 @@
         padding-bottom: 10px;
         border-bottom: 2px solid black;
         z-index: 1000;
+        color: black;
       }
 
       .print-footer {
@@ -125,33 +166,65 @@
         font-weight: bold;
         font-size: 12px;
         z-index: 1000;
+        color: black;
       }
 
-      #priorities-list li {
-        display: list-item !important;
-        list-style-type: disc !important;
-        margin-left: 2rem !important;
-        border: none !important;
-        background: none !important;
-        padding: 0.5rem 0 !important;
+      /* Priorities container - hide section headers in print, show items */
+      #priorities-container {
+        display: block !important;
       }
 
-      #priorities-list .flex-shrink-0 {
+      #priorities-immediate,
+      #priorities-aeo,
+      #priorities-geo,
+      #priorities-quickwins {
+        margin-bottom: 1rem !important;
+      }
+
+      #priorities-container h4 {
         display: none !important;
       }
 
-      #results-dashboard,
-      #results-dashboard-comp {
+      #priorities-list-immediate li,
+      #priorities-list-aeo li,
+      #priorities-list-geo li,
+      #priorities-list-quickwins li {
+        display: list-item !important;
+        list-style-type: disc !important;
+        margin-left: 1.5rem !important;
         border: none !important;
-        padding-top: 0 !important;
+        background: none !important;
+        padding: 0.25rem 0 !important;
+        font-size: 10px !important;
       }
 
-      #strategic-roadmap {
-        page-break-before: always;
-        break-before: page;
-        margin-top: 0 !important;
-        padding-top: 2rem !important;
-        border: none !important;
+      #priorities-list-immediate li .flex-shrink-0,
+      #priorities-list-aeo li .flex-shrink-0,
+      #priorities-list-geo li .flex-shrink-0,
+      #priorities-list-quickwins li .flex-shrink-0 {
+        display: none !important;
+      }
+
+      #priorities-list-immediate li p,
+      #priorities-list-aeo li p,
+      #priorities-list-geo li p,
+      #priorities-list-quickwins li p {
+        font-size: 10px !important;
+        line-height: 1.3 !important;
+      }
+
+      /* Fix gauge backgrounds and ensure circles are visible */
+      svg circle {
+        stroke: currentColor !important;
+      }
+
+      svg circle.text-slate-800 {
+        stroke: #e5e5e5 !important;
+      }
+
+      /* Ensure all SVG elements have black strokes */
+      svg {
+        stroke: black !important;
       }
     }
   </style>
@@ -569,11 +642,38 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
-        Strategic Roadmap: Top 3 Priorities
+        Strategic Roadmap: 10 Priority Actions
       </h3>
-      <ul id="priorities-list" class="space-y-4 text-slate-300 font-medium">
-        <!-- Rendered items go here -->
-      </ul>
+      <div id="priorities-container">
+        <div id="priorities-immediate" class="mb-8">
+          <h4 class="text-sm font-bold text-red-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            Immediate Technical Fixes
+          </h4>
+          <ul id="priorities-list-immediate" class="space-y-3 text-slate-300 font-medium"></ul>
+        </div>
+        <div id="priorities-aeo" class="mb-8">
+          <h4 class="text-sm font-bold text-indigo-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            Answer Engine Optimization (AEO)
+          </h4>
+          <ul id="priorities-list-aeo" class="space-y-3 text-slate-300 font-medium"></ul>
+        </div>
+        <div id="priorities-geo" class="mb-8">
+          <h4 class="text-sm font-bold text-purple-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            Local Authority (GEO)
+          </h4>
+          <ul id="priorities-list-geo" class="space-y-3 text-slate-300 font-medium"></ul>
+        </div>
+        <div id="priorities-quickwins">
+          <h4 class="text-sm font-bold text-green-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            Quick Wins
+          </h4>
+          <ul id="priorities-list-quickwins" class="space-y-3 text-slate-300 font-medium"></ul>
+        </div>
+      </div>
     </div>
 
     <div class="mt-12 flex justify-center pb-4 gap-4 no-print">
@@ -720,9 +820,176 @@
             let buffer = '';
             
             let liveStreamText = '';
-            let livePrioritiesRendered = 0;
-            const pListDOM = document.getElementById('priorities-list');
-            if (pListDOM) pListDOM.innerHTML = '';
+            let realTimeParseStarted = false;
+            let realTimeParseInterval = null;
+            let capturedJSON = null;
+            
+            // Clear and prepare all priorities lists
+            const pLists = {
+              immediate: document.getElementById('priorities-list-immediate'),
+              aeo: document.getElementById('priorities-list-aeo'),
+              geo: document.getElementById('priorities-list-geo'),
+              quickwins: document.getElementById('priorities-list-quickwins')
+            };
+            Object.values(pLists).forEach(list => { if (list) list.innerHTML = ''; });
+
+            // Helper to create priority item HTML
+            const createPriorityItem = (text, colorClass = 'blue') => {
+              const colors = {
+                blue: 'border-blue-500/50 hover:border-blue-400',
+                indigo: 'border-indigo-500/50 hover:border-indigo-400',
+                purple: 'border-purple-500/50 hover:border-purple-400',
+                green: 'border-green-500/50 hover:border-green-400'
+              };
+              return `<li class="flex items-start gap-4 bg-slate-900/50 p-4 rounded-xl border ${colors[colorClass] || colors.blue} transition cursor-pointer select-none group" onclick="this.classList.toggle('opacity-50'); const cb = this.querySelector('input'); cb.checked = !cb.checked;">
+                <div class="flex-shrink-0 mt-0.5">
+                  <input type="checkbox" class="w-5 h-5 rounded border-slate-600 text-blue-500 bg-slate-800 pointer-events-none group-hover:border-blue-400 transition">
+                </div>
+                <p class="text-sm leading-relaxed text-slate-200">${text}</p>
+              </li>`;
+            };
+
+            // Show dashboard and roadmap
+            const showResults = () => {
+              const dash = document.getElementById('results-dashboard');
+              if (dash.classList.contains('hidden')) {
+                dash.classList.remove('hidden');
+                setTimeout(() => dash.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+              }
+            };
+
+            // Animate gauges from partial or full data
+            const animateFromData = (data) => {
+              if (!data || typeof data !== 'object') return;
+              
+              const sMeta = data.seo?.meta || 0;
+              const sHeaders = data.seo?.headers || 0;
+              const sMobile = data.seo?.mobile || 0;
+              const aDirect = data.aeo?.directness || 0;
+              const aSchema = data.aeo?.schema || 0;
+              const gCitability = data.geo?.citability || 0;
+              const gAuthority = data.geo?.authority || 0;
+
+              const seoScore = Math.round((sMeta + sHeaders + sMobile) / 3) || 0;
+              const aeoScore = Math.round((aDirect + aSchema) / 2) || 0;
+              const geoScore = Math.round((gCitability + gAuthority) / 2) || 0;
+
+              const animateGauge = (idPrefix, score, circ = 314) => {
+                const el = document.getElementById(`svg-${idPrefix}`);
+                if (el) {
+                  const offset = circ - (circ * score) / 100;
+                  el.style.strokeDashoffset = offset;
+                }
+                const scoreEl = document.getElementById(`score-${idPrefix}`);
+                if (scoreEl) scoreEl.innerText = score;
+              };
+
+              const animateBar = (id, val) => {
+                const barEl = document.getElementById(`bar-${id}`);
+                const txtEl = document.getElementById(`txt-${id}`);
+                if (barEl) barEl.style.width = `${val}%`;
+                if (txtEl) txtEl.innerText = `${val}%`;
+              };
+
+              animateGauge('seo', Math.min(100, Math.max(0, seoScore)));
+              animateBar('seo-meta', sMeta);
+              animateBar('seo-headers', sHeaders);
+              animateBar('seo-mobile', sMobile);
+
+              animateGauge('aeo', Math.min(100, Math.max(0, aeoScore)));
+              animateBar('aeo-directness', aDirect);
+              animateBar('aeo-schema', aSchema);
+
+              animateGauge('geo', Math.min(100, Math.max(0, geoScore)));
+              animateBar('geo-citability', gCitability);
+              animateBar('geo-authority', gAuthority);
+            };
+
+            // Render priorities from categorized structure
+            const renderPriorities = (priorities) => {
+              if (!priorities || typeof priorities !== 'object') return;
+              
+              // Handle new categorized structure
+              if (priorities.immediateTechnicalFixes) {
+                priorities.immediateTechnicalFixes.forEach(item => {
+                  if (pLists.immediate && item && item.length > 5) {
+                    pLists.immediate.innerHTML += createPriorityItem(item, 'red');
+                  }
+                });
+              }
+              if (priorities.answerEngineOptimization) {
+                priorities.answerEngineOptimization.forEach(item => {
+                  if (pLists.aeo && item && item.length > 5) {
+                    pLists.aeo.innerHTML += createPriorityItem(item, 'indigo');
+                  }
+                });
+              }
+              if (priorities.localAuthorityGEO) {
+                priorities.localAuthorityGEO.forEach(item => {
+                  if (pLists.geo && item && item.length > 5) {
+                    pLists.geo.innerHTML += createPriorityItem(item, 'purple');
+                  }
+                });
+              }
+              if (priorities.quickWins) {
+                priorities.quickWins.forEach(item => {
+                  if (pLists.quickwins && item && item.length > 5) {
+                    pLists.quickwins.innerHTML += createPriorityItem(item, 'green');
+                  }
+                });
+              }
+              
+              // Fallback: legacy flat array structure
+              if (Array.isArray(priorities)) {
+                priorities.forEach((item, idx) => {
+                  if (item && item.length > 5) {
+                    const color = idx < 3 ? 'red' : idx < 6 ? 'indigo' : idx < 8 ? 'purple' : 'green';
+                    pLists.immediate.innerHTML += createPriorityItem(item, color);
+                  }
+                });
+              }
+            };
+
+            // Start real-time JSON parsing as soon as { is detected
+            const startRealTimeParsing = () => {
+              if (realTimeParseStarted) return;
+              realTimeParseStarted = true;
+              
+              realTimeParseInterval = setInterval(() => {
+                try {
+                  // Find JSON block in accumulated text
+                  const jsonStart = liveStreamText.indexOf('{');
+                  if (jsonStart === -1) return;
+                  
+                  const potentialJson = liveStreamText.slice(jsonStart);
+                  const parsed = JSON.parse(potentialJson);
+                  
+                  if (parsed && parsed.seo && parsed.aeo && parsed.geo) {
+                    capturedJSON = parsed;
+                    
+                    // Immediately show results and animate
+                    showResults();
+                    
+                    const data = parsed.target ? parsed.target : parsed;
+                    animateFromData(data);
+                    
+                    if (parsed.priorities) {
+                      renderPriorities(parsed.priorities);
+                    }
+                    
+                    // Stop trying once we have valid complete JSON
+                    if (parsed.seo && parsed.aeo && parsed.geo && 
+                        (parsed.priorities?.immediateTechnicalFixes?.length || 
+                         parsed.priorities?.answerEngineOptimization?.length ||
+                         Array.isArray(parsed.priorities))) {
+                      clearInterval(realTimeParseInterval);
+                    }
+                  }
+                } catch (e) {
+                  // Keep trying - JSON not complete yet
+                }
+              }, 500);
+            };
 
             while (true) {
               const { done, value } = await reader.read();
@@ -750,6 +1017,7 @@
                            window.manualTextPayload = manualText;
                            document.getElementById('auditForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
                         });
+                        if (realTimeParseInterval) clearInterval(realTimeParseInterval);
                         return; // Break out of function securely
                       }
 
@@ -762,29 +1030,9 @@
                       logDiv.scrollTop = logDiv.scrollHeight;
                       liveStreamText += content;
 
-                      const liveMatch = liveStreamText.match(/"priorities"\s*:\s*\[([\s\S]*?)(?:\]|$)/i);
-                      if (liveMatch) {
-                        const dash = document.getElementById('results-dashboard');
-                        if (dash.classList.contains('hidden')) {
-                           dash.classList.remove('hidden');
-                           setTimeout(() => dash.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
-                        }
-                        
-                        const rawItems = liveMatch[1].match(/"([^"]+)"/g);
-                        if (rawItems && rawItems.length > livePrioritiesRendered) {
-                          for (let i = livePrioritiesRendered; i < rawItems.length; i++) {
-                            const pClean = rawItems[i].replace(/^"|"$/g, '').trim();
-                            if (pListDOM && pClean.length > 5) {
-                              pListDOM.innerHTML += `<li class="flex items-start gap-4 bg-slate-900/50 p-5 rounded-2xl border border-slate-700/50 hover:border-blue-500/50 transition cursor-pointer select-none group" onclick="this.classList.toggle('opacity-50'); const cb = this.querySelector('input'); cb.checked = !cb.checked;">
-                                <div class="flex-shrink-0 mt-1">
-                                  <input type="checkbox" class="w-6 h-6 rounded border-slate-600 text-blue-500 bg-slate-800 pointer-events-none group-hover:border-blue-400 transition">
-                                </div>
-                                <p class="pt-0.5 text-base leading-relaxed text-slate-200">${pClean}</p>
-                              </li>`;
-                            }
-                            livePrioritiesRendered++;
-                          }
-                        }
+                      // Start real-time parsing as soon as we see JSON opening brace
+                      if (liveStreamText.includes('{') && !realTimeParseStarted) {
+                        startRealTimeParsing();
                       }
                     }
                   } catch (e) {
@@ -793,30 +1041,33 @@
                 }
               }
             }
+            
+            // Stop real-time parsing interval if still running
+            if (realTimeParseInterval) {
+              clearInterval(realTimeParseInterval);
+            }
 
-            // STREAM COMPLETE, RUN JSON PARSING AND METRICS ANIMATION
+            // STREAM COMPLETE, RUN FINAL JSON PARSING AND METRICS ANIMATION
             const fullText = logDiv.innerText;
             // Uses a permissive regex to find the JSON output at the end of the generator text
             const match = fullText.match(/\{[\s\S]*"seo"[\s\S]*"aeo"[\s\S]*"geo"[\s\S]*\}/i);
 
             if (match) {
               try {
-                // Show dashboard BEFORE mapping loops start
-                const dashboard = document.getElementById('results-dashboard');
-                dashboard.classList.remove('hidden');
-                setTimeout(() => dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
-
-                const r = JSON.parse(match[0]);
-                console.log('Raw AI Text:', fullText);
-                console.log('Extracted JSON:', r);
+                // Use capturedJSON from real-time parsing if available, otherwise parse fresh
+                const r = capturedJSON || JSON.parse(match[0]);
+                console.log('Final Extracted JSON:', r);
                 
                 const data = r.target ? r.target : r;
-                const priorities = r.priorities || (r.target && r.target.priorities) || [];
-                console.log('Final Priorities Array:', priorities);
+                const priorities = r.priorities || (r.target && r.target.priorities) || {};
                 
                 const isCompMode = !!r.competitor;
 
-                // Target Scores mapped with failsafes natively from 'data' variable
+                // Ensure dashboard is visible
+                const dashboard = document.getElementById('results-dashboard');
+                dashboard.classList.remove('hidden');
+
+                // Target Scores mapped with failsafes
                 const sMeta = data.seo?.meta || 0;
                 const sHeaders = data.seo?.headers || 0;
                 const sMobile = data.seo?.mobile || 0;
@@ -829,11 +1080,12 @@
                 const aeoScore = Math.round((aDirect + aSchema) / 2) || 0;
                 const geoScore = Math.round((gCitability + gAuthority) / 2) || 0;
 
+                // Final gauge animations with score counter
                 const animateGauge = (idPrefix, score, circ = 314) => {
                   const offset = circ - (circ * score) / 100;
                   document.getElementById(`svg-${idPrefix}`).style.strokeDashoffset = offset;
 
-                  let current = 0;
+                  let current = parseInt(document.getElementById(`score-${idPrefix}`).innerText) || 0;
                   const intv = setInterval(() => {
                     current += 1;
                     if (current >= score) {
@@ -861,6 +1113,14 @@
                 animateGauge('geo', Math.min(100, Math.max(0, geoScore)));
                 animateBar('geo-citability', gCitability);
                 animateBar('geo-authority', gAuthority);
+
+                // Ensure priorities are rendered (from real-time parsing or now)
+                if (priorities.immediateTechnicalFixes || priorities.answerEngineOptimization || 
+                    priorities.localAuthorityGEO || priorities.quickWins || Array.isArray(priorities)) {
+                  // Clear existing and re-render to ensure completeness
+                  Object.values(pLists).forEach(list => { if (list) list.innerHTML = ''; });
+                  renderPriorities(priorities);
+                }
 
                 let compScoresText = '';
 
@@ -912,7 +1172,6 @@
                   if (probeRes.ok) {
                     const probeData = await probeRes.json();
                     const cShare = probeData.citationShare;
-                    // Short delay for dramatic effect
                     setTimeout(() => {
                       document.getElementById('bar-citation-share').style.width = `${cShare}%`;
                       document.getElementById('txt-citation-share').innerText = `${cShare}%`;
@@ -924,12 +1183,23 @@
                   }
                 }
 
-                // Compile Priorities Array purely for Clipboard
-                let compiledPrioritiesString = '';
-                if (Array.isArray(priorities) && priorities.length > 0) {
-                  compiledPrioritiesString = '\n\n## Top 3 Priorities:\n';
-                  priorities.forEach((priority) => {
-                    compiledPrioritiesString += `[ ] ${priority}\n`;
+                // Compile Priorities for Clipboard Report (now with all 10 items)
+                let compiledPrioritiesString = '\n\n## Strategic Roadmap (10 Priority Actions):\n';
+                
+                const flattenPriorities = (p) => {
+                  const items = [];
+                  if (p.immediateTechnicalFixes) items.push(...p.immediateTechnicalFixes);
+                  if (p.answerEngineOptimization) items.push(...p.answerEngineOptimization);
+                  if (p.localAuthorityGEO) items.push(...p.localAuthorityGEO);
+                  if (p.quickWins) items.push(...p.quickWins);
+                  if (Array.isArray(p)) items.push(...p);
+                  return items;
+                };
+                
+                const allPriorities = flattenPriorities(priorities);
+                if (allPriorities.length > 0) {
+                  allPriorities.forEach((priority, idx) => {
+                    compiledPrioritiesString += `[ ] ${idx + 1}. ${priority}\n`;
                   });
                 }
 
@@ -951,9 +1221,9 @@
                   setTimeout(() => btnNode.innerHTML = origHTML, 3000);
                 };
                 
-                // Strip the exact raw JSON block from the screen log to keep the UI clean and conversational
+                // Strip the exact raw JSON block from the screen log
                 const textAnalysis = logDiv.innerText.replace(match[0], '').trim();
-                logDiv.innerHTML = logDiv.innerHTML.replace(match[0], '<br/><br/><span class="text-blue-500 italic">Analysis successfully parsed. Metrics populated below.</span>');
+                logDiv.innerHTML = logDiv.innerHTML.replace(match[0], '<br/><br/><span class="text-blue-500 italic">Analysis successfully parsed. Strategic Roadmap populated below.</span>');
 
                 // Enable PDF Print Button
                 document.getElementById('btn-print-report').onclick = () => {
@@ -964,14 +1234,19 @@
                 };
 
               } catch (e) {
-                console.error('JSON parsing failed:', e);
-                logDiv.innerHTML += '<br/><br/><div><span class="text-red-400 font-bold italic">Warning: The AI model generated an improperly formatted output and metrics could not be displayed.</span><button id="btn-retry-scan-1" class="ml-4 bg-red-500/20 text-red-300 font-bold px-4 py-2 rounded-lg hover:bg-red-500/40 relative z-10 transition">Retry Scan</button></div>';
-                document.getElementById('btn-retry-scan-1').addEventListener('click', () => { window.isRetryCall = true; document.getElementById('auditForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true })); });
+                console.error('Final JSON parsing failed:', e);
+                // Even if final parsing fails, we may have partial results from real-time parsing
+                if (!capturedJSON) {
+                  logDiv.innerHTML += '<br/><br/><div><span class="text-red-400 font-bold italic">Warning: The AI model generated an improperly formatted output. Some metrics may not have been displayed.</span><button id="btn-retry-scan-1" class="ml-4 bg-red-500/20 text-red-300 font-bold px-4 py-2 rounded-lg hover:bg-red-500/40 relative z-10 transition">Retry Scan</button></div>';
+                  document.getElementById('btn-retry-scan-1').addEventListener('click', () => { window.isRetryCall = true; document.getElementById('auditForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true })); });
+                }
               }
             } else {
-              // Handle AI failing to produce valid JSON at the end
-              logDiv.innerHTML += '<br/><br/><div><span class="text-orange-400 font-bold italic">Warning: The AI model failed to yield the final scoring metrics.</span><button id="btn-retry-scan-2" class="ml-4 bg-orange-500/20 text-orange-300 font-bold px-4 py-2 rounded-lg hover:bg-orange-500/40 relative z-10 transition">Retry Scan</button></div>';
-              document.getElementById('btn-retry-scan-2').addEventListener('click', () => { window.isRetryCall = true; document.getElementById('auditForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true })); });
+              // No valid JSON found at all
+              if (!capturedJSON) {
+                logDiv.innerHTML += '<br/><br/><div><span class="text-orange-400 font-bold italic">Warning: The AI model failed to yield the final scoring metrics.</span><button id="btn-retry-scan-2" class="ml-4 bg-orange-500/20 text-orange-300 font-bold px-4 py-2 rounded-lg hover:bg-orange-500/40 relative z-10 transition">Retry Scan</button></div>';
+                document.getElementById('btn-retry-scan-2').addEventListener('click', () => { window.isRetryCall = true; document.getElementById('auditForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true })); });
+              }
             }
 
           } catch (error) {
