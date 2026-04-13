@@ -718,6 +718,11 @@
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let buffer = '';
+            
+            let liveStreamText = '';
+            let livePrioritiesRendered = 0;
+            const pListDOM = document.getElementById('priorities-list');
+            if (pListDOM) pListDOM.innerHTML = '';
 
             while (true) {
               const { done, value } = await reader.read();
@@ -755,6 +760,32 @@
                     if (content) {
                       logDiv.innerHTML += content;
                       logDiv.scrollTop = logDiv.scrollHeight;
+                      liveStreamText += content;
+
+                      const liveMatch = liveStreamText.match(/"priorities"\s*:\s*\[([\s\S]*?)(?:\]|$)/i);
+                      if (liveMatch) {
+                        const dash = document.getElementById('results-dashboard');
+                        if (dash.classList.contains('hidden')) {
+                           dash.classList.remove('hidden');
+                           setTimeout(() => dash.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+                        }
+                        
+                        const rawItems = liveMatch[1].match(/"([^"]+)"/g);
+                        if (rawItems && rawItems.length > livePrioritiesRendered) {
+                          for (let i = livePrioritiesRendered; i < rawItems.length; i++) {
+                            const pClean = rawItems[i].replace(/^"|"$/g, '').trim();
+                            if (pListDOM && pClean.length > 5) {
+                              pListDOM.innerHTML += `<li class="flex items-start gap-4 bg-slate-900/50 p-5 rounded-2xl border border-slate-700/50 hover:border-blue-500/50 transition cursor-pointer select-none group" onclick="this.classList.toggle('opacity-50'); const cb = this.querySelector('input'); cb.checked = !cb.checked;">
+                                <div class="flex-shrink-0 mt-1">
+                                  <input type="checkbox" class="w-6 h-6 rounded border-slate-600 text-blue-500 bg-slate-800 pointer-events-none group-hover:border-blue-400 transition">
+                                </div>
+                                <p class="pt-0.5 text-base leading-relaxed text-slate-200">${pClean}</p>
+                              </li>`;
+                            }
+                            livePrioritiesRendered++;
+                          }
+                        }
+                      }
                     }
                   } catch (e) {
                     // Ignore parsing errors for incomplete chunks
@@ -893,25 +924,13 @@
                   }
                 }
 
-                // Map Priorities List
-                const prioritiesList = document.getElementById('priorities-list');
+                // Compile Priorities Array purely for Clipboard
                 let compiledPrioritiesString = '';
-                
-                if (prioritiesList) {
-                  prioritiesList.innerHTML = '';
-                  
-                  if (Array.isArray(priorities) && priorities.length > 0) {
-                    compiledPrioritiesString = '\n\n## Top 3 Priorities:\n';
-                    priorities.forEach((priority, i) => {
-                      prioritiesList.innerHTML += `<li class="flex items-start gap-4 bg-slate-900/50 p-5 rounded-2xl border border-slate-700/50 hover:border-blue-500/50 transition cursor-pointer select-none group" onclick="this.classList.toggle('opacity-50'); const cb = this.querySelector('input'); cb.checked = !cb.checked;">
-                        <div class="flex-shrink-0 mt-1">
-                          <input type="checkbox" class="w-6 h-6 rounded border-slate-600 text-blue-500 bg-slate-800 pointer-events-none group-hover:border-blue-400 transition">
-                        </div>
-                        <p class="pt-0.5 text-base leading-relaxed text-slate-200">${priority}</p>
-                      </li>`;
-                      compiledPrioritiesString += `[ ] ${priority}\n`;
-                    });
-                  }
+                if (Array.isArray(priorities) && priorities.length > 0) {
+                  compiledPrioritiesString = '\n\n## Top 3 Priorities:\n';
+                  priorities.forEach((priority) => {
+                    compiledPrioritiesString += `[ ] ${priority}\n`;
+                  });
                 }
 
                 // Enable Copy Report Button

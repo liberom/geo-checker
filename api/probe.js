@@ -92,7 +92,7 @@ Example: {"citationShare": 65}`;
         'X-Title': 'Vynix Analyzer'
       },
       body: JSON.stringify({
-        model: 'qwen/qwen3.5-9b',
+        model: 'minimax/minimax-m2.7',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `Text to identify:\n\n${textContent}` }

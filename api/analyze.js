@@ -192,7 +192,7 @@ Finally, output a strict JSON block containing granular scores (0-100) and your 
         'X-Title': 'Vynix Analyzer'
       },
       body: JSON.stringify({
-        model: 'qwen/qwen3.5-9b',
+        model: 'minimax/minimax-m2.7',
         stream: true,
         messages: [
           { role: 'system', content: systemPrompt },
