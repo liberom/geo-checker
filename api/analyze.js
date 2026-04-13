@@ -3,9 +3,47 @@ module.exports = async function (req, res) {
   const targetUrl = req.query.url || (req.body && req.body.url);
   const competitorUrl = req.query.competitorUrl || (req.body && req.body.competitorUrl);
 
-  if (key !== process.env.MY_SECRET_ACCESS_STRING) {
-    return res.status(401).json({ error: 'Unauthorized: Invalid access key' });
+  const validateLicense = (k) => {
+    if (!k || typeof k !== 'string') return { valid: false };
+    const parts = k.split('_');
+    if (parts.length < 2) return { valid: false };
+    const prefix = parts[0].toLowerCase();
+    const segments = parts[1].split('-');
+    if (segments.length !== 6) return { valid: false };
+
+    const expected = ['v', 'y', 'n', 'i', 'x'];
+    for (let i = 0; i < 5; i++) {
+      if (!segments[i] || segments[i].charAt(0).toLowerCase() !== expected[i]) {
+        return { valid: false };
+      }
+    }
+
+    const expDateStr = segments[5];
+    if (expDateStr.length !== 4) return { valid: false };
+    const expMonth = parseInt(expDateStr.slice(0, 2), 10);
+    const expYear = parseInt('20' + expDateStr.slice(2, 4), 10);
+
+    const now = new Date();
+    const currMonth = now.getMonth() + 1;
+    const currYear = now.getFullYear();
+
+    let expired = false;
+    if (currYear > expYear || (currYear === expYear && currMonth > expMonth)) {
+      expired = true;
+    }
+
+    return { valid: true, expired, isMidMarket: prefix === 'mid' };
+  };
+
+  const license = validateLicense(key);
+  if (!license.valid) {
+    return res.status(401).json({ error: 'Unauthorized: Invalid license structure' });
   }
+  if (license.expired) {
+    return res.status(403).json({ error: 'License Expired' });
+  }
+
+  const isMidMarket = license.isMidMarket;
 
   if (!targetUrl) {
     return res.status(400).json({ error: 'Missing target URL' });
@@ -54,20 +92,35 @@ module.exports = async function (req, res) {
     let systemPrompt = '';
     let userPrompt = '';
 
-    if (competitorUrl) {
-      systemPrompt = `You are a strict SEO, AEO, and GEO gap-analysis auditor.
-First, provide 3 paragraphs of Gap Analysis identifying exactly why the Competitor is more likely to be cited by Gemini or AI Answer Engines than the Target.
+    if (competitorUrl && isMidMarket) {
+      systemPrompt = `You are a highly aggressive SEO, AEO, and GEO gap-analysis auditor.
+First, provide 3 paragraphs identifying specific 'Semantic Gaps' where the Target is missing technical authority and exactly why the Competitor is more likely to be cited by Gemini or AI Answer Engines.
 Finally, output a strict JSON block exactly in this multi-site format:
 {
   "target": { "seo": { "meta": 80, "headers": 70, "mobile": 90 }, "aeo": { "directness": 60, "schema": 50 }, "geo": { "citability": 65, "authority": 70 } },
   "competitor": { "seo": { "meta": 85, "headers": 80, "mobile": 95 }, "aeo": { "directness": 75, "schema": 60 }, "geo": { "citability": 90, "authority": 85 } },
   "priorities": [
-    "Prioritize fixing Target H1 structure to match Competitor...",
-    "Inject FAQ modules for AEO Answer extraction...",
-    "Improve brand citability to catch up with Competitor digital PR..."
+    "Strategic Action Plan 1...",
+    "Strategic Action Plan 2...",
+    "Strategic Action Plan 3..."
   ]
 }`;
       userPrompt = `Analyze and compare these two websites:\n\n=== TARGET [${targetUrl}] ===\n${targetText}\n\n=== COMPETITOR [${competitorUrl}] ===\n${compText}`;
+    } else if (isMidMarket) {
+      systemPrompt = `You are a highly aggressive SEO, AEO, and GEO auditor.
+First, provide 3 paragraphs identifying specific 'Semantic Gaps' where the site is missing technical authority and exactly why it might be ignored by Answer Engines.
+Finally, output a strict JSON block containing granular scores (0-100) and your 'Top 3 Strategic Action Plan' exactly in this format:
+{
+  "seo": { "meta": 80, "headers": 70, "mobile": 90 },
+  "aeo": { "directness": 60, "schema": 50 },
+  "geo": { "citability": 65, "authority": 70 },
+  "priorities": [
+    "Strategic Action Plan 1...",
+    "Strategic Action Plan 2...",
+    "Strategic Action Plan 3..."
+  ]
+}`;
+      userPrompt = `Analyze this website content:\n\n${targetText}`;
     } else {
       systemPrompt = `You are an expert SEO, AEO (Answer Engine Optimization), and GEO (Generative Engine Optimization) auditor.
 First, provide 3 paragraphs of verbal analysis regarding the SEO, AEO, and GEO potential of the content.
@@ -98,7 +151,7 @@ Finally, output a strict JSON block containing granular scores (0-100) and your 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'qwen/qwen-2.5-7b-instruct',
+        model: 'qwen/qwen3.5-9b',
         stream: true,
         messages: [
           { role: 'system', content: systemPrompt },

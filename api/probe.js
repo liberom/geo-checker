@@ -2,8 +2,44 @@ module.exports = async function (req, res) {
   const key = req.query.key || (req.body && req.body.key);
   const targetUrl = req.query.url || (req.body && req.body.url);
 
-  if (key !== process.env.MY_SECRET_ACCESS_STRING) {
-    return res.status(401).json({ error: 'Unauthorized: Invalid access key' });
+  const validateLicense = (k) => {
+    if (!k || typeof k !== 'string') return { valid: false };
+    const parts = k.split('_');
+    if (parts.length < 2) return { valid: false };
+    const prefix = parts[0].toLowerCase();
+    const segments = parts[1].split('-');
+    if (segments.length !== 6) return { valid: false };
+
+    const expected = ['v', 'y', 'n', 'i', 'x'];
+    for (let i = 0; i < 5; i++) {
+      if (!segments[i] || segments[i].charAt(0).toLowerCase() !== expected[i]) {
+        return { valid: false };
+      }
+    }
+
+    const expDateStr = segments[5];
+    if (expDateStr.length !== 4) return { valid: false };
+    const expMonth = parseInt(expDateStr.slice(0, 2), 10);
+    const expYear = parseInt('20' + expDateStr.slice(2, 4), 10);
+
+    const now = new Date();
+    const currMonth = now.getMonth() + 1;
+    const currYear = now.getFullYear();
+
+    let expired = false;
+    if (currYear > expYear || (currYear === expYear && currMonth > expMonth)) {
+      expired = true;
+    }
+
+    return { valid: true, expired, isMidMarket: prefix === 'mid' };
+  };
+
+  const license = validateLicense(key);
+  if (!license.valid) {
+    return res.status(401).json({ error: 'Unauthorized: Invalid license structure' });
+  }
+  if (license.expired) {
+    return res.status(403).json({ error: 'License Expired' });
   }
 
   if (!targetUrl) {
@@ -37,7 +73,7 @@ Example: {"citationShare": 65}`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'qwen/qwen-2.5-7b-instruct',
+        model: 'qwen/qwen3.5-9b',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `Text to identify:\n\n${textContent}` }
