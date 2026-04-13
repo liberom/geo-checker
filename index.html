@@ -770,27 +770,29 @@
 
             if (match) {
               try {
-                const results = JSON.parse(match[0]);
-                console.log('Raw AI Text:', fullText);
-                console.log('Extracted JSON:', results);
-                
-                const isCompMode = !!results.competitor;
-                const rT = isCompMode && results.target ? results.target : results;
-                const prioritiesPayload = results.priorities || (results.target && results.target.priorities) || [];
-
-                // Show dashboard logic
+                // Show dashboard BEFORE mapping loops start
                 const dashboard = document.getElementById('results-dashboard');
                 dashboard.classList.remove('hidden');
                 setTimeout(() => dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
 
-                // Target Scores mapped with failsafes
-                const sMeta = rT.seo?.meta || 0;
-                const sHeaders = rT.seo?.headers || 0;
-                const sMobile = rT.seo?.mobile || 0;
-                const aDirect = rT.aeo?.directness || 0;
-                const aSchema = rT.aeo?.schema || 0;
-                const gCitability = rT.geo?.citability || 0;
-                const gAuthority = rT.geo?.authority || 0;
+                const r = JSON.parse(match[0]);
+                console.log('Raw AI Text:', fullText);
+                console.log('Extracted JSON:', r);
+                
+                const data = r.target ? r.target : r;
+                const priorities = r.priorities || (r.target && r.target.priorities) || [];
+                console.log('Final Priorities Array:', priorities);
+                
+                const isCompMode = !!r.competitor;
+
+                // Target Scores mapped with failsafes natively from 'data' variable
+                const sMeta = data.seo?.meta || 0;
+                const sHeaders = data.seo?.headers || 0;
+                const sMobile = data.seo?.mobile || 0;
+                const aDirect = data.aeo?.directness || 0;
+                const aSchema = data.aeo?.schema || 0;
+                const gCitability = data.geo?.citability || 0;
+                const gAuthority = data.geo?.authority || 0;
 
                 const seoScore = Math.round((sMeta + sHeaders + sMobile) / 3) || 0;
                 const aeoScore = Math.round((aDirect + aSchema) / 2) || 0;
@@ -835,7 +837,7 @@
                 if (isCompMode) {
                   const cDash = document.getElementById('results-dashboard-comp');
                   cDash.classList.remove('hidden');
-                  const rC = results.competitor;
+                  const rC = r.competitor;
 
                   const cMeta = rC.seo?.meta || 0;
                   const cHeaders = rC.seo?.headers || 0;
@@ -893,25 +895,24 @@
 
                 // Map Priorities List
                 const prioritiesList = document.getElementById('priorities-list');
-                prioritiesList.innerHTML = '';
                 let compiledPrioritiesString = '';
                 
-                if (Array.isArray(prioritiesPayload) && prioritiesPayload.length > 0) {
-                  compiledPrioritiesString = '\n\n## Top 3 Priorities:\n';
-                  prioritiesPayload.forEach((priority, i) => {
-                    prioritiesList.innerHTML += `<li class="flex items-start gap-4 bg-slate-900/50 p-5 rounded-2xl border border-slate-700/50 hover:border-blue-500/50 transition cursor-pointer select-none group" onclick="this.classList.toggle('opacity-50'); const cb = this.querySelector('input'); cb.checked = !cb.checked;">
-                      <div class="flex-shrink-0 mt-1">
-                        <input type="checkbox" class="w-6 h-6 rounded border-slate-600 text-blue-500 bg-slate-800 pointer-events-none group-hover:border-blue-400 transition">
-                      </div>
-                      <p class="pt-0.5 text-base leading-relaxed text-slate-200">${priority}</p>
-                    </li>`;
-                    compiledPrioritiesString += `[ ] ${priority}\n`;
-                  });
+                if (prioritiesList) {
+                  prioritiesList.innerHTML = '';
+                  
+                  if (Array.isArray(priorities) && priorities.length > 0) {
+                    compiledPrioritiesString = '\n\n## Top 3 Priorities:\n';
+                    priorities.forEach((priority, i) => {
+                      prioritiesList.innerHTML += `<li class="flex items-start gap-4 bg-slate-900/50 p-5 rounded-2xl border border-slate-700/50 hover:border-blue-500/50 transition cursor-pointer select-none group" onclick="this.classList.toggle('opacity-50'); const cb = this.querySelector('input'); cb.checked = !cb.checked;">
+                        <div class="flex-shrink-0 mt-1">
+                          <input type="checkbox" class="w-6 h-6 rounded border-slate-600 text-blue-500 bg-slate-800 pointer-events-none group-hover:border-blue-400 transition">
+                        </div>
+                        <p class="pt-0.5 text-base leading-relaxed text-slate-200">${priority}</p>
+                      </li>`;
+                      compiledPrioritiesString += `[ ] ${priority}\n`;
+                    });
+                  }
                 }
-
-                // Strip the exact raw JSON block from the screen log to keep the UI clean and conversational
-                const textAnalysis = logDiv.innerText.replace(match[0], '').trim();
-                logDiv.innerHTML = logDiv.innerHTML.replace(match[0], '<br/><br/><span class="text-blue-500 italic">Analysis successfully parsed. Metrics populated below.</span>');
 
                 // Enable Copy Report Button
                 document.getElementById('btn-copy-report').onclick = () => {
@@ -930,6 +931,10 @@
                   btnNode.innerHTML = 'Copied to Clipboard! 🎉';
                   setTimeout(() => btnNode.innerHTML = origHTML, 3000);
                 };
+                
+                // Strip the exact raw JSON block from the screen log to keep the UI clean and conversational
+                const textAnalysis = logDiv.innerText.replace(match[0], '').trim();
+                logDiv.innerHTML = logDiv.innerHTML.replace(match[0], '<br/><br/><span class="text-blue-500 italic">Analysis successfully parsed. Metrics populated below.</span>');
 
                 // Enable PDF Print Button
                 document.getElementById('btn-print-report').onclick = () => {
