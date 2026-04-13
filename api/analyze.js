@@ -57,20 +57,20 @@ module.exports = async function (req, res) {
   try {
     const fetchSite = async (urlStr, charLimit, isTarget = true) => {
       let htmlContent = '';
-      
+
       const renderFlag = isTarget || isMidMarket ? 'true' : 'false';
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000);
 
       try {
         const scraperUrl = `https://api.scraperapi.com/?api_key=${process.env.SCRAPERAPI_KEY || ''}&url=${encodeURIComponent(urlStr)}&render=${renderFlag}`;
-        
+
         const siteCall = await fetch(scraperUrl, { signal: controller.signal });
-        
+
         if (siteCall.status === 403 || siteCall.status === 429) {
           throw new Error('SCRAPE_FAILED');
         }
-        
+
         if (siteCall.ok) {
           htmlContent = await siteCall.text();
         } else {
@@ -78,7 +78,7 @@ module.exports = async function (req, res) {
         }
       } catch (err) {
         if (err.name === 'AbortError' || err.message === 'SCRAPE_FAILED') {
-           throw new Error('SCRAPE_FAILED');
+          throw new Error('SCRAPE_FAILED');
         }
       } finally {
         clearTimeout(timeoutId);
@@ -87,11 +87,11 @@ module.exports = async function (req, res) {
       if (!htmlContent || htmlContent.length < 250) {
         throw new Error('SCRAPE_FAILED');
       }
-      
+
       const titleMatch = htmlContent.match(/<title[^>]*>([^<]+)<\/title>/i);
       const title = titleMatch ? titleMatch[1].trim() : 'No Title Found';
-      const descMatch = htmlContent.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["'][^>]*>/i) 
-                     || htmlContent.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']description["'][^>]*>/i);
+      const descMatch = htmlContent.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["'][^>]*>/i)
+        || htmlContent.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']description["'][^>]*>/i);
       const description = descMatch ? descMatch[1].trim() : 'No Meta Description Found';
       const h1Matches = [...htmlContent.matchAll(/<h1[^>]*>([\s\S]*?)<\/h1>/gi)].map(m => m[1].replace(/<[^>]+>/g, '').trim()).filter(Boolean);
       const altMatches = [...htmlContent.matchAll(/<img[^>]*alt=["']([^"']+)["'][^>]*>/gi)].map(m => m[1].trim()).filter(Boolean);
@@ -109,7 +109,7 @@ module.exports = async function (req, res) {
 
     let targetText = '';
     let compText = '';
-    
+
     if (manualText) {
       targetText = manualText.substring(0, 5000);
     } else {
@@ -178,7 +178,7 @@ Finally, output a strict JSON block containing granular scores (0-100) and your 
       headers: {
         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://vynix-analyzer.vercel.app',
+        'HTTP-Referer': 'https://geo-checker-gold.vercel.app',
         'X-Title': 'Vynix Analyzer'
       },
       body: JSON.stringify({
@@ -192,33 +192,9 @@ Finally, output a strict JSON block containing granular scores (0-100) and your 
     });
 
     if (!orReq.ok) {
-        const errorBody = await orReq.text();
-        console.error('OpenRouter Error Body:', errorBody);
-        
-        // Model Fallback to Gemini Flash
-        orReq = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-            'Content-Type': 'application/json',
-            'HTTP-Referer': 'https://vynix-analyzer.vercel.app',
-            'X-Title': 'Vynix Analyzer'
-          },
-          body: JSON.stringify({
-            model: 'google/gemini-flash-1.5',
-            stream: true,
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: userPrompt }
-            ]
-          })
-        });
-
-        if (!orReq.ok) {
-            const fbErrorBody = await orReq.text();
-            console.error('OpenRouter Error Body:', fbErrorBody);
-            throw new Error(`OpenRouter API error: ${orReq.statusText}`);
-        }
+      const errorBody = await orReq.text();
+      console.error('OpenRouter Error Body:', errorBody);
+      throw new Error(`OpenRouter API error: ${orReq.statusText}`);
     }
 
     // Pipe the response stream to the client explicitly mapped as a decoded string
@@ -231,8 +207,8 @@ Finally, output a strict JSON block containing granular scores (0-100) and your 
       const chunk = decoder.decode(value, { stream: true });
       res.write(chunk); // Output guaranteed string maintaining standard SSE format (data: ...\n\n) from OpenRouter
     }
-    
-    res.write('data: [DONE]\n\n'); 
+
+    res.write('data: [DONE]\n\n');
     res.end();
   } catch (error) {
     if (error.message === 'SCRAPE_FAILED') {

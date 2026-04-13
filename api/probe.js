@@ -54,21 +54,21 @@ module.exports = async function (req, res) {
     try {
       const apiKey = process.env.SCRAPERAPI_KEY || '';
       const scraperUrl = `https://api.scraperapi.com/?api_key=${apiKey}&url=${encodeURIComponent(targetUrl)}&render=false`;
-      
+
       const siteCall = await fetch(scraperUrl, { signal: controller.signal });
-      
+
       if (siteCall.status === 403 || siteCall.status === 429 || !siteCall.ok) {
         throw new Error('SCRAPE_FAILED');
       }
       htmlContent = await siteCall.text();
     } catch (err) {
       if (err.name === 'AbortError' || err.message === 'SCRAPE_FAILED') {
-         throw new Error('SCRAPE_FAILED');
+        throw new Error('SCRAPE_FAILED');
       }
     } finally {
       clearTimeout(timeoutId);
     }
-    
+
     // Quick text extration
     const textContent = htmlContent
       .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
@@ -76,9 +76,9 @@ module.exports = async function (req, res) {
       .replace(/<[^>]+>/g, ' ')
       .replace(/\s+/g, ' ')
       .trim()
-      .slice(0, 3000); 
+      .slice(0, 3000);
 
-    const systemPrompt = `You are an AI that estimates brand visibility in LLM training data. 
+    const systemPrompt = `You are an AI that estimates brand visibility in LLM training data.
 Is the brand associated with the following website text mentioned in your training data?
 Return your answer ONLY as a strict JSON format with exactly one key "citationShare" which is a percentage from 0 to 100 representing visibility.
 Example: {"citationShare": 65}`;
@@ -88,7 +88,7 @@ Example: {"citationShare": 65}`;
       headers: {
         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://vynix-analyzer.vercel.app',
+        'HTTP-Referer': 'https://geo-checker-gold.vercel.app',
         'X-Title': 'Vynix Analyzer'
       },
       body: JSON.stringify({
@@ -101,9 +101,9 @@ Example: {"citationShare": 65}`;
     });
 
     if (!orReq.ok) {
-        const errorBody = await orReq.text();
-        console.error('OpenRouter Error Body:', errorBody);
-        throw new Error(`API error`);
+      const errorBody = await orReq.text();
+      console.error('OpenRouter Error Body:', errorBody);
+      throw new Error(`API error`);
     }
 
     const data = await orReq.json();
@@ -118,7 +118,7 @@ Example: {"citationShare": 65}`;
       }
     } catch (e) {
       // Fallback
-       citationShare = Math.floor(Math.random() * 40) + 10;
+      citationShare = Math.floor(Math.random() * 40) + 10;
     }
 
     res.status(200).json({ citationShare });
