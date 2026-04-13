@@ -197,6 +197,13 @@
         </div>
       </div>
     </div>
+    
+    <div class="mt-16 flex justify-center pb-4">
+      <button id="btn-copy-report" class="bg-slate-800 hover:bg-slate-700 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-3 backdrop-blur-md shadow-lg shadow-black/20 group">
+        <svg class="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+        Copy Report to Clipboard
+      </button>
+    </div>
   </section>
 
   <footer class="py-16 bg-slate-950 border-t border-slate-900 text-center">
@@ -238,6 +245,8 @@
 
         const input = document.querySelector('#auditForm input');
         let targetUrl = input.value;
+        const isRetry = window.isRetryCall === true;
+        window.isRetryCall = false; // Reset the retry flag
 
         try {
           if (!targetUrl.startsWith('http')) targetUrl = 'https://' + targetUrl;
@@ -267,6 +276,7 @@
             const url = new URL('/api/analyze', window.location.origin);
             url.searchParams.append('key', key);
             url.searchParams.append('url', targetUrl);
+            if (isRetry) url.searchParams.append('retry', 'true');
             
             const response = await fetch(url);
             
@@ -388,15 +398,36 @@
                 }
 
                 // Strip the exact raw JSON block from the screen log to keep the UI clean and conversational
+                const textAnalysis = logDiv.innerText.replace(match[0], '').trim();
                 logDiv.innerHTML = logDiv.innerHTML.replace(match[0], '<br/><br/><span class="text-blue-500 italic">Analysis successfully parsed. Metrics populated below.</span>');
+
+                // Enable Copy Report Button
+                document.getElementById('btn-copy-report').onclick = () => {
+                  const scoresText = `## SEO: ${seoScore}% (Meta: ${results.seo.meta}%, Headers: ${results.seo.headers}%, Mobile: ${results.seo.mobile}%)\n## AEO: ${aeoScore}% (Directness: ${results.aeo.directness}%, Schema: ${results.aeo.schema}%)\n## GEO: ${geoScore}% (Citability: ${results.geo.citability}%, Authority: ${results.geo.authority}%)`;
+                  let cShareAdd = '';
+                  if (key.startsWith('mid_')) {
+                    const shareTxt = document.getElementById('txt-citation-share').innerText;
+                    if (shareTxt !== 'Probing...') cShareAdd = `\n## LLM Citation Share: ${shareTxt}\n`;
+                  }
+                  
+                  const reportData = `# Vynix Analytics AI Report\n**Target URL:** ${targetUrl}\n\n## AI Analysis\n${textAnalysis}\n\n${scoresText}${cShareAdd}`;
+                  
+                  navigator.clipboard.writeText(reportData);
+                  const btnNode = document.getElementById('btn-copy-report');
+                  const origHTML = btnNode.innerHTML;
+                  btnNode.innerHTML = 'Copied to Clipboard! 🎉';
+                  setTimeout(() => btnNode.innerHTML = origHTML, 3000);
+                };
 
               } catch(e) {
                 console.error('JSON parsing failed:', e);
-                logDiv.innerHTML += '<br/><br/><span class="text-red-400 font-bold italic">Warning: The AI model generated an improperly formatted output and metrics could not be displayed. Please try analyzing the URL again.</span>';
+                logDiv.innerHTML += '<br/><br/><div><span class="text-red-400 font-bold italic">Warning: The AI model generated an improperly formatted output and metrics could not be displayed.</span><button id="btn-retry-scan-1" class="ml-4 bg-red-500/20 text-red-300 font-bold px-4 py-2 rounded-lg hover:bg-red-500/40 relative z-10 transition">Retry Scan</button></div>';
+                document.getElementById('btn-retry-scan-1').addEventListener('click', () => { window.isRetryCall = true; document.getElementById('auditForm').dispatchEvent(new Event('submit', {cancelable: true, bubbles: true})); });
               }
             } else {
               // Handle AI failing to produce valid JSON at the end
-              logDiv.innerHTML += '<br/><br/><span class="text-orange-400 font-bold italic">Warning: The AI model failed to yield the final scoring metrics. Please try running the analysis again.</span>';
+              logDiv.innerHTML += '<br/><br/><div><span class="text-orange-400 font-bold italic">Warning: The AI model failed to yield the final scoring metrics.</span><button id="btn-retry-scan-2" class="ml-4 bg-orange-500/20 text-orange-300 font-bold px-4 py-2 rounded-lg hover:bg-orange-500/40 relative z-10 transition">Retry Scan</button></div>';
+              document.getElementById('btn-retry-scan-2').addEventListener('click', () => { window.isRetryCall = true; document.getElementById('auditForm').dispatchEvent(new Event('submit', {cancelable: true, bubbles: true})); });
             }
 
           } catch (error) {

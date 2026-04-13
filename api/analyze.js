@@ -26,16 +26,30 @@ module.exports = async function (req, res) {
     const proxyData = await siteCall.json();
     const htmlContent = proxyData.contents || '';
     
+    // Explicitly grab SEO critical tags
+    const titleMatch = htmlContent.match(/<title[^>]*>([^<]+)<\/title>/i);
+    const title = titleMatch ? titleMatch[1].trim() : 'No Title Found';
+
+    const descMatch = htmlContent.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["'][^>]*>/i) 
+                   || htmlContent.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']description["'][^>]*>/i);
+    const description = descMatch ? descMatch[1].trim() : 'No Meta Description Found';
+
+    const h1Matches = [...htmlContent.matchAll(/<h1[^>]*>([\s\S]*?)<\/h1>/gi)].map(m => m[1].replace(/<[^>]+>/g, '').trim()).filter(Boolean);
+    const altMatches = [...htmlContent.matchAll(/<img[^>]*alt=["']([^"']+)["'][^>]*>/gi)].map(m => m[1].trim()).filter(Boolean);
+
+    const seoMetaStr = `[META TITLE]: ${title}\n[META DESCRIPTION]: ${description}\n[H1 TAGS]: ${h1Matches.join(' | ')}\n[IMAGE ALTS]: ${altMatches.slice(0, 10).join(' | ')}\n\n[PAGE TEXT]:\n`;
+
     // Quick extraction of text from HTML to optimize tokens
-    const textContent = htmlContent
+    let textContent = htmlContent
       .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
       .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
       .replace(/<[^>]+>/g, ' ')
       .replace(/\s+/g, ' ')
-      .trim()
-      .slice(0, 6000); // 6k chars to prevent Vercel Hobby timeouts
+      .trim();
 
-    const systemPrompt = `You are an expert SEO, AEO (Answer Engine Optimization), and GEO (Generative Engine Optimization) auditor.
+    textContent = (seoMetaStr + textContent).slice(0, 6000); // 6k chars to prevent Vercel Hobby timeouts
+
+    let systemPrompt = `You are an expert SEO, AEO (Answer Engine Optimization), and GEO (Generative Engine Optimization) auditor.
 First, provide 3 paragraphs of verbal analysis regarding the SEO, AEO, and GEO potential of the content.
 Finally, output a strict JSON block containing granular scores (0-100) exactly in this format:
 {
@@ -43,6 +57,11 @@ Finally, output a strict JSON block containing granular scores (0-100) exactly i
   "aeo": { "directness": 60, "schema": 50 },
   "geo": { "citability": 65, "authority": 70 }
 }`;
+
+    const isRetry = req.query.retry === 'true' || (req.body && req.body.retry === 'true');
+    if (isRetry) {
+      systemPrompt += `\n\nCRITICAL INSTRUCTION: You MUST include the final JSON block exactly as requested. Failure to do so will break the application. Output the JSON and ONLY the JSON at the very end. DO NOT wrap the JSON in markdown formatting (like \`\`\`json). Just return the raw JSON braces.`;
+    }
 
     // 2. Call OpenRouter API with Stream
     const orReq = await fetch('https://openrouter.ai/api/v1/chat/completions', {
