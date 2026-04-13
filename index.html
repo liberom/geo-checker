@@ -48,12 +48,135 @@
       background: rgba(30, 41, 59, 0.7);
       backdrop-filter: blur(12px);
     }
+
+    @media print {
+      @page {
+        margin: 0.75in;
+      }
+
+      body {
+        background: white !important;
+        color: black !important;
+        padding-top: 100px;
+        padding-bottom: 60px;
+      }
+
+      #app-header,
+      .hero-section,
+      #features,
+      .app-footer,
+      .no-print,
+      #auditForm {
+        display: none !important;
+      }
+
+      #analysis-log {
+        height: auto !important;
+        overflow: visible !important;
+        background: transparent !important;
+        border: 1px solid #ccc !important;
+        color: black !important;
+        padding: 1rem !important;
+      }
+
+      .glass-card {
+        background: transparent !important;
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+        color: black !important;
+      }
+
+      h1,
+      h2,
+      h3,
+      p,
+      span,
+      div {
+        color: black !important;
+      }
+
+      svg circle.text-slate-800 {
+        stroke: #e5e5e5 !important;
+      }
+
+      .print-header {
+        display: block !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding-bottom: 10px;
+        border-bottom: 2px solid black;
+        z-index: 1000;
+      }
+
+      .print-footer {
+        display: block !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding-top: 10px;
+        border-top: 1px solid black;
+        text-align: center;
+        font-weight: bold;
+        font-size: 12px;
+        z-index: 1000;
+      }
+
+      #priorities-list li {
+        display: list-item !important;
+        list-style-type: disc !important;
+        margin-left: 2rem !important;
+        border: none !important;
+        background: none !important;
+        padding: 0.5rem 0 !important;
+      }
+
+      #priorities-list .flex-shrink-0 {
+        display: none !important;
+      }
+
+      #results-dashboard,
+      #results-dashboard-comp {
+        border: none !important;
+        padding-top: 0 !important;
+      }
+
+      #strategic-roadmap {
+        page-break-before: always;
+        break-before: page;
+        margin-top: 0 !important;
+        padding-top: 2rem !important;
+        border: none !important;
+      }
+    }
   </style>
 </head>
 
 <body class="bg-slate-900 text-slate-100 font-sans antialiased">
 
-  <header class="border-b border-slate-800 py-5 px-6 sticky top-0 bg-slate-900/80 backdrop-blur-md z-50">
+  <div class="print-header hidden">
+    <div class="flex items-center gap-3">
+      <img src="https://liberom.github.io/vynix-sys/assets/Vynix-Logo.png" alt="Vynix Logo"
+        class="h-8 object-contain filter grayscale brightness-0">
+      <h1 class="text-2xl font-black uppercase tracking-tight m-0 leading-none">Vynix Systems | Digital Visibility Audit
+      </h1>
+    </div>
+    <div class="flex justify-between mt-3 font-bold text-sm pt-2 border-t border-slate-300">
+      <span id="print-date-display"></span>
+      <span id="print-url-display"></span>
+    </div>
+  </div>
+  <div class="print-footer hidden">
+    © 2026 Vynix Systems - Confidential Business Intelligence
+  </div>
+
+  <header id="app-header"
+    class="border-b border-slate-800 py-5 px-6 sticky top-0 bg-slate-900/80 backdrop-blur-md z-50">
     <nav class="max-w-6xl mx-auto flex justify-between items-center">
       <div class="text-2xl font-black tracking-tighter text-white">
         VYNIX<span class="text-blue-500 font-light">ANALYZER</span>
@@ -66,14 +189,23 @@
   </header>
 
   <!-- Renewal Overlay -->
-  <div id="renewal-overlay" class="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-lg hidden items-center justify-center p-6">
-    <div class="bg-slate-900 border border-red-500/50 p-10 rounded-3xl max-w-lg text-center shadow-2xl shadow-red-900/20">
+  <div id="renewal-overlay"
+    class="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-lg hidden items-center justify-center p-6">
+    <div
+      class="bg-slate-900 border border-red-500/50 p-10 rounded-3xl max-w-lg text-center shadow-2xl shadow-red-900/20">
       <div class="w-20 h-20 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
-        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+          </path>
+        </svg>
       </div>
       <h2 class="text-3xl font-black text-white mb-4">Subscription Expired</h2>
-      <p class="text-slate-400 mb-8 leading-relaxed">Your Vynix Analyzer license key has expired. Please upgrade or renew your plan to continue accessing advanced SEO/AEO insights.</p>
-      <a href="https://vynix.systems" class="block w-full bg-red-600 hover:bg-red-500 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-red-900/50">Renew License</a>
+      <p class="text-slate-400 mb-8 leading-relaxed">Your Vynix Analyzer license key has expired. Please upgrade or
+        renew your plan to continue accessing advanced SEO/AEO insights.</p>
+      <a href="https://vynix.systems"
+        class="block w-full bg-red-600 hover:bg-red-500 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-red-900/50">Renew
+        License</a>
     </div>
   </div>
 
@@ -82,7 +214,7 @@
       class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent -z-10">
     </div>
 
-    <section class="max-w-5xl mx-auto px-6 pt-24 pb-32 text-center">
+    <section class="hero-section max-w-5xl mx-auto px-6 pt-24 pb-32 text-center">
       <h1
         class="text-5xl md:text-7xl font-extrabold mb-8 tracking-tight leading-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-400">
         Is your brand <span class="text-blue-500">Cited</span> or <span class="text-slate-600">Shadowed</span> by AI?
@@ -156,63 +288,158 @@
   </section>
 
   <section id="results-dashboard" class="max-w-5xl mx-auto px-6 py-24 hidden border-t border-slate-800">
-    <h2 class="text-3xl font-extrabold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">Analysis Results</h2>
-    
+    <h2
+      class="text-3xl font-extrabold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+      Analysis Results</h2>
+
     <div class="grid md:grid-cols-3 gap-8">
       <!-- SEO -->
-      <div class="glass-card p-6 rounded-3xl border border-blue-900/50 flex flex-col items-center relative overflow-hidden">
-        <div class="absolute top-0 right-0 p-4 opacity-10"><svg class="w-24 h-24 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M21 21H3v-2h18v2zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2v-6zm0 8h2v2h-2v-2z"></path></svg></div>
+      <div
+        class="glass-card p-6 rounded-3xl border border-blue-900/50 flex flex-col items-center relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4 opacity-10"><svg class="w-24 h-24 text-blue-500" fill="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              d="M21 21H3v-2h18v2zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2v-6zm0 8h2v2h-2v-2z">
+            </path>
+          </svg></div>
         <h3 class="text-xl font-bold mb-4 text-blue-300 z-10">SEO Score</h3>
         <div class="relative w-32 h-32 mb-6 z-10">
           <svg class="w-full h-full transform -rotate-90">
-            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent" class="text-slate-800" />
-            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent" stroke-dasharray="314" stroke-dashoffset="314" class="text-blue-500 transition-all duration-1000 ease-out" id="svg-seo" />
+            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent"
+              class="text-slate-800" />
+            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent"
+              stroke-dasharray="314" stroke-dashoffset="314" class="text-blue-500 transition-all duration-1000 ease-out"
+              id="svg-seo" />
           </svg>
-          <div class="absolute inset-0 flex items-center justify-center text-4xl font-black text-white" id="score-seo">0</div>
+          <div class="absolute inset-0 flex items-center justify-center text-4xl font-black text-white" id="score-seo">0
+          </div>
         </div>
         <div class="w-full space-y-4 z-10 font-bold">
-          <div><div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span class="tracking-widest">Meta</span><span id="txt-seo-meta" class="text-blue-200">0%</span></div><div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-gradient-to-r from-blue-700 to-blue-400 rounded-full w-0 transition-all duration-[1.5s]" id="bar-seo-meta"></div></div></div>
-          <div><div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span class="tracking-widest">Headers</span><span id="txt-seo-headers" class="text-blue-200">0%</span></div><div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-gradient-to-r from-blue-700 to-blue-400 rounded-full w-0 transition-all duration-[1.5s]" id="bar-seo-headers"></div></div></div>
-          <div><div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span class="tracking-widest">Mobile</span><span id="txt-seo-mobile" class="text-blue-200">0%</span></div><div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-gradient-to-r from-blue-700 to-blue-400 rounded-full w-0 transition-all duration-[1.5s]" id="bar-seo-mobile"></div></div></div>
+          <div>
+            <div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span
+                class="tracking-widest">Meta</span><span id="txt-seo-meta" class="text-blue-200">0%</span></div>
+            <div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner">
+              <div
+                class="h-full bg-gradient-to-r from-blue-700 to-blue-400 rounded-full w-0 transition-all duration-[1.5s]"
+                id="bar-seo-meta"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span
+                class="tracking-widest">Headers</span><span id="txt-seo-headers" class="text-blue-200">0%</span></div>
+            <div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner">
+              <div
+                class="h-full bg-gradient-to-r from-blue-700 to-blue-400 rounded-full w-0 transition-all duration-[1.5s]"
+                id="bar-seo-headers"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span
+                class="tracking-widest">Mobile</span><span id="txt-seo-mobile" class="text-blue-200">0%</span></div>
+            <div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner">
+              <div
+                class="h-full bg-gradient-to-r from-blue-700 to-blue-400 rounded-full w-0 transition-all duration-[1.5s]"
+                id="bar-seo-mobile"></div>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- AEO -->
-      <div class="glass-card p-6 rounded-3xl border border-indigo-900/50 flex flex-col items-center relative overflow-hidden">
-        <div class="absolute top-0 right-0 p-4 opacity-10"><svg class="w-24 h-24 text-indigo-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 3.8l6.8 13.8H5.2L12 5.8zM11 10h2v5h-2v-5zm0 6h2v2h-2v-2z"></path></svg></div>
+      <div
+        class="glass-card p-6 rounded-3xl border border-indigo-900/50 flex flex-col items-center relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4 opacity-10"><svg class="w-24 h-24 text-indigo-500" fill="currentColor"
+            viewBox="0 0 24 24">
+            <path d="M12 2L2 22h20L12 2zm0 3.8l6.8 13.8H5.2L12 5.8zM11 10h2v5h-2v-5zm0 6h2v2h-2v-2z"></path>
+          </svg></div>
         <h3 class="text-xl font-bold mb-4 text-indigo-300 z-10">AEO Score</h3>
         <div class="relative w-32 h-32 mb-6 z-10">
           <svg class="w-full h-full transform -rotate-90">
-            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent" class="text-slate-800" />
-            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent" stroke-dasharray="314" stroke-dashoffset="314" class="text-indigo-500 transition-all duration-1000 ease-out" id="svg-aeo" />
+            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent"
+              class="text-slate-800" />
+            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent"
+              stroke-dasharray="314" stroke-dashoffset="314"
+              class="text-indigo-500 transition-all duration-1000 ease-out" id="svg-aeo" />
           </svg>
-          <div class="absolute inset-0 flex items-center justify-center text-4xl font-black text-white" id="score-aeo">0</div>
+          <div class="absolute inset-0 flex items-center justify-center text-4xl font-black text-white" id="score-aeo">0
+          </div>
         </div>
         <div class="w-full space-y-4 z-10 font-bold">
-          <div><div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span class="tracking-widest">Directness</span><span id="txt-aeo-directness" class="text-indigo-200">0%</span></div><div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-gradient-to-r from-indigo-700 to-indigo-400 rounded-full w-0 transition-all duration-[1.5s]" id="bar-aeo-directness"></div></div></div>
-          <div><div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span class="tracking-widest">Schema</span><span id="txt-aeo-schema" class="text-indigo-200">0%</span></div><div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-gradient-to-r from-indigo-700 to-indigo-400 rounded-full w-0 transition-all duration-[1.5s]" id="bar-aeo-schema"></div></div></div>
+          <div>
+            <div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span
+                class="tracking-widest">Directness</span><span id="txt-aeo-directness" class="text-indigo-200">0%</span>
+            </div>
+            <div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner">
+              <div
+                class="h-full bg-gradient-to-r from-indigo-700 to-indigo-400 rounded-full w-0 transition-all duration-[1.5s]"
+                id="bar-aeo-directness"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span
+                class="tracking-widest">Schema</span><span id="txt-aeo-schema" class="text-indigo-200">0%</span></div>
+            <div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner">
+              <div
+                class="h-full bg-gradient-to-r from-indigo-700 to-indigo-400 rounded-full w-0 transition-all duration-[1.5s]"
+                id="bar-aeo-schema"></div>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- GEO -->
-      <div class="glass-card p-6 rounded-3xl border border-purple-900/50 flex flex-col items-center relative overflow-hidden">
-        <div class="absolute top-0 right-0 p-4 opacity-10"><svg class="w-24 h-24 text-purple-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"></path></svg></div>
+      <div
+        class="glass-card p-6 rounded-3xl border border-purple-900/50 flex flex-col items-center relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4 opacity-10"><svg class="w-24 h-24 text-purple-500" fill="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z">
+            </path>
+          </svg></div>
         <h3 class="text-xl font-bold mb-4 text-purple-300 z-10">GEO Score</h3>
         <div class="relative w-32 h-32 mb-6 z-10">
           <svg class="w-full h-full transform -rotate-90">
-            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent" class="text-slate-800" />
-            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent" stroke-dasharray="314" stroke-dashoffset="314" class="text-purple-500 transition-all duration-1000 ease-out" id="svg-geo" />
+            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent"
+              class="text-slate-800" />
+            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent"
+              stroke-dasharray="314" stroke-dashoffset="314"
+              class="text-purple-500 transition-all duration-1000 ease-out" id="svg-geo" />
           </svg>
-          <div class="absolute inset-0 flex items-center justify-center text-4xl font-black text-white" id="score-geo">0</div>
+          <div class="absolute inset-0 flex items-center justify-center text-4xl font-black text-white" id="score-geo">0
+          </div>
         </div>
         <div class="w-full space-y-4 z-10 font-bold">
-          <div><div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span class="tracking-widest">Citability</span><span id="txt-geo-citability" class="text-purple-200">0%</span></div><div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-gradient-to-r from-purple-700 to-purple-400 rounded-full w-0 transition-all duration-[1.5s]" id="bar-geo-citability"></div></div></div>
-          <div><div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span class="tracking-widest">Authority</span><span id="txt-geo-authority" class="text-purple-200">0%</span></div><div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-gradient-to-r from-purple-700 to-purple-400 rounded-full w-0 transition-all duration-[1.5s]" id="bar-geo-authority"></div></div></div>
-          
+          <div>
+            <div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span
+                class="tracking-widest">Citability</span><span id="txt-geo-citability" class="text-purple-200">0%</span>
+            </div>
+            <div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner">
+              <div
+                class="h-full bg-gradient-to-r from-purple-700 to-purple-400 rounded-full w-0 transition-all duration-[1.5s]"
+                id="bar-geo-citability"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span
+                class="tracking-widest">Authority</span><span id="txt-geo-authority" class="text-purple-200">0%</span>
+            </div>
+            <div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner">
+              <div
+                class="h-full bg-gradient-to-r from-purple-700 to-purple-400 rounded-full w-0 transition-all duration-[1.5s]"
+                id="bar-geo-authority"></div>
+            </div>
+          </div>
+
           <div id="citation-tier-ui" class="hidden pt-4 mt-6 border-t border-purple-900/50 flex-col gap-2">
-            <div class="flex justify-between text-xs mb-1 text-pink-300 uppercase tracking-widest font-black"><span class="tracking-widest">LLM Citation Share</span><span id="txt-citation-share" class="animate-pulse">Probing...</span></div>
-            <div class="h-3.5 bg-slate-950 rounded-full border border-pink-500/30 overflow-hidden shadow-lg relative cursor-help" title="Model Probing triggered for mid_ access tier">
-               <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-600 via-pink-500 to-rose-500 w-0 transition-all duration-[2000ms] shadow-[0_0_15px_rgba(236,72,153,0.8)]" id="bar-citation-share"></div>
+            <div class="flex justify-between text-xs mb-1 text-pink-300 uppercase tracking-widest font-black"><span
+                class="tracking-widest">LLM Citation Share</span><span id="txt-citation-share"
+                class="animate-pulse">Probing...</span></div>
+            <div
+              class="h-3.5 bg-slate-950 rounded-full border border-pink-500/30 overflow-hidden shadow-lg relative cursor-help"
+              title="Model Probing triggered for mid_ access tier">
+              <div
+                class="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-600 via-pink-500 to-rose-500 w-0 transition-all duration-[2000ms] shadow-[0_0_15px_rgba(236,72,153,0.8)]"
+                id="bar-citation-share"></div>
             </div>
           </div>
         </div>
@@ -222,72 +449,158 @@
     <!-- Competitor Side-By-Side Dashboard -->
     <div id="results-dashboard-comp" class="hidden mt-12 grid md:grid-cols-3 gap-8">
       <!-- SEO Comp -->
-      <div class="glass-card p-6 rounded-3xl border border-slate-700/50 flex flex-col items-center relative overflow-hidden bg-slate-900/60 opacity-80 hover:opacity-100 transition">
-        <h3 class="text-xl font-bold mb-4 text-slate-400 z-10 w-full text-center border-b border-slate-800 pb-2">Competitor SEO</h3>
+      <div
+        class="glass-card p-6 rounded-3xl border border-slate-700/50 flex flex-col items-center relative overflow-hidden bg-slate-900/60 opacity-80 hover:opacity-100 transition">
+        <h3 class="text-xl font-bold mb-4 text-slate-400 z-10 w-full text-center border-b border-slate-800 pb-2">
+          Competitor SEO</h3>
         <div class="relative w-24 h-24 mb-6 z-10">
           <svg class="w-full h-full transform -rotate-90">
-            <circle cx="48" cy="48" r="38" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-800" />
-            <circle cx="48" cy="48" r="38" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="239" stroke-dashoffset="239" class="text-slate-400 transition-all duration-1000 ease-out" id="svg-seo-comp" />
+            <circle cx="48" cy="48" r="38" stroke="currentColor" stroke-width="8" fill="transparent"
+              class="text-slate-800" />
+            <circle cx="48" cy="48" r="38" stroke="currentColor" stroke-width="8" fill="transparent"
+              stroke-dasharray="239" stroke-dashoffset="239"
+              class="text-slate-400 transition-all duration-1000 ease-out" id="svg-seo-comp" />
           </svg>
-          <div class="absolute inset-0 flex items-center justify-center text-3xl font-black text-slate-300" id="score-seo-comp">0</div>
+          <div class="absolute inset-0 flex items-center justify-center text-3xl font-black text-slate-300"
+            id="score-seo-comp">0</div>
         </div>
         <div class="w-full space-y-4 z-10 font-bold opacity-80">
-          <div><div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest"><span>Meta</span><span id="txt-seo-meta-comp" class="text-slate-300">0%</span></div><div class="h-1.5 bg-slate-900 rounded-full"><div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]" id="bar-seo-meta-comp"></div></div></div>
-          <div><div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest"><span>Headers</span><span id="txt-seo-headers-comp" class="text-slate-300">0%</span></div><div class="h-1.5 bg-slate-900 rounded-full"><div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]" id="bar-seo-headers-comp"></div></div></div>
-          <div><div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest"><span>Mobile</span><span id="txt-seo-mobile-comp" class="text-slate-300">0%</span></div><div class="h-1.5 bg-slate-900 rounded-full"><div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]" id="bar-seo-mobile-comp"></div></div></div>
+          <div>
+            <div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest">
+              <span>Meta</span><span id="txt-seo-meta-comp" class="text-slate-300">0%</span></div>
+            <div class="h-1.5 bg-slate-900 rounded-full">
+              <div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]" id="bar-seo-meta-comp">
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest">
+              <span>Headers</span><span id="txt-seo-headers-comp" class="text-slate-300">0%</span></div>
+            <div class="h-1.5 bg-slate-900 rounded-full">
+              <div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]"
+                id="bar-seo-headers-comp"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest">
+              <span>Mobile</span><span id="txt-seo-mobile-comp" class="text-slate-300">0%</span></div>
+            <div class="h-1.5 bg-slate-900 rounded-full">
+              <div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]" id="bar-seo-mobile-comp">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <!-- AEO Comp -->
-      <div class="glass-card p-6 rounded-3xl border border-slate-700/50 flex flex-col items-center relative overflow-hidden bg-slate-900/60 opacity-80 hover:opacity-100 transition">
-        <h3 class="text-xl font-bold mb-4 text-slate-400 z-10 w-full text-center border-b border-slate-800 pb-2">Competitor AEO</h3>
+      <div
+        class="glass-card p-6 rounded-3xl border border-slate-700/50 flex flex-col items-center relative overflow-hidden bg-slate-900/60 opacity-80 hover:opacity-100 transition">
+        <h3 class="text-xl font-bold mb-4 text-slate-400 z-10 w-full text-center border-b border-slate-800 pb-2">
+          Competitor AEO</h3>
         <div class="relative w-24 h-24 mb-6 z-10">
           <svg class="w-full h-full transform -rotate-90">
-            <circle cx="48" cy="48" r="38" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-800" />
-            <circle cx="48" cy="48" r="38" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="239" stroke-dashoffset="239" class="text-slate-400 transition-all duration-1000 ease-out" id="svg-aeo-comp" />
+            <circle cx="48" cy="48" r="38" stroke="currentColor" stroke-width="8" fill="transparent"
+              class="text-slate-800" />
+            <circle cx="48" cy="48" r="38" stroke="currentColor" stroke-width="8" fill="transparent"
+              stroke-dasharray="239" stroke-dashoffset="239"
+              class="text-slate-400 transition-all duration-1000 ease-out" id="svg-aeo-comp" />
           </svg>
-          <div class="absolute inset-0 flex items-center justify-center text-3xl font-black text-slate-300" id="score-aeo-comp">0</div>
+          <div class="absolute inset-0 flex items-center justify-center text-3xl font-black text-slate-300"
+            id="score-aeo-comp">0</div>
         </div>
         <div class="w-full space-y-4 z-10 font-bold opacity-80">
-          <div><div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest"><span>Directness</span><span id="txt-aeo-directness-comp" class="text-slate-300">0%</span></div><div class="h-1.5 bg-slate-900 rounded-full"><div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]" id="bar-aeo-directness-comp"></div></div></div>
-          <div><div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest"><span>Schema</span><span id="txt-aeo-schema-comp" class="text-slate-300">0%</span></div><div class="h-1.5 bg-slate-900 rounded-full"><div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]" id="bar-aeo-schema-comp"></div></div></div>
+          <div>
+            <div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest">
+              <span>Directness</span><span id="txt-aeo-directness-comp" class="text-slate-300">0%</span></div>
+            <div class="h-1.5 bg-slate-900 rounded-full">
+              <div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]"
+                id="bar-aeo-directness-comp"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest">
+              <span>Schema</span><span id="txt-aeo-schema-comp" class="text-slate-300">0%</span></div>
+            <div class="h-1.5 bg-slate-900 rounded-full">
+              <div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]" id="bar-aeo-schema-comp">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <!-- GEO Comp -->
-      <div class="glass-card p-6 rounded-3xl border border-slate-700/50 flex flex-col items-center relative overflow-hidden bg-slate-900/60 opacity-80 hover:opacity-100 transition">
-        <h3 class="text-xl font-bold mb-4 text-slate-400 z-10 w-full text-center border-b border-slate-800 pb-2">Competitor GEO</h3>
+      <div
+        class="glass-card p-6 rounded-3xl border border-slate-700/50 flex flex-col items-center relative overflow-hidden bg-slate-900/60 opacity-80 hover:opacity-100 transition">
+        <h3 class="text-xl font-bold mb-4 text-slate-400 z-10 w-full text-center border-b border-slate-800 pb-2">
+          Competitor GEO</h3>
         <div class="relative w-24 h-24 mb-6 z-10">
           <svg class="w-full h-full transform -rotate-90">
-            <circle cx="48" cy="48" r="38" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-800" />
-            <circle cx="48" cy="48" r="38" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="239" stroke-dashoffset="239" class="text-slate-400 transition-all duration-1000 ease-out" id="svg-geo-comp" />
+            <circle cx="48" cy="48" r="38" stroke="currentColor" stroke-width="8" fill="transparent"
+              class="text-slate-800" />
+            <circle cx="48" cy="48" r="38" stroke="currentColor" stroke-width="8" fill="transparent"
+              stroke-dasharray="239" stroke-dashoffset="239"
+              class="text-slate-400 transition-all duration-1000 ease-out" id="svg-geo-comp" />
           </svg>
-          <div class="absolute inset-0 flex items-center justify-center text-3xl font-black text-slate-300" id="score-geo-comp">0</div>
+          <div class="absolute inset-0 flex items-center justify-center text-3xl font-black text-slate-300"
+            id="score-geo-comp">0</div>
         </div>
         <div class="w-full space-y-4 z-10 font-bold opacity-80">
-          <div><div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest"><span>Citability</span><span id="txt-geo-citability-comp" class="text-slate-300">0%</span></div><div class="h-1.5 bg-slate-900 rounded-full"><div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]" id="bar-geo-citability-comp"></div></div></div>
-          <div><div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest"><span>Authority</span><span id="txt-geo-authority-comp" class="text-slate-300">0%</span></div><div class="h-1.5 bg-slate-900 rounded-full"><div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]" id="bar-geo-authority-comp"></div></div></div>
+          <div>
+            <div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest">
+              <span>Citability</span><span id="txt-geo-citability-comp" class="text-slate-300">0%</span></div>
+            <div class="h-1.5 bg-slate-900 rounded-full">
+              <div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]"
+                id="bar-geo-citability-comp"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest">
+              <span>Authority</span><span id="txt-geo-authority-comp" class="text-slate-300">0%</span></div>
+            <div class="h-1.5 bg-slate-900 rounded-full">
+              <div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]"
+                id="bar-geo-authority-comp"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <div id="strategic-roadmap" class="mt-12 glass-card p-10 rounded-3xl border border-blue-500/30">
       <h3 class="text-2xl font-extrabold mb-6 text-white flex items-center gap-3">
-        <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
         Strategic Roadmap: Top 3 Priorities
       </h3>
       <ul id="priorities-list" class="space-y-4 text-slate-300 font-medium">
         <!-- Rendered items go here -->
       </ul>
     </div>
-    
-    <div class="mt-12 flex justify-center pb-4">
-      <button id="btn-copy-report" class="bg-slate-800 hover:bg-slate-700 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-3 backdrop-blur-md shadow-lg shadow-black/20 group">
-        <svg class="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+
+    <div class="mt-12 flex justify-center pb-4 gap-4 no-print">
+      <button id="btn-copy-report"
+        class="bg-slate-800 hover:bg-slate-700 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-3 backdrop-blur-md shadow-lg shadow-black/20 group">
+        <svg class="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3">
+          </path>
+        </svg>
         Copy Report to Clipboard
+      </button>
+      <button id="btn-print-report"
+        class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-3 backdrop-blur-md shadow-lg shadow-blue-500/20 group">
+        <svg class="w-5 h-5 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+          </path>
+        </svg>
+        Download PDF Report
       </button>
     </div>
   </section>
 
-  <footer class="py-16 bg-slate-950 border-t border-slate-900 text-center">
+  <footer class="app-footer py-16 bg-slate-950 border-t border-slate-900 text-center">
     <div
       class="flex flex-wrap justify-center gap-12 mb-12 opacity-40 hover:opacity-100 transition-opacity duration-700">
       <span class="text-xs tracking-widest uppercase font-bold">SSL 256-Bit Secure</span>
@@ -315,7 +628,7 @@
         btn.innerHTML = 'Private Access Only';
         btn.classList.add('opacity-50', 'cursor-not-allowed');
         btn.classList.remove('hover:bg-blue-500', 'hover:scale-[1.02]', 'active:scale-95');
-        
+
         // Disable the input as well for better UX
         const input = document.querySelector('#auditForm input');
         input.disabled = true;
@@ -324,7 +637,7 @@
 
       document.getElementById('auditForm').addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         btn.innerHTML = 'Analyzing...';
         btn.classList.add('animate-pulse');
 
@@ -339,7 +652,7 @@
         try {
           if (!targetUrl.startsWith('http')) targetUrl = 'https://' + targetUrl;
           new URL(targetUrl);
-          
+
           if (compUrl) {
             if (!compUrl.startsWith('http')) compUrl = 'https://' + compUrl;
             new URL(compUrl);
@@ -359,7 +672,7 @@
           logDiv.className = 'mt-12 p-6 bg-slate-800/80 rounded-2xl border border-slate-700 text-left whitespace-pre-wrap font-mono text-sm text-slate-300 h-96 overflow-y-auto w-full max-w-3xl mx-auto hidden';
           formContainer.appendChild(logDiv);
         }
-        
+
         logDiv.innerHTML = '';
         logDiv.classList.remove('hidden');
 
@@ -371,9 +684,9 @@
             url.searchParams.append('url', targetUrl);
             if (compUrl) url.searchParams.append('competitorUrl', compUrl);
             if (isRetry) url.searchParams.append('retry', 'true');
-            
+
             const response = await fetch(url);
-            
+
             if (response.status === 403) {
               const errData = await response.json().catch(() => ({}));
               if (errData.error === 'License Expired') {
@@ -397,7 +710,7 @@
             while (true) {
               const { done, value } = await reader.read();
               if (done) break;
-              
+
               buffer += decoder.decode(value, { stream: true });
               let lines = buffer.split('\n');
               // keep unfinished line
@@ -427,13 +740,13 @@
             const fullText = logDiv.innerText;
             // Uses a permissive regex to find the JSON output at the end of the generator text
             const match = fullText.match(/\{[\s\S]*"seo"[\s\S]*"aeo"[\s\S]*"geo"[\s\S]*\}/i);
-            
+
             if (match) {
               try {
                 const results = JSON.parse(match[0]);
                 const isCompMode = !!results.competitor;
                 const rT = isCompMode ? results.target : results;
-                
+
                 // Show dashboard logic
                 const dashboard = document.getElementById('results-dashboard');
                 dashboard.classList.remove('hidden');
@@ -447,11 +760,11 @@
                 const animateGauge = (idPrefix, score, circ = 314) => {
                   const offset = circ - (circ * score) / 100;
                   document.getElementById(`svg-${idPrefix}`).style.strokeDashoffset = offset;
-                  
+
                   let current = 0;
                   const intv = setInterval(() => {
                     current += 1;
-                    if(current >= score) {
+                    if (current >= score) {
                       current = score;
                       clearInterval(intv);
                     }
@@ -476,46 +789,46 @@
                 animateGauge('geo', Math.min(100, Math.max(0, geoScore)));
                 animateBar('geo-citability', rT.geo.citability);
                 animateBar('geo-authority', rT.geo.authority);
-                
+
                 let compScoresText = '';
 
                 // Competitor Logic Mapping
                 if (isCompMode) {
-                   const cDash = document.getElementById('results-dashboard-comp');
-                   cDash.classList.remove('hidden');
-                   const rC = results.competitor;
-                   
-                   const cSeo = Math.round((rC.seo.meta + rC.seo.headers + rC.seo.mobile) / 3);
-                   const cAeo = Math.round((rC.aeo.directness + rC.aeo.schema) / 2);
-                   const cGeo = Math.round((rC.geo.citability + rC.geo.authority) / 2);
+                  const cDash = document.getElementById('results-dashboard-comp');
+                  cDash.classList.remove('hidden');
+                  const rC = results.competitor;
 
-                   animateGauge('seo-comp', Math.min(100, Math.max(0, cSeo)), 239);
-                   animateBar('seo-meta-comp', rC.seo.meta);
-                   animateBar('seo-headers-comp', rC.seo.headers);
-                   animateBar('seo-mobile-comp', rC.seo.mobile);
+                  const cSeo = Math.round((rC.seo.meta + rC.seo.headers + rC.seo.mobile) / 3);
+                  const cAeo = Math.round((rC.aeo.directness + rC.aeo.schema) / 2);
+                  const cGeo = Math.round((rC.geo.citability + rC.geo.authority) / 2);
 
-                   animateGauge('aeo-comp', Math.min(100, Math.max(0, cAeo)), 239);
-                   animateBar('aeo-directness-comp', rC.aeo.directness);
-                   animateBar('aeo-schema-comp', rC.aeo.schema);
+                  animateGauge('seo-comp', Math.min(100, Math.max(0, cSeo)), 239);
+                  animateBar('seo-meta-comp', rC.seo.meta);
+                  animateBar('seo-headers-comp', rC.seo.headers);
+                  animateBar('seo-mobile-comp', rC.seo.mobile);
 
-                   animateGauge('geo-comp', Math.min(100, Math.max(0, cGeo)), 239);
-                   animateBar('geo-citability-comp', rC.geo.citability);
-                   animateBar('geo-authority-comp', rC.geo.authority);
-                   
-                   compScoresText = `\n\n## Competitor Scores\nSEO: ${cSeo}% | AEO: ${cAeo}% | GEO: ${cGeo}%`;
+                  animateGauge('aeo-comp', Math.min(100, Math.max(0, cAeo)), 239);
+                  animateBar('aeo-directness-comp', rC.aeo.directness);
+                  animateBar('aeo-schema-comp', rC.aeo.schema);
+
+                  animateGauge('geo-comp', Math.min(100, Math.max(0, cGeo)), 239);
+                  animateBar('geo-citability-comp', rC.geo.citability);
+                  animateBar('geo-authority-comp', rC.geo.authority);
+
+                  compScoresText = `\n\n## Competitor Scores\nSEO: ${cSeo}% | AEO: ${cAeo}% | GEO: ${cGeo}%`;
                 }
 
                 // Tiering Logic - Model Probing for mid_ key
                 if (key.startsWith('mid_')) {
                   document.getElementById('citation-tier-ui').classList.remove('hidden');
                   document.getElementById('citation-tier-ui').classList.add('flex');
-                  
+
                   const probeUrl = new URL('/api/probe', window.location.origin);
                   probeUrl.searchParams.append('key', key);
                   probeUrl.searchParams.append('url', targetUrl);
-                  
+
                   const probeRes = await fetch(probeUrl);
-                  
+
                   if (probeRes.ok) {
                     const probeData = await probeRes.json();
                     const cShare = probeData.citationShare;
@@ -560,9 +873,9 @@
                     const shareTxt = document.getElementById('txt-citation-share').innerText;
                     if (shareTxt !== 'Probing...') cShareAdd = `\n## LLM Citation Share: ${shareTxt}\n`;
                   }
-                  
+
                   const reportData = `# Vynix Analytics AI Report\n**Target URL:** ${targetUrl}\n${compUrl ? '**Competitor URL:** ' + compUrl + '\n' : ''}\n## AI Analysis\n${textAnalysis}${compiledPrioritiesString}\n\n${scoresText}${compScoresText}${cShareAdd}`;
-                  
+
                   navigator.clipboard.writeText(reportData);
                   const btnNode = document.getElementById('btn-copy-report');
                   const origHTML = btnNode.innerHTML;
@@ -570,19 +883,27 @@
                   setTimeout(() => btnNode.innerHTML = origHTML, 3000);
                 };
 
-              } catch(e) {
+                // Enable PDF Print Button
+                document.getElementById('btn-print-report').onclick = () => {
+                  const now = new Date();
+                  document.getElementById('print-date-display').innerText = `Generated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+                  document.getElementById('print-url-display').innerText = `Target: ${targetUrl} ${compUrl ? ' | Comp: ' + compUrl : ''}`;
+                  window.print();
+                };
+
+              } catch (e) {
                 console.error('JSON parsing failed:', e);
                 logDiv.innerHTML += '<br/><br/><div><span class="text-red-400 font-bold italic">Warning: The AI model generated an improperly formatted output and metrics could not be displayed.</span><button id="btn-retry-scan-1" class="ml-4 bg-red-500/20 text-red-300 font-bold px-4 py-2 rounded-lg hover:bg-red-500/40 relative z-10 transition">Retry Scan</button></div>';
-                document.getElementById('btn-retry-scan-1').addEventListener('click', () => { window.isRetryCall = true; document.getElementById('auditForm').dispatchEvent(new Event('submit', {cancelable: true, bubbles: true})); });
+                document.getElementById('btn-retry-scan-1').addEventListener('click', () => { window.isRetryCall = true; document.getElementById('auditForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true })); });
               }
             } else {
               // Handle AI failing to produce valid JSON at the end
               logDiv.innerHTML += '<br/><br/><div><span class="text-orange-400 font-bold italic">Warning: The AI model failed to yield the final scoring metrics.</span><button id="btn-retry-scan-2" class="ml-4 bg-orange-500/20 text-orange-300 font-bold px-4 py-2 rounded-lg hover:bg-orange-500/40 relative z-10 transition">Retry Scan</button></div>';
-              document.getElementById('btn-retry-scan-2').addEventListener('click', () => { window.isRetryCall = true; document.getElementById('auditForm').dispatchEvent(new Event('submit', {cancelable: true, bubbles: true})); });
+              document.getElementById('btn-retry-scan-2').addEventListener('click', () => { window.isRetryCall = true; document.getElementById('auditForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true })); });
             }
 
           } catch (error) {
-             logDiv.innerHTML += `\nConnection Error: ${error.message}`;
+            logDiv.innerHTML += `\nConnection Error: ${error.message}`;
           } finally {
             btn.innerHTML = 'Analyze Now';
             btn.classList.remove('animate-pulse');
