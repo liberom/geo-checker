@@ -147,18 +147,52 @@
   </footer>
 
   <script>
-    document.getElementById('auditForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const btn = e.target.querySelector('button');
-      btn.innerHTML = 'Analyzing...';
-      btn.classList.add('animate-pulse');
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const key = urlParams.get('key');
+      const btn = document.querySelector('#auditForm button');
+      const formContainer = document.getElementById('auditForm').parentElement;
 
-      // Simulating app transition
-      setTimeout(() => {
-        alert('Analysis starting. In a real app, this would redirect to the report dashboard.');
-        btn.innerHTML = 'Analyze Now';
-        btn.classList.remove('animate-pulse');
-      }, 1500);
+      if (!key) {
+        btn.disabled = true;
+        btn.innerHTML = 'Private Access Only';
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+        btn.classList.remove('hover:bg-blue-500', 'hover:scale-[1.02]', 'active:scale-95');
+        
+        // Disable the input as well for better UX
+        const input = document.querySelector('#auditForm input');
+        input.disabled = true;
+        input.classList.add('cursor-not-allowed', 'opacity-50');
+      }
+
+      document.getElementById('auditForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        btn.innerHTML = 'Analyzing...';
+        btn.classList.add('animate-pulse');
+
+        // Simulating app transition to API call
+        setTimeout(async () => {
+          try {
+            const url = new URL('/api/analyze', window.location.origin);
+            url.searchParams.append('key', key);
+            
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (response.ok) {
+              alert(`Analysis Complete: ${data.message}`);
+            } else {
+              alert(`Analysis Failed: ${data.error}`);
+            }
+          } catch (error) {
+             alert('An error occurred during analysis.');
+          } finally {
+            btn.innerHTML = 'Analyze Now';
+            btn.classList.remove('animate-pulse');
+          }
+        }, 1500);
+      });
     });
   </script>
 </body>
