@@ -2,6 +2,7 @@ module.exports = async function (req, res) {
   const key = req.query.key || (req.body && req.body.key);
   const targetUrl = req.query.url || (req.body && req.body.url);
   const competitorUrl = req.query.competitorUrl || (req.body && req.body.competitorUrl);
+  const manualText = req.body && req.body.manualText;
 
   const validateLicense = (k) => {
     if (!k || typeof k !== 'string') return { valid: false };
@@ -55,12 +56,30 @@ module.exports = async function (req, res) {
 
   try {
     const fetchSite = async (urlStr, charLimit) => {
-      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(urlStr)}`;
-      const siteCall = await fetch(proxyUrl);
-      if (!siteCall.ok) throw new Error('Failed to fetch URL via proxy');
-      
-      const proxyData = await siteCall.json();
-      const htmlContent = proxyData.contents || '';
+      let htmlContent = '';
+      try {
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(urlStr)}`;
+        const siteCall = await fetch(proxyUrl);
+        if (!siteCall.ok) throw new Error('Primary proxy failed');
+        
+        const proxyData = await siteCall.json();
+        htmlContent = proxyData.contents || '';
+      } catch (err) {
+        // Fallback to direct fetch mimicking user agent if cross-origin proxy fails
+        try {
+          const directCall = await fetch(urlStr, {
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Vynix/1.0' }
+          });
+          if (!directCall.ok) throw new Error('Direct fetch failed');
+          htmlContent = await directCall.text();
+        } catch (fbErr) {
+          throw new Error('Connection Blocked');
+        }
+      }
+
+      if (!htmlContent || htmlContent.length < 250) {
+        throw new Error('Site protected by bot-blocker. Please paste the text manually.');
+      }
       
       const titleMatch = htmlContent.match(/<title[^>]*>([^<]+)<\/title>/i);
       const title = titleMatch ? titleMatch[1].trim() : 'No Title Found';
@@ -84,10 +103,13 @@ module.exports = async function (req, res) {
     let targetText = '';
     let compText = '';
     
-    // Half the token limit per site if both are fetched
-    const limit = competitorUrl ? 3500 : 6000;
-    targetText = await fetchSite(targetUrl, limit);
-    if (competitorUrl) compText = await fetchSite(competitorUrl, limit);
+    if (manualText) {
+      targetText = manualText.substring(0, 6000);
+    } else {
+      const limit = competitorUrl ? 3500 : 6000;
+      targetText = await fetchSite(targetUrl, limit);
+      if (competitorUrl) compText = await fetchSite(competitorUrl, limit);
+    }
 
     let systemPrompt = '';
     let userPrompt = '';
