@@ -95,7 +95,14 @@ module.exports = async function (req, res) {
       const description = descMatch ? descMatch[1].trim() : 'No Meta Description Found';
       const h1Matches = [...htmlContent.matchAll(/<h1[^>]*>([\s\S]*?)<\/h1>/gi)].map(m => m[1].replace(/<[^>]+>/g, '').trim()).filter(Boolean);
       const altMatches = [...htmlContent.matchAll(/<img[^>]*alt=["']([^"']+)["'][^>]*>/gi)].map(m => m[1].trim()).filter(Boolean);
-      const seoMetaStr = `[META TITLE]: ${title}\n[META DESCRIPTION]: ${description}\n[H1 TAGS]: ${h1Matches.join(' | ')}\n[IMAGE ALTS]: ${altMatches.slice(0, 10).join(' | ')}\n\n[PAGE TEXT]:\n`;
+      
+      const structuredDataMatches = [...htmlContent.matchAll(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
+      let schemaStr = '';
+      if (structuredDataMatches.length > 0) {
+        schemaStr = '[STRUCTURED DATA/SCHEMA]:\n' + structuredDataMatches.map(m => m[1].trim()).join('\n---\n') + '\n\n';
+      }
+      
+      const seoMetaStr = `[META TITLE]: ${title}\n[META DESCRIPTION]: ${description}\n[H1 TAGS]: ${h1Matches.join(' | ')}\n[IMAGE ALTS]: ${altMatches.slice(0, 10).join(' | ')}\n\n${schemaStr}[PAGE TEXT]:\n`;
 
       let textContent = htmlContent
         .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
@@ -124,6 +131,7 @@ module.exports = async function (req, res) {
     if (competitorUrl && isMidMarket) {
       systemPrompt = `You are a highly aggressive SEO, AEO, and GEO gap-analysis auditor.
 First, provide 3 paragraphs identifying specific 'Semantic Gaps' where the Target is missing technical authority and exactly why the Competitor is more likely to be cited by Gemini or AI Answer Engines.
+Pay close attention to the [STRUCTURED DATA] section to verify if Schema.org (like FAQPage or LocalBusiness) is actually implemented before marking it as a gap.
 Finally, output a strict JSON block exactly in this multi-site format:
 {
   "target": { "seo": { "meta": 80, "headers": 70, "mobile": 90 }, "aeo": { "directness": 60, "schema": 50 }, "geo": { "citability": 65, "authority": 70 } },
@@ -138,6 +146,7 @@ Finally, output a strict JSON block exactly in this multi-site format:
     } else if (isMidMarket) {
       systemPrompt = `You are a highly aggressive SEO, AEO, and GEO auditor.
 First, provide 3 paragraphs identifying specific 'Semantic Gaps' where the site is missing technical authority and exactly why it might be ignored by Answer Engines.
+Pay close attention to the [STRUCTURED DATA] section to verify if Schema.org (like FAQPage or LocalBusiness) is actually implemented before marking it as a gap.
 Finally, output a strict JSON block containing granular scores (0-100) and your 'Top 3 Strategic Action Plan' exactly in this format:
 {
   "seo": { "meta": 80, "headers": 70, "mobile": 90 },
@@ -153,6 +162,7 @@ Finally, output a strict JSON block containing granular scores (0-100) and your 
     } else {
       systemPrompt = `You are an expert SEO, AEO (Answer Engine Optimization), and GEO (Generative Engine Optimization) auditor.
 First, provide 3 paragraphs of verbal analysis regarding the SEO, AEO, and GEO potential of the content.
+Pay close attention to the [STRUCTURED DATA] section to verify if Schema.org (like FAQPage or LocalBusiness) is actually implemented before marking it as a gap.
 Finally, output a strict JSON block containing granular scores (0-100) and your top 3 specific, actionable priorities exactly in this format:
 {
   "seo": { "meta": 80, "headers": 70, "mobile": 90 },
