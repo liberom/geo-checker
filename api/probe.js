@@ -47,10 +47,27 @@ module.exports = async function (req, res) {
   }
 
   try {
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
-    const siteCall = await fetch(proxyUrl);
-    const proxyData = await siteCall.json();
-    const htmlContent = proxyData.contents || '';
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
+    let htmlContent = '';
+
+    try {
+      const apiKey = process.env.SCRAPERAPI_KEY || '';
+      const scraperUrl = `https://api.scraperapi.com/?api_key=${apiKey}&url=${encodeURIComponent(targetUrl)}&render=false`;
+      
+      const siteCall = await fetch(scraperUrl, { signal: controller.signal });
+      
+      if (siteCall.status === 403 || siteCall.status === 429 || !siteCall.ok) {
+        throw new Error('SCRAPE_FAILED');
+      }
+      htmlContent = await siteCall.text();
+    } catch (err) {
+      if (err.name === 'AbortError' || err.message === 'SCRAPE_FAILED') {
+         throw new Error('SCRAPE_FAILED');
+      }
+    } finally {
+      clearTimeout(timeoutId);
+    }
     
     // Quick text extration
     const textContent = htmlContent

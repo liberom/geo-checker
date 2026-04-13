@@ -55,32 +55,33 @@ module.exports = async function (req, res) {
   res.setHeader('Connection', 'keep-alive');
 
   try {
-    const fetchSite = async (urlStr, charLimit) => {
+    const fetchSite = async (urlStr, charLimit, isTarget = true) => {
       let htmlContent = '';
-      let fetchSuccess = false;
+      
+      const renderFlag = isTarget || isMidMarket ? 'true' : 'false';
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
 
-      // 1. Primary: Direct Fetch Spoofing
       try {
-        const directUrl = new URL(urlStr).toString();
-        const directCall = await fetch(directUrl, {
-          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Vynix/1.0' }
-        });
-        if (directCall.ok) {
-          htmlContent = await directCall.text();
-          if (htmlContent && htmlContent.length >= 250) fetchSuccess = true;
+        const scraperUrl = `https://api.scraperapi.com/?api_key=${process.env.SCRAPERAPI_KEY || ''}&url=${encodeURIComponent(urlStr)}&render=${renderFlag}`;
+        
+        const siteCall = await fetch(scraperUrl, { signal: controller.signal });
+        
+        if (siteCall.status === 403 || siteCall.status === 429) {
+          throw new Error('SCRAPE_FAILED');
         }
-      } catch (err) {}
-
-      // 2. Fallback: Proxy Fetch
-      if (!fetchSuccess) {
-        try {
-          const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(urlStr)}`;
-          const siteCall = await fetch(proxyUrl);
-          if (siteCall.ok) {
-            const proxyData = await siteCall.json();
-            htmlContent = proxyData.contents || '';
-          }
-        } catch (err) {}
+        
+        if (siteCall.ok) {
+          htmlContent = await siteCall.text();
+        } else {
+          throw new Error('SCRAPE_FAILED');
+        }
+      } catch (err) {
+        if (err.name === 'AbortError' || err.message === 'SCRAPE_FAILED') {
+           throw new Error('SCRAPE_FAILED');
+        }
+      } finally {
+        clearTimeout(timeoutId);
       }
 
       if (!htmlContent || htmlContent.length < 250) {
@@ -113,8 +114,8 @@ module.exports = async function (req, res) {
       targetText = manualText.substring(0, 6000);
     } else {
       const limit = competitorUrl ? 3500 : 6000;
-      targetText = await fetchSite(targetUrl, limit);
-      if (competitorUrl) compText = await fetchSite(competitorUrl, limit);
+      targetText = await fetchSite(targetUrl, limit, true);
+      if (competitorUrl) compText = await fetchSite(competitorUrl, limit, false);
     }
 
     let systemPrompt = '';
