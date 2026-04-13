@@ -33,7 +33,7 @@ module.exports = async function (req, res) {
       .replace(/<[^>]+>/g, ' ')
       .replace(/\s+/g, ' ')
       .trim()
-      .slice(0, 8000); // 8k chars approx 2k tokens
+      .slice(0, 6000); // 6k chars to prevent Vercel Hobby timeouts
 
     const systemPrompt = `You are an expert SEO, AEO (Answer Engine Optimization), and GEO (Generative Engine Optimization) auditor.
 First, provide 3 paragraphs of verbal analysis regarding the SEO, AEO, and GEO potential of the content.
@@ -65,15 +65,18 @@ Finally, output a strict JSON block containing granular scores (0-100) exactly i
         throw new Error(`OpenRouter API error: ${orReq.statusText}`);
     }
 
-    // Pipe the response stream to the client
+    // Pipe the response stream to the client explicitly mapped as a decoded string
     const reader = orReq.body.getReader();
+    const decoder = new TextDecoder('utf-8');
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      res.write(value);
+      const chunk = decoder.decode(value, { stream: true });
+      res.write(chunk); // Output guaranteed string maintaining standard SSE format (data: ...\n\n) from OpenRouter
     }
     
+    res.write('data: [DONE]\n\n'); // Explicit explicit stream termination block to be safe
     res.end();
   } catch (error) {
     // Send standard SSE error chunk if something fails
