@@ -88,6 +88,8 @@ Example: {"citationShare": 65}`;
       headers: {
         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://vynix-analyzer.vercel.app',
+        'X-Title': 'Vynix Analyzer'
       },
       body: JSON.stringify({
         model: 'qwen/qwen3.5-9b',
@@ -99,6 +101,8 @@ Example: {"citationShare": 65}`;
     });
 
     if (!orReq.ok) {
+        const errorBody = await orReq.text();
+        console.error('OpenRouter Error Body:', errorBody);
         throw new Error(`API error`);
     }
 

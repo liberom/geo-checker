@@ -111,9 +111,9 @@ module.exports = async function (req, res) {
     let compText = '';
     
     if (manualText) {
-      targetText = manualText.substring(0, 6000);
+      targetText = manualText.substring(0, 5000);
     } else {
-      const limit = competitorUrl ? 3500 : 6000;
+      const limit = competitorUrl ? 2500 : 5000;
       targetText = await fetchSite(targetUrl, limit, true);
       if (competitorUrl) compText = await fetchSite(competitorUrl, limit, false);
     }
@@ -173,11 +173,13 @@ Finally, output a strict JSON block containing granular scores (0-100) and your 
     }
 
     // 2. Call OpenRouter API with Stream
-    const orReq = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    let orReq = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://vynix-analyzer.vercel.app',
+        'X-Title': 'Vynix Analyzer'
       },
       body: JSON.stringify({
         model: 'qwen/qwen3.5-9b',
@@ -190,7 +192,33 @@ Finally, output a strict JSON block containing granular scores (0-100) and your 
     });
 
     if (!orReq.ok) {
-        throw new Error(`OpenRouter API error: ${orReq.statusText}`);
+        const errorBody = await orReq.text();
+        console.error('OpenRouter Error Body:', errorBody);
+        
+        // Model Fallback to Gemini Flash
+        orReq = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://vynix-analyzer.vercel.app',
+            'X-Title': 'Vynix Analyzer'
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-flash-1.5',
+            stream: true,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt }
+            ]
+          })
+        });
+
+        if (!orReq.ok) {
+            const fbErrorBody = await orReq.text();
+            console.error('OpenRouter Error Body:', fbErrorBody);
+            throw new Error(`OpenRouter API error: ${orReq.statusText}`);
+        }
     }
 
     // Pipe the response stream to the client explicitly mapped as a decoded string
