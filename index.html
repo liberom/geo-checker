@@ -771,18 +771,30 @@
             if (match) {
               try {
                 const results = JSON.parse(match[0]);
+                console.log('Raw AI Text:', fullText);
+                console.log('Extracted JSON:', results);
+                
                 const isCompMode = !!results.competitor;
-                const rT = isCompMode ? results.target : results;
+                const rT = isCompMode && results.target ? results.target : results;
+                const prioritiesPayload = results.priorities || (results.target && results.target.priorities) || [];
 
                 // Show dashboard logic
                 const dashboard = document.getElementById('results-dashboard');
                 dashboard.classList.remove('hidden');
                 setTimeout(() => dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
 
-                // Target Scores
-                const seoScore = Math.round((rT.seo.meta + rT.seo.headers + rT.seo.mobile) / 3);
-                const aeoScore = Math.round((rT.aeo.directness + rT.aeo.schema) / 2);
-                const geoScore = Math.round((rT.geo.citability + rT.geo.authority) / 2);
+                // Target Scores mapped with failsafes
+                const sMeta = rT.seo?.meta || 0;
+                const sHeaders = rT.seo?.headers || 0;
+                const sMobile = rT.seo?.mobile || 0;
+                const aDirect = rT.aeo?.directness || 0;
+                const aSchema = rT.aeo?.schema || 0;
+                const gCitability = rT.geo?.citability || 0;
+                const gAuthority = rT.geo?.authority || 0;
+
+                const seoScore = Math.round((sMeta + sHeaders + sMobile) / 3) || 0;
+                const aeoScore = Math.round((aDirect + aSchema) / 2) || 0;
+                const geoScore = Math.round((gCitability + gAuthority) / 2) || 0;
 
                 const animateGauge = (idPrefix, score, circ = 314) => {
                   const offset = circ - (circ * score) / 100;
@@ -805,17 +817,17 @@
                 };
 
                 animateGauge('seo', Math.min(100, Math.max(0, seoScore)));
-                animateBar('seo-meta', rT.seo.meta);
-                animateBar('seo-headers', rT.seo.headers);
-                animateBar('seo-mobile', rT.seo.mobile);
+                animateBar('seo-meta', sMeta);
+                animateBar('seo-headers', sHeaders);
+                animateBar('seo-mobile', sMobile);
 
                 animateGauge('aeo', Math.min(100, Math.max(0, aeoScore)));
-                animateBar('aeo-directness', rT.aeo.directness);
-                animateBar('aeo-schema', rT.aeo.schema);
+                animateBar('aeo-directness', aDirect);
+                animateBar('aeo-schema', aSchema);
 
                 animateGauge('geo', Math.min(100, Math.max(0, geoScore)));
-                animateBar('geo-citability', rT.geo.citability);
-                animateBar('geo-authority', rT.geo.authority);
+                animateBar('geo-citability', gCitability);
+                animateBar('geo-authority', gAuthority);
 
                 let compScoresText = '';
 
@@ -825,22 +837,30 @@
                   cDash.classList.remove('hidden');
                   const rC = results.competitor;
 
-                  const cSeo = Math.round((rC.seo.meta + rC.seo.headers + rC.seo.mobile) / 3);
-                  const cAeo = Math.round((rC.aeo.directness + rC.aeo.schema) / 2);
-                  const cGeo = Math.round((rC.geo.citability + rC.geo.authority) / 2);
+                  const cMeta = rC.seo?.meta || 0;
+                  const cHeaders = rC.seo?.headers || 0;
+                  const cMobile = rC.seo?.mobile || 0;
+                  const caDirect = rC.aeo?.directness || 0;
+                  const caSchema = rC.aeo?.schema || 0;
+                  const cgCitability = rC.geo?.citability || 0;
+                  const cgAuthority = rC.geo?.authority || 0;
+
+                  const cSeo = Math.round((cMeta + cHeaders + cMobile) / 3) || 0;
+                  const cAeo = Math.round((caDirect + caSchema) / 2) || 0;
+                  const cGeo = Math.round((cgCitability + cgAuthority) / 2) || 0;
 
                   animateGauge('seo-comp', Math.min(100, Math.max(0, cSeo)), 239);
-                  animateBar('seo-meta-comp', rC.seo.meta);
-                  animateBar('seo-headers-comp', rC.seo.headers);
-                  animateBar('seo-mobile-comp', rC.seo.mobile);
+                  animateBar('seo-meta-comp', cMeta);
+                  animateBar('seo-headers-comp', cHeaders);
+                  animateBar('seo-mobile-comp', cMobile);
 
                   animateGauge('aeo-comp', Math.min(100, Math.max(0, cAeo)), 239);
-                  animateBar('aeo-directness-comp', rC.aeo.directness);
-                  animateBar('aeo-schema-comp', rC.aeo.schema);
+                  animateBar('aeo-directness-comp', caDirect);
+                  animateBar('aeo-schema-comp', caSchema);
 
                   animateGauge('geo-comp', Math.min(100, Math.max(0, cGeo)), 239);
-                  animateBar('geo-citability-comp', rC.geo.citability);
-                  animateBar('geo-authority-comp', rC.geo.authority);
+                  animateBar('geo-citability-comp', cgCitability);
+                  animateBar('geo-authority-comp', cgAuthority);
 
                   compScoresText = `\n\n## Competitor Scores\nSEO: ${cSeo}% | AEO: ${cAeo}% | GEO: ${cGeo}%`;
                 }
@@ -875,9 +895,10 @@
                 const prioritiesList = document.getElementById('priorities-list');
                 prioritiesList.innerHTML = '';
                 let compiledPrioritiesString = '';
-                if (results.priorities && Array.isArray(results.priorities)) {
+                
+                if (Array.isArray(prioritiesPayload) && prioritiesPayload.length > 0) {
                   compiledPrioritiesString = '\n\n## Top 3 Priorities:\n';
-                  results.priorities.forEach((priority, i) => {
+                  prioritiesPayload.forEach((priority, i) => {
                     prioritiesList.innerHTML += `<li class="flex items-start gap-4 bg-slate-900/50 p-5 rounded-2xl border border-slate-700/50 hover:border-blue-500/50 transition cursor-pointer select-none group" onclick="this.classList.toggle('opacity-50'); const cb = this.querySelector('input'); cb.checked = !cb.checked;">
                       <div class="flex-shrink-0 mt-1">
                         <input type="checkbox" class="w-6 h-6 rounded border-slate-600 text-blue-500 bg-slate-800 pointer-events-none group-hover:border-blue-400 transition">
@@ -894,7 +915,7 @@
 
                 // Enable Copy Report Button
                 document.getElementById('btn-copy-report').onclick = () => {
-                  const scoresText = `## TARGET SEO: ${seoScore}% (Meta: ${rT.seo.meta}%, Headers: ${rT.seo.headers}%, Mobile: ${rT.seo.mobile}%)\n## TARGET AEO: ${aeoScore}% (Directness: ${rT.aeo.directness}%, Schema: ${rT.aeo.schema}%)\n## TARGET GEO: ${geoScore}% (Citability: ${rT.geo.citability}%, Authority: ${rT.geo.authority}%)`;
+                  const scoresText = `## TARGET SEO: ${seoScore}% (Meta: ${sMeta}%, Headers: ${sHeaders}%, Mobile: ${sMobile}%)\n## TARGET AEO: ${aeoScore}% (Directness: ${aDirect}%, Schema: ${aSchema}%)\n## TARGET GEO: ${geoScore}% (Citability: ${gCitability}%, Authority: ${gAuthority}%)`;
                   let cShareAdd = '';
                   if (key.startsWith('mid_')) {
                     const shareTxt = document.getElementById('txt-citation-share').innerText;
