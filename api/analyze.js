@@ -1,6 +1,7 @@
 module.exports = async function (req, res) {
   const key = req.query.key || (req.body && req.body.key);
   const targetUrl = req.query.url || (req.body && req.body.url);
+  const competitorUrl = req.query.competitorUrl || (req.body && req.body.competitorUrl);
 
   if (key !== process.env.MY_SECRET_ACCESS_STRING) {
     return res.status(401).json({ error: 'Unauthorized: Invalid access key' });
@@ -15,41 +16,60 @@ module.exports = async function (req, res) {
   res.setHeader('Connection', 'keep-alive');
 
   try {
-    // 1. Fetch site text via proxy using AllOrigins
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
-    const siteCall = await fetch(proxyUrl);
+    const fetchSite = async (urlStr, charLimit) => {
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(urlStr)}`;
+      const siteCall = await fetch(proxyUrl);
+      if (!siteCall.ok) throw new Error('Failed to fetch URL via proxy');
+      
+      const proxyData = await siteCall.json();
+      const htmlContent = proxyData.contents || '';
+      
+      const titleMatch = htmlContent.match(/<title[^>]*>([^<]+)<\/title>/i);
+      const title = titleMatch ? titleMatch[1].trim() : 'No Title Found';
+      const descMatch = htmlContent.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["'][^>]*>/i) 
+                     || htmlContent.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']description["'][^>]*>/i);
+      const description = descMatch ? descMatch[1].trim() : 'No Meta Description Found';
+      const h1Matches = [...htmlContent.matchAll(/<h1[^>]*>([\s\S]*?)<\/h1>/gi)].map(m => m[1].replace(/<[^>]+>/g, '').trim()).filter(Boolean);
+      const altMatches = [...htmlContent.matchAll(/<img[^>]*alt=["']([^"']+)["'][^>]*>/gi)].map(m => m[1].trim()).filter(Boolean);
+      const seoMetaStr = `[META TITLE]: ${title}\n[META DESCRIPTION]: ${description}\n[H1 TAGS]: ${h1Matches.join(' | ')}\n[IMAGE ALTS]: ${altMatches.slice(0, 10).join(' | ')}\n\n[PAGE TEXT]:\n`;
+
+      let textContent = htmlContent
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      return (seoMetaStr + textContent).slice(0, charLimit);
+    };
+
+    let targetText = '';
+    let compText = '';
     
-    if (!siteCall.ok) {
-      throw new Error('Failed to fetch target URL via proxy');
-    }
-    
-    const proxyData = await siteCall.json();
-    const htmlContent = proxyData.contents || '';
-    
-    // Explicitly grab SEO critical tags
-    const titleMatch = htmlContent.match(/<title[^>]*>([^<]+)<\/title>/i);
-    const title = titleMatch ? titleMatch[1].trim() : 'No Title Found';
+    // Half the token limit per site if both are fetched
+    const limit = competitorUrl ? 3500 : 6000;
+    targetText = await fetchSite(targetUrl, limit);
+    if (competitorUrl) compText = await fetchSite(competitorUrl, limit);
 
-    const descMatch = htmlContent.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["'][^>]*>/i) 
-                   || htmlContent.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']description["'][^>]*>/i);
-    const description = descMatch ? descMatch[1].trim() : 'No Meta Description Found';
+    let systemPrompt = '';
+    let userPrompt = '';
 
-    const h1Matches = [...htmlContent.matchAll(/<h1[^>]*>([\s\S]*?)<\/h1>/gi)].map(m => m[1].replace(/<[^>]+>/g, '').trim()).filter(Boolean);
-    const altMatches = [...htmlContent.matchAll(/<img[^>]*alt=["']([^"']+)["'][^>]*>/gi)].map(m => m[1].trim()).filter(Boolean);
-
-    const seoMetaStr = `[META TITLE]: ${title}\n[META DESCRIPTION]: ${description}\n[H1 TAGS]: ${h1Matches.join(' | ')}\n[IMAGE ALTS]: ${altMatches.slice(0, 10).join(' | ')}\n\n[PAGE TEXT]:\n`;
-
-    // Quick extraction of text from HTML to optimize tokens
-    let textContent = htmlContent
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-      .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-
-    textContent = (seoMetaStr + textContent).slice(0, 6000); // 6k chars to prevent Vercel Hobby timeouts
-
-    let systemPrompt = `You are an expert SEO, AEO (Answer Engine Optimization), and GEO (Generative Engine Optimization) auditor.
+    if (competitorUrl) {
+      systemPrompt = `You are a strict SEO, AEO, and GEO gap-analysis auditor.
+First, provide 3 paragraphs of Gap Analysis identifying exactly why the Competitor is more likely to be cited by Gemini or AI Answer Engines than the Target.
+Finally, output a strict JSON block exactly in this multi-site format:
+{
+  "target": { "seo": { "meta": 80, "headers": 70, "mobile": 90 }, "aeo": { "directness": 60, "schema": 50 }, "geo": { "citability": 65, "authority": 70 } },
+  "competitor": { "seo": { "meta": 85, "headers": 80, "mobile": 95 }, "aeo": { "directness": 75, "schema": 60 }, "geo": { "citability": 90, "authority": 85 } },
+  "priorities": [
+    "Prioritize fixing Target H1 structure to match Competitor...",
+    "Inject FAQ modules for AEO Answer extraction...",
+    "Improve brand citability to catch up with Competitor digital PR..."
+  ]
+}`;
+      userPrompt = `Analyze and compare these two websites:\n\n=== TARGET [${targetUrl}] ===\n${targetText}\n\n=== COMPETITOR [${competitorUrl}] ===\n${compText}`;
+    } else {
+      systemPrompt = `You are an expert SEO, AEO (Answer Engine Optimization), and GEO (Generative Engine Optimization) auditor.
 First, provide 3 paragraphs of verbal analysis regarding the SEO, AEO, and GEO potential of the content.
 Finally, output a strict JSON block containing granular scores (0-100) and your top 3 specific, actionable priorities exactly in this format:
 {
@@ -62,6 +82,8 @@ Finally, output a strict JSON block containing granular scores (0-100) and your 
     "Increase brand citability by acquiring digital PR links..."
   ]
 }`;
+      userPrompt = `Analyze this website content:\n\n${targetText}`;
+    }
 
     const isRetry = req.query.retry === 'true' || (req.body && req.body.retry === 'true');
     if (isRetry) {
@@ -80,7 +102,7 @@ Finally, output a strict JSON block containing granular scores (0-100) and your 
         stream: true,
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: `Analyze this website content:\n\n${textContent}` }
+          { role: 'user', content: userPrompt }
         ]
       })
     });
