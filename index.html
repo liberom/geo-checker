@@ -62,7 +62,9 @@
         padding-bottom: 60px;
       }
 
-      *, *::before, *::after {
+      *,
+      *::before,
+      *::after {
         background: white !important;
         color: black !important;
       }
@@ -245,7 +247,7 @@
     </div>
   </div>
   <div class="print-footer hidden">
-    © 2026 Vynix Systems - Confidential Business Intelligence
+    © 2026 Vynix - Confidential Business Intelligence
   </div>
 
   <header id="app-header"
@@ -296,39 +298,10 @@
         The search landscape has shifted. Optimize your site for traditional search (SEO) and the new Generative &
         Answer Engines (GEO/AEO).
       </p>
-
-      <div class="glass-card p-3 rounded-3xl border border-slate-700/50 hero-glow max-w-3xl mx-auto">
-        <form id="auditForm" class="flex flex-col gap-3">
-          <div class="flex flex-col md:flex-row gap-3">
-            <input type="url" id="target-url-input" required placeholder="Enter your website URL (https://...)"
-              class="flex-1 bg-slate-800/50 p-5 rounded-2xl outline-none border border-transparent focus:border-blue-500/50 transition-all text-blue-100 placeholder:text-slate-500">
-            <button type="submit" id="main-submit"
-              class="bg-blue-600 hover:bg-blue-500 px-10 py-5 rounded-2xl font-bold transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl shadow-blue-900/30">
-              Analyze Now
-            </button>
-          </div>
-          <div id="competitor-ui" class="hidden">
-            <div class="flex items-center gap-4 w-full md:w-3/4 mx-auto mt-2">
-              <span class="text-xs font-black uppercase text-slate-500 rounded-md tracking-wider">VS</span>
-              <input type="url" id="competitor-url-input" placeholder="Optional: Competitor URL"
-                class="w-full bg-slate-900/60 p-4 rounded-xl outline-none border border-slate-700/50 focus:border-blue-500/30 transition-all text-slate-300 placeholder:text-slate-600 text-sm">
-            </div>
-          </div>
-        </form>
-      </div>
-
-      <p class="mt-6 text-sm text-slate-500 flex items-center justify-center gap-2">
-        <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-          <path
-            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z">
-          </path>
-        </svg>
-        Processing available for 2026 AI Algorithm Updates
-      </p>
     </section>
   </main>
 
-  <section id="features" class="py-24 border-t border-slate-800">
+  <section id="features" class="py-16 border-t border-slate-800">
     <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-12">
       <div class="group">
         <div
@@ -345,7 +318,8 @@
           <span class="text-indigo-400 font-bold">02</span>
         </div>
         <h3 class="text-xl font-bold mb-4">AEO Strategy</h3>
-        <p class="text-slate-400">Evaluate Schema.org density to ensure your content fuels "Featured Snippets" and Voice
+        <p class="text-slate-400">Evaluate Schema.org density to ensure your content fuels "Featured Snippets" and
+          Voice
           Search.</p>
       </div>
       <div class="group">
@@ -354,13 +328,43 @@
           <span class="text-purple-400 font-bold">03</span>
         </div>
         <h3 class="text-xl font-bold mb-4">GEO Optimization</h3>
-        <p class="text-slate-400">Audit E-E-A-T signals to increase the probability of being cited by LLMs like ChatGPT
+        <p class="text-slate-400">Audit E-E-A-T signals to increase the probability of being cited by LLMs like
+          ChatGPT
           and Gemini.</p>
       </div>
     </div>
   </section>
 
-  <section id="results-dashboard" class="max-w-5xl mx-auto px-6 py-24 hidden border-t border-slate-800">
+  <section id="results-dashboard" class="max-w-5xl mx-auto px-6 py-24 border-t border-slate-800">
+    <div class="glass-card p-3 rounded-3xl border border-slate-700/50 mb-12 max-w-3xl mx-auto">
+      <form id="auditForm" class="flex flex-col gap-3">
+        <div class="flex flex-col md:flex-row gap-3">
+          <input type="url" id="target-url-input" required placeholder="Enter your website URL (https://...)"
+            class="flex-1 bg-slate-800/50 p-5 rounded-2xl outline-none border border-transparent focus:border-blue-500/50 transition-all text-blue-100 placeholder:text-slate-500">
+          <button type="submit" id="main-submit"
+            class="bg-blue-600 hover:bg-blue-500 px-10 py-5 rounded-2xl font-bold transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl shadow-blue-900/30">
+            Analyze Now
+          </button>
+        </div>
+        <div id="competitor-ui" class="hidden">
+          <div class="flex items-center gap-4 w-full md:w-3/4 mx-auto mt-2">
+            <span class="text-xs font-black uppercase text-slate-500 rounded-md tracking-wider">VS</span>
+            <input type="url" id="competitor-url-input" placeholder="Optional: Competitor URL"
+              class="w-full bg-slate-900/60 p-4 rounded-xl outline-none border border-slate-700/50 focus:border-blue-500/30 transition-all text-slate-300 placeholder:text-slate-600 text-sm">
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <p class="mb-12 text-sm text-slate-500 flex items-center justify-center gap-2">
+      <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+        <path
+          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z">
+        </path>
+      </svg>
+      Processing available for 2026 AI Algorithm Updates
+    </p>
+
     <h2
       class="text-3xl font-extrabold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
       Analysis Results</h2>
@@ -540,7 +544,8 @@
         <div class="w-full space-y-4 z-10 font-bold opacity-80">
           <div>
             <div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest">
-              <span>Meta</span><span id="txt-seo-meta-comp" class="text-slate-300">0%</span></div>
+              <span>Meta</span><span id="txt-seo-meta-comp" class="text-slate-300">0%</span>
+            </div>
             <div class="h-1.5 bg-slate-900 rounded-full">
               <div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]" id="bar-seo-meta-comp">
               </div>
@@ -548,7 +553,8 @@
           </div>
           <div>
             <div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest">
-              <span>Headers</span><span id="txt-seo-headers-comp" class="text-slate-300">0%</span></div>
+              <span>Headers</span><span id="txt-seo-headers-comp" class="text-slate-300">0%</span>
+            </div>
             <div class="h-1.5 bg-slate-900 rounded-full">
               <div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]"
                 id="bar-seo-headers-comp"></div>
@@ -556,7 +562,8 @@
           </div>
           <div>
             <div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest">
-              <span>Mobile</span><span id="txt-seo-mobile-comp" class="text-slate-300">0%</span></div>
+              <span>Mobile</span><span id="txt-seo-mobile-comp" class="text-slate-300">0%</span>
+            </div>
             <div class="h-1.5 bg-slate-900 rounded-full">
               <div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]" id="bar-seo-mobile-comp">
               </div>
@@ -583,7 +590,8 @@
         <div class="w-full space-y-4 z-10 font-bold opacity-80">
           <div>
             <div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest">
-              <span>Directness</span><span id="txt-aeo-directness-comp" class="text-slate-300">0%</span></div>
+              <span>Directness</span><span id="txt-aeo-directness-comp" class="text-slate-300">0%</span>
+            </div>
             <div class="h-1.5 bg-slate-900 rounded-full">
               <div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]"
                 id="bar-aeo-directness-comp"></div>
@@ -591,7 +599,8 @@
           </div>
           <div>
             <div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest">
-              <span>Schema</span><span id="txt-aeo-schema-comp" class="text-slate-300">0%</span></div>
+              <span>Schema</span><span id="txt-aeo-schema-comp" class="text-slate-300">0%</span>
+            </div>
             <div class="h-1.5 bg-slate-900 rounded-full">
               <div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]" id="bar-aeo-schema-comp">
               </div>
@@ -618,7 +627,8 @@
         <div class="w-full space-y-4 z-10 font-bold opacity-80">
           <div>
             <div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest">
-              <span>Citability</span><span id="txt-geo-citability-comp" class="text-slate-300">0%</span></div>
+              <span>Citability</span><span id="txt-geo-citability-comp" class="text-slate-300">0%</span>
+            </div>
             <div class="h-1.5 bg-slate-900 rounded-full">
               <div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]"
                 id="bar-geo-citability-comp"></div>
@@ -626,7 +636,8 @@
           </div>
           <div>
             <div class="flex justify-between text-[10px] mb-1 text-slate-500 uppercase tracking-widest">
-              <span>Authority</span><span id="txt-geo-authority-comp" class="text-slate-300">0%</span></div>
+              <span>Authority</span><span id="txt-geo-authority-comp" class="text-slate-300">0%</span>
+            </div>
             <div class="h-1.5 bg-slate-900 rounded-full">
               <div class="h-full bg-slate-500 rounded-full w-0 transition-all duration-[1.5s]"
                 id="bar-geo-authority-comp"></div>
@@ -647,28 +658,44 @@
       <div id="priorities-container">
         <div id="priorities-immediate" class="mb-8">
           <h4 class="text-sm font-bold text-red-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"></path>
+            </svg>
             Immediate Technical Fixes
           </h4>
           <ul id="priorities-list-immediate" class="space-y-3 text-slate-300 font-medium"></ul>
         </div>
         <div id="priorities-aeo" class="mb-8">
           <h4 class="text-sm font-bold text-indigo-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"></path>
+            </svg>
             Answer Engine Optimization (AEO)
           </h4>
           <ul id="priorities-list-aeo" class="space-y-3 text-slate-300 font-medium"></ul>
         </div>
         <div id="priorities-geo" class="mb-8">
           <h4 class="text-sm font-bold text-purple-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"></path>
+            </svg>
             Local Authority (GEO)
           </h4>
           <ul id="priorities-list-geo" class="space-y-3 text-slate-300 font-medium"></ul>
         </div>
         <div id="priorities-quickwins">
           <h4 class="text-sm font-bold text-green-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"></path>
+            </svg>
             Quick Wins
           </h4>
           <ul id="priorities-list-quickwins" class="space-y-3 text-slate-300 font-medium"></ul>
@@ -788,13 +815,13 @@
             let fetchOptions = {};
             let endpoint = url;
             if (window.manualTextPayload) {
-               fetchOptions = {
-                 method: 'POST',
-                 headers: { 'Content-Type': 'application/json' },
-                 body: JSON.stringify({ key, url: targetUrl, competitorUrl: compUrl, retry: isRetry ? 'true' : 'false', manualText: window.manualTextPayload })
-               };
-               endpoint = '/api/analyze';
-               window.manualTextPayload = null;
+              fetchOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key, url: targetUrl, competitorUrl: compUrl, retry: isRetry ? 'true' : 'false', manualText: window.manualTextPayload })
+              };
+              endpoint = '/api/analyze';
+              window.manualTextPayload = null;
             }
 
             const response = await fetch(endpoint, fetchOptions);
@@ -818,12 +845,12 @@
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let buffer = '';
-            
+
             let liveStreamText = '';
             let realTimeParseStarted = false;
             let realTimeParseInterval = null;
             let capturedJSON = null;
-            
+
             // Clear and prepare all priorities lists
             const pLists = {
               immediate: document.getElementById('priorities-list-immediate'),
@@ -861,7 +888,7 @@
             // Animate gauges from partial or full data
             const animateFromData = (data) => {
               if (!data || typeof data !== 'object') return;
-              
+
               const sMeta = data.seo?.meta || 0;
               const sHeaders = data.seo?.headers || 0;
               const sMobile = data.seo?.mobile || 0;
@@ -908,7 +935,7 @@
             // Render priorities from categorized structure
             const renderPriorities = (priorities) => {
               if (!priorities || typeof priorities !== 'object') return;
-              
+
               // Handle new categorized structure
               if (priorities.immediateTechnicalFixes) {
                 priorities.immediateTechnicalFixes.forEach(item => {
@@ -938,7 +965,7 @@
                   }
                 });
               }
-              
+
               // Fallback: legacy flat array structure
               if (Array.isArray(priorities)) {
                 priorities.forEach((item, idx) => {
@@ -954,34 +981,34 @@
             const startRealTimeParsing = () => {
               if (realTimeParseStarted) return;
               realTimeParseStarted = true;
-              
+
               realTimeParseInterval = setInterval(() => {
                 try {
                   // Find JSON block in accumulated text
                   const jsonStart = liveStreamText.indexOf('{');
                   if (jsonStart === -1) return;
-                  
+
                   const potentialJson = liveStreamText.slice(jsonStart);
                   const parsed = JSON.parse(potentialJson);
-                  
+
                   if (parsed && parsed.seo && parsed.aeo && parsed.geo) {
                     capturedJSON = parsed;
-                    
+
                     // Immediately show results and animate
                     showResults();
-                    
+
                     const data = parsed.target ? parsed.target : parsed;
                     animateFromData(data);
-                    
+
                     if (parsed.priorities) {
                       renderPriorities(parsed.priorities);
                     }
-                    
+
                     // Stop trying once we have valid complete JSON
-                    if (parsed.seo && parsed.aeo && parsed.geo && 
-                        (parsed.priorities?.immediateTechnicalFixes?.length || 
-                         parsed.priorities?.answerEngineOptimization?.length ||
-                         Array.isArray(parsed.priorities))) {
+                    if (parsed.seo && parsed.aeo && parsed.geo &&
+                      (parsed.priorities?.immediateTechnicalFixes?.length ||
+                        parsed.priorities?.answerEngineOptimization?.length ||
+                        Array.isArray(parsed.priorities))) {
                       clearInterval(realTimeParseInterval);
                     }
                   }
@@ -1010,12 +1037,12 @@
                         <p class="text-slate-300 mb-6">The target site's security is blocking our automated crawler. To continue, please copy the text from the site and paste it here.</p>
                         <textarea id="manual-paste-area" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-sm text-slate-300 h-64 focus:border-blue-500 outline-none" placeholder="Paste the website's text content here..."></textarea>
                         <button id="btn-manual-submit" class="mt-4 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition shadow-lg shadow-blue-500/20">Run Manual Audit</button>`;
-                        
+
                         document.getElementById('btn-manual-submit').addEventListener('click', () => {
-                           const manualText = document.getElementById('manual-paste-area').value;
-                           if(!manualText.trim()) return alert('Please paste some text first.');
-                           window.manualTextPayload = manualText;
-                           document.getElementById('auditForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                          const manualText = document.getElementById('manual-paste-area').value;
+                          if (!manualText.trim()) return alert('Please paste some text first.');
+                          window.manualTextPayload = manualText;
+                          document.getElementById('auditForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
                         });
                         if (realTimeParseInterval) clearInterval(realTimeParseInterval);
                         return; // Break out of function securely
@@ -1041,7 +1068,7 @@
                 }
               }
             }
-            
+
             // Stop real-time parsing interval if still running
             if (realTimeParseInterval) {
               clearInterval(realTimeParseInterval);
@@ -1057,10 +1084,10 @@
                 // Use capturedJSON from real-time parsing if available, otherwise parse fresh
                 const r = capturedJSON || JSON.parse(match[0]);
                 console.log('Final Extracted JSON:', r);
-                
+
                 const data = r.target ? r.target : r;
                 const priorities = r.priorities || (r.target && r.target.priorities) || {};
-                
+
                 const isCompMode = !!r.competitor;
 
                 // Ensure dashboard is visible
@@ -1115,8 +1142,8 @@
                 animateBar('geo-authority', gAuthority);
 
                 // Ensure priorities are rendered (from real-time parsing or now)
-                if (priorities.immediateTechnicalFixes || priorities.answerEngineOptimization || 
-                    priorities.localAuthorityGEO || priorities.quickWins || Array.isArray(priorities)) {
+                if (priorities.immediateTechnicalFixes || priorities.answerEngineOptimization ||
+                  priorities.localAuthorityGEO || priorities.quickWins || Array.isArray(priorities)) {
                   // Clear existing and re-render to ensure completeness
                   Object.values(pLists).forEach(list => { if (list) list.innerHTML = ''; });
                   renderPriorities(priorities);
@@ -1185,7 +1212,7 @@
 
                 // Compile Priorities for Clipboard Report (now with all 10 items)
                 let compiledPrioritiesString = '\n\n## Strategic Roadmap (10 Priority Actions):\n';
-                
+
                 const flattenPriorities = (p) => {
                   const items = [];
                   if (p.immediateTechnicalFixes) items.push(...p.immediateTechnicalFixes);
@@ -1195,7 +1222,7 @@
                   if (Array.isArray(p)) items.push(...p);
                   return items;
                 };
-                
+
                 const allPriorities = flattenPriorities(priorities);
                 if (allPriorities.length > 0) {
                   allPriorities.forEach((priority, idx) => {
@@ -1220,7 +1247,7 @@
                   btnNode.innerHTML = 'Copied to Clipboard! 🎉';
                   setTimeout(() => btnNode.innerHTML = origHTML, 3000);
                 };
-                
+
                 // Strip the exact raw JSON block from the screen log
                 const textAnalysis = logDiv.innerText.replace(match[0], '').trim();
                 logDiv.innerHTML = logDiv.innerHTML.replace(match[0], '<br/><br/><span class="text-blue-500 italic">Analysis successfully parsed. Strategic Roadmap populated below.</span>');
