@@ -134,6 +134,71 @@
     </div>
   </section>
 
+  <section id="results-dashboard" class="max-w-5xl mx-auto px-6 py-24 hidden border-t border-slate-800">
+    <h2 class="text-3xl font-extrabold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">Analysis Results</h2>
+    
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- SEO -->
+      <div class="glass-card p-6 rounded-3xl border border-blue-900/50 flex flex-col items-center relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4 opacity-10"><svg class="w-24 h-24 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M21 21H3v-2h18v2zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2v-6zm0 8h2v2h-2v-2z"></path></svg></div>
+        <h3 class="text-xl font-bold mb-4 text-blue-300 z-10">SEO Score</h3>
+        <div class="relative w-32 h-32 mb-6 z-10">
+          <svg class="w-full h-full transform -rotate-90">
+            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent" class="text-slate-800" />
+            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent" stroke-dasharray="314" stroke-dashoffset="314" class="text-blue-500 transition-all duration-1000 ease-out" id="svg-seo" />
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center text-4xl font-black text-white" id="score-seo">0</div>
+        </div>
+        <div class="w-full space-y-4 z-10 font-bold">
+          <div><div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span class="tracking-widest">Meta</span><span id="txt-seo-meta" class="text-blue-200">0%</span></div><div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-gradient-to-r from-blue-700 to-blue-400 rounded-full w-0 transition-all duration-[1.5s]" id="bar-seo-meta"></div></div></div>
+          <div><div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span class="tracking-widest">Headers</span><span id="txt-seo-headers" class="text-blue-200">0%</span></div><div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-gradient-to-r from-blue-700 to-blue-400 rounded-full w-0 transition-all duration-[1.5s]" id="bar-seo-headers"></div></div></div>
+          <div><div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span class="tracking-widest">Mobile</span><span id="txt-seo-mobile" class="text-blue-200">0%</span></div><div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-gradient-to-r from-blue-700 to-blue-400 rounded-full w-0 transition-all duration-[1.5s]" id="bar-seo-mobile"></div></div></div>
+        </div>
+      </div>
+
+      <!-- AEO -->
+      <div class="glass-card p-6 rounded-3xl border border-indigo-900/50 flex flex-col items-center relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4 opacity-10"><svg class="w-24 h-24 text-indigo-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 3.8l6.8 13.8H5.2L12 5.8zM11 10h2v5h-2v-5zm0 6h2v2h-2v-2z"></path></svg></div>
+        <h3 class="text-xl font-bold mb-4 text-indigo-300 z-10">AEO Score</h3>
+        <div class="relative w-32 h-32 mb-6 z-10">
+          <svg class="w-full h-full transform -rotate-90">
+            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent" class="text-slate-800" />
+            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent" stroke-dasharray="314" stroke-dashoffset="314" class="text-indigo-500 transition-all duration-1000 ease-out" id="svg-aeo" />
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center text-4xl font-black text-white" id="score-aeo">0</div>
+        </div>
+        <div class="w-full space-y-4 z-10 font-bold">
+          <div><div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span class="tracking-widest">Directness</span><span id="txt-aeo-directness" class="text-indigo-200">0%</span></div><div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-gradient-to-r from-indigo-700 to-indigo-400 rounded-full w-0 transition-all duration-[1.5s]" id="bar-aeo-directness"></div></div></div>
+          <div><div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span class="tracking-widest">Schema</span><span id="txt-aeo-schema" class="text-indigo-200">0%</span></div><div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-gradient-to-r from-indigo-700 to-indigo-400 rounded-full w-0 transition-all duration-[1.5s]" id="bar-aeo-schema"></div></div></div>
+        </div>
+      </div>
+
+      <!-- GEO -->
+      <div class="glass-card p-6 rounded-3xl border border-purple-900/50 flex flex-col items-center relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4 opacity-10"><svg class="w-24 h-24 text-purple-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"></path></svg></div>
+        <h3 class="text-xl font-bold mb-4 text-purple-300 z-10">GEO Score</h3>
+        <div class="relative w-32 h-32 mb-6 z-10">
+          <svg class="w-full h-full transform -rotate-90">
+            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent" class="text-slate-800" />
+            <circle cx="64" cy="64" r="50" stroke="currentColor" stroke-width="12" fill="transparent" stroke-dasharray="314" stroke-dashoffset="314" class="text-purple-500 transition-all duration-1000 ease-out" id="svg-geo" />
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center text-4xl font-black text-white" id="score-geo">0</div>
+        </div>
+        <div class="w-full space-y-4 z-10 font-bold">
+          <div><div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span class="tracking-widest">Citability</span><span id="txt-geo-citability" class="text-purple-200">0%</span></div><div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-gradient-to-r from-purple-700 to-purple-400 rounded-full w-0 transition-all duration-[1.5s]" id="bar-geo-citability"></div></div></div>
+          <div><div class="flex justify-between text-xs mb-1 text-slate-400 uppercase tracking-widest"><span class="tracking-widest">Authority</span><span id="txt-geo-authority" class="text-purple-200">0%</span></div><div class="h-2.5 bg-slate-900 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-gradient-to-r from-purple-700 to-purple-400 rounded-full w-0 transition-all duration-[1.5s]" id="bar-geo-authority"></div></div></div>
+          
+          <div id="citation-tier-ui" class="hidden pt-4 mt-6 border-t border-purple-900/50 flex-col gap-2">
+            <div class="flex justify-between text-xs mb-1 text-pink-300 uppercase tracking-widest font-black"><span class="tracking-widest">LLM Citation Share</span><span id="txt-citation-share" class="animate-pulse">Probing...</span></div>
+            <div class="h-3.5 bg-slate-950 rounded-full border border-pink-500/30 overflow-hidden shadow-lg relative cursor-help" title="Model Probing triggered for mid_ access tier">
+               <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-600 via-pink-500 to-rose-500 w-0 transition-all duration-[2000ms] shadow-[0_0_15px_rgba(236,72,153,0.8)]" id="bar-citation-share"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <footer class="py-16 bg-slate-950 border-t border-slate-900 text-center">
     <div
       class="flex flex-wrap justify-center gap-12 mb-12 opacity-40 hover:opacity-100 transition-opacity duration-700">
@@ -172,7 +237,17 @@
         btn.classList.add('animate-pulse');
 
         const input = document.querySelector('#auditForm input');
-        const targetUrl = input.value;
+        let targetUrl = input.value;
+
+        try {
+          if (!targetUrl.startsWith('http')) targetUrl = 'https://' + targetUrl;
+          new URL(targetUrl);
+        } catch (err) {
+          alert("Please enter a valid URL.");
+          btn.innerHTML = 'Analyze Now';
+          btn.classList.remove('animate-pulse');
+          return;
+        }
 
         // Ensure analysis-log area exists
         let logDiv = document.getElementById('analysis-log');
@@ -233,6 +308,97 @@
                 }
               }
             }
+
+            // STREAM COMPLETE, RUN JSON PARSING AND METRICS ANIMATION
+            const fullText = logDiv.innerText;
+            // Uses a permissive regex to find the JSON output at the end of the generator text
+            const match = fullText.match(/\{[\s\S]*"seo"[\s\S]*"aeo"[\s\S]*"geo"[\s\S]*\}/i);
+            
+            if (match) {
+              try {
+                const results = JSON.parse(match[0]);
+                
+                // Show dashboard logic
+                const dashboard = document.getElementById('results-dashboard');
+                dashboard.classList.remove('hidden');
+                setTimeout(() => dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+
+                // Derived Main Scores
+                const seoScore = Math.round((results.seo.meta + results.seo.headers + results.seo.mobile) / 3);
+                const aeoScore = Math.round((results.aeo.directness + results.aeo.schema) / 2);
+                const geoScore = Math.round((results.geo.citability + results.geo.authority) / 2);
+
+                const animateGauge = (idPrefix, score) => {
+                  const offset = 314 - (314 * score) / 100;
+                  document.getElementById(`svg-${idPrefix}`).style.strokeDashoffset = offset;
+                  
+                  let current = 0;
+                  const intv = setInterval(() => {
+                    current += 2;
+                    if(current >= score) {
+                      current = score;
+                      clearInterval(intv);
+                    }
+                    document.getElementById(`score-${idPrefix}`).innerText = current;
+                  }, 25);
+                };
+
+                const animateBar = (id, val) => {
+                  document.getElementById(`bar-${id}`).style.width = `${val}%`;
+                  document.getElementById(`txt-${id}`).innerText = `${val}%`;
+                };
+
+                animateGauge('seo', Math.min(100, Math.max(0, seoScore)));
+                animateBar('seo-meta', results.seo.meta);
+                animateBar('seo-headers', results.seo.headers);
+                animateBar('seo-mobile', results.seo.mobile);
+
+                animateGauge('aeo', Math.min(100, Math.max(0, aeoScore)));
+                animateBar('aeo-directness', results.aeo.directness);
+                animateBar('aeo-schema', results.aeo.schema);
+
+                animateGauge('geo', Math.min(100, Math.max(0, geoScore)));
+                animateBar('geo-citability', results.geo.citability);
+                animateBar('geo-authority', results.geo.authority);
+
+                // Tiering Logic - Model Probing for mid_ key
+                if (key.startsWith('mid_')) {
+                  document.getElementById('citation-tier-ui').classList.remove('hidden');
+                  document.getElementById('citation-tier-ui').classList.add('flex');
+                  
+                  const probeUrl = new URL('/api/probe', window.location.origin);
+                  probeUrl.searchParams.append('key', key);
+                  probeUrl.searchParams.append('url', targetUrl);
+                  
+                  const probeRes = await fetch(probeUrl);
+                  
+                  if (probeRes.ok) {
+                    const probeData = await probeRes.json();
+                    const cShare = probeData.citationShare;
+                    // Short delay for dramatic effect
+                    setTimeout(() => {
+                      document.getElementById('bar-citation-share').style.width = `${cShare}%`;
+                      document.getElementById('txt-citation-share').innerText = `${cShare}%`;
+                      document.getElementById('txt-citation-share').classList.remove('animate-pulse');
+                    }, 800);
+                  } else {
+                    document.getElementById('txt-citation-share').innerText = 'N/A';
+                    document.getElementById('txt-citation-share').classList.remove('animate-pulse');
+                  }
+                }
+
+                // Strip the exact raw JSON block from the screen log to keep the UI clean and conversational
+                logDiv.innerHTML = logDiv.innerHTML.replace(match[0], '<br/><br/><span class="text-blue-500 italic">Analysis successfully parsed. Metrics populated below.</span>');
+
+              } catch(e) {
+                console.error('JSON parsing failed:', e);
+                logDiv.innerHTML += '<br/><br/><span class="text-red-400 font-bold italic">Warning: The AI model generated an improperly formatted output and metrics could not be displayed. Please try analyzing the URL again.</span>';
+              }
+            } else {
+              // Handle AI failing to produce valid JSON at the end
+              logDiv.innerHTML += '<br/><br/><span class="text-orange-400 font-bold italic">Warning: The AI model failed to yield the final scoring metrics. Please try running the analysis again.</span>';
+            }
+
           } catch (error) {
              logDiv.innerHTML += `\nConnection Error: ${error.message}`;
           } finally {
