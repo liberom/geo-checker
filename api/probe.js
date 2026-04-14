@@ -31,7 +31,11 @@ module.exports = async function (req, res) {
       expired = true;
     }
 
-    return { valid: true, expired, isMidMarket: prefix === 'mid' };
+    const isOwner = prefix === 'owner';
+    const isMidMarket = prefix === 'mid';
+    const isSmb = prefix === 'smb';
+
+    return { valid: true, expired, isOwner, isMidMarket, isSmb };
   };
 
   const license = validateLicense(key);
@@ -41,6 +45,9 @@ module.exports = async function (req, res) {
   if (license.expired) {
     return res.status(403).json({ error: 'License Expired' });
   }
+
+  const isOwner = license.isOwner;
+  const isMidMarket = license.isMidMarket;
 
   if (!targetUrl) {
     return res.status(400).json({ error: 'Missing target URL' });
@@ -53,7 +60,9 @@ module.exports = async function (req, res) {
 
     try {
       const apiKey = process.env.SCRAPERAPI_KEY || '';
-      const scraperUrl = `https://api.scraperapi.com/?api_key=${apiKey}&url=${encodeURIComponent(targetUrl)}&render=false`;
+      // Owner tier gets full render for better probing
+      const render = isOwner ? 'true' : 'false';
+      const scraperUrl = `https://api.scraperapi.com/?api_key=${apiKey}&url=${encodeURIComponent(targetUrl)}&render=${render}`;
 
       const siteCall = await fetch(scraperUrl, { signal: controller.signal });
 
@@ -69,7 +78,7 @@ module.exports = async function (req, res) {
       clearTimeout(timeoutId);
     }
 
-    // Quick text extration
+    // Quick text extraction
     const textContent = htmlContent
       .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
       .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
@@ -78,10 +87,22 @@ module.exports = async function (req, res) {
       .trim()
       .slice(0, 3000);
 
-    const systemPrompt = `You are an AI that estimates brand visibility in LLM training data.
+    // Owner tier gets enhanced probing with more detailed analysis
+    let systemPrompt;
+    if (isOwner) {
+      systemPrompt = `You are operating in MASTER/CONSULTANT MODE - Full Technical Dominance engagement. Perform enhanced brand visibility probing with granular analysis.
+
+For the Paraguay/CDE region, analyze local entity visibility patterns.
+
+Return your answer ONLY as a strict JSON format with exactly one key "citationShare" which is a percentage from 0 to 100 representing LLM citation probability.
+
+Example: {"citationShare": 75}`;
+    } else {
+      systemPrompt = `You are an AI that estimates brand visibility in LLM training data.
 Is the brand associated with the following website text mentioned in your training data?
 Return your answer ONLY as a strict JSON format with exactly one key "citationShare" which is a percentage from 0 to 100 representing visibility.
 Example: {"citationShare": 65}`;
+    }
 
     const orReq = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',

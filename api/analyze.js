@@ -33,7 +33,11 @@ module.exports = async function (req, res) {
       expired = true;
     }
 
-    return { valid: true, expired, isMidMarket: prefix === 'mid' };
+    const isOwner = prefix === 'owner';
+    const isMidMarket = prefix === 'mid';
+    const isSmb = prefix === 'smb';
+
+    return { valid: true, expired, isOwner, isMidMarket, isSmb };
   };
 
   const license = validateLicense(key);
@@ -44,7 +48,9 @@ module.exports = async function (req, res) {
     return res.status(403).json({ error: 'License Expired' });
   }
 
+  const isOwner = license.isOwner;
   const isMidMarket = license.isMidMarket;
+  const isSmb = license.isSmb;
 
   if (!targetUrl) {
     return res.status(400).json({ error: 'Missing target URL' });
@@ -58,7 +64,7 @@ module.exports = async function (req, res) {
     const fetchSite = async (urlStr, charLimit, isTarget = true) => {
       let htmlContent = '';
 
-      const renderFlag = isTarget || isMidMarket ? 'true' : 'false';
+      const renderFlag = isTarget || isMidMarket || isOwner ? 'true' : 'false';
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000);
 
@@ -128,8 +134,108 @@ module.exports = async function (req, res) {
     let systemPrompt = '';
     let userPrompt = '';
 
-    if (competitorUrl && isMidMarket) {
-      systemPrompt = `You are a world-class SEO, AEO, and GEO strategic consultant. This is a $3,000/month premium engagement. Your deliverable is a 10-item Comprehensive Action Plan that demonstrates enterprise-grade expertise.
+    // OWNER TIER: Master/Consultant Mode with enhanced technical detail
+    if (competitorUrl && isOwner) {
+      systemPrompt = `You are operating in MASTER/CONSULTANT MODE - Full Technical Dominance engagement. This is an elite, unfiltered expert-level auditing session with no holding back on technical critiques.
+
+You are auditing for the Paraguay/CDE (Ciudad del Este) region with specialized geological and local business entity mapping strategies.
+
+CRITICAL OWNER-LEVEL REQUIREMENTS:
+1. Provide EVEN MORE GRANULAR technical detail than standard premium
+2. Identify SPECIFIC code flaws in the DOM structure, including inline styles, deprecated tags, and accessibility violations
+3. Perform advanced geological/local business entity mapping for Paraguay/CDE region
+4. Include wireframe analysis for hero sections and conversion funnels
+5. Audit server-side rendering (SSR) and dynamic content loading patterns
+6. Identify JavaScript hydration issues and client-side routing problems
+7. Flag performance bottlenecks at the browser engine level
+8. Provide direct code snippets showing exact fixes needed
+
+FIRST: Cross-reference the TECHNICAL SCHEMA block (delimited by ==== START TECHNICAL SCHEMA ==== and ==== END TECHNICAL SCHEMA ====). You MUST check this block before auditing. If a schema type (e.g., FAQPage, LocalBusiness, Organization, Product) is present in that block, you are STRICTLY FORBIDDEN from flagging it as a "Missing Gap" in your analysis. Only flag schema elements that are ACTUALLY ABSENT from the TECHNICAL SCHEMA block.
+
+Provide 5 paragraphs of expert-level strategic analysis identifying:
+- DOM-level code flaws and specific remediation steps
+- Semantic gaps with granular technical recommendations
+- Paraguay/CDE regional entity mapping opportunities
+- Advanced AEO and GEO positioning strategies
+
+FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categorized into these EXACT buckets:
+{
+  "target": { "seo": { "meta": 80, "headers": 70, "mobile": 90 }, "aeo": { "directness": 60, "schema": 50 }, "geo": { "citability": 65, "authority": 70 } },
+  "competitor": { "seo": { "meta": 85, "headers": 80, "mobile": 95 }, "aeo": { "directness": 75, "schema": 60 }, "geo": { "citability": 90, "authority": 85 } },
+  "priorities": {
+    "immediateTechnicalFixes": [
+      "DOM flaw fix 1: [specific code issue]...",
+      "DOM flaw fix 2: [specific code issue]...",
+      "DOM flaw fix 3: [specific code issue]..."
+    ],
+    "answerEngineOptimization": [
+      "AEO action 1: [granular technical detail]...",
+      "AEO action 2: [granular technical detail]...",
+      "AEO action 3: [granular technical detail]..."
+    ],
+    "localAuthorityGEO": [
+      "GEO action 1: [Paraguay/CDE specific]...",
+      "GEO action 2: [Paraguay/CDE specific]..."
+    ],
+    "quickWins": [
+      "Quick win 1: [immediate technical fix]...",
+      "Quick win 2: [immediate technical fix]..."
+    ]
+  }
+}`;
+      userPrompt = `Analyze and compare these two websites:\n\n=== TARGET [${targetUrl}] ===\n${targetText}\n\n=== COMPETITOR [${competitorUrl}] ===\n${compText}`;
+    } else if (isOwner) {
+      systemPrompt = `You are operating in MASTER/CONSULTANT MODE - Full Technical Dominance engagement. This is an elite, unfiltered expert-level auditing session with no holding back on technical critiques.
+
+You are auditing for the Paraguay/CDE (Ciudad del Este) region with specialized geological and local business entity mapping strategies.
+
+CRITICAL OWNER-LEVEL REQUIREMENTS:
+1. Provide EVEN MORE GRANULAR technical detail than standard premium
+2. Identify SPECIFIC code flaws in the DOM structure, including inline styles, deprecated tags, and accessibility violations
+3. Perform advanced geological/local business entity mapping for Paraguay/CDE region
+4. Include wireframe analysis for hero sections and conversion funnels
+5. Audit server-side rendering (SSR) and dynamic content loading patterns
+6. Identify JavaScript hydration issues and client-side routing problems
+7. Flag performance bottlenecks at the browser engine level
+8. Provide direct code snippets showing exact fixes needed
+
+FIRST: Cross-reference the TECHNICAL SCHEMA block (delimited by ==== START TECHNICAL SCHEMA ==== and ==== END TECHNICAL SCHEMA ====). You MUST check this block before auditing. If a schema type (e.g., FAQPage, LocalBusiness, Organization, Product) is present in that block, you are STRICTLY FORBIDDEN from flagging it as a "Missing Gap" in your analysis. Only flag schema elements that are ACTUALLY ABSENT from the TECHNICAL SCHEMA block.
+
+Provide 5 paragraphs of expert-level strategic analysis identifying:
+- DOM-level code flaws and specific remediation steps
+- Semantic gaps with granular technical recommendations
+- Paraguay/CDE regional entity mapping opportunities
+- Advanced AEO and GEO positioning strategies
+
+FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categorized into these EXACT buckets:
+{
+  "seo": { "meta": 80, "headers": 70, "mobile": 90 },
+  "aeo": { "directness": 60, "schema": 50 },
+  "geo": { "citability": 65, "authority": 70 },
+  "priorities": {
+    "immediateTechnicalFixes": [
+      "DOM flaw fix 1: [specific code issue]...",
+      "DOM flaw fix 2: [specific code issue]...",
+      "DOM flaw fix 3: [specific code issue]..."
+    ],
+    "answerEngineOptimization": [
+      "AEO action 1: [granular technical detail]...",
+      "AEO action 2: [granular technical detail]...",
+      "AEO action 3: [granular technical detail]..."
+    ],
+    "localAuthorityGEO": [
+      "GEO action 1: [Paraguay/CDE specific]...",
+      "GEO action 2: [Paraguay/CDE specific]..."
+    ],
+    "quickWins": [
+      "Quick win 1: [immediate technical fix]...",
+      "Quick win 2: [immediate technical fix]..."
+    ]
+  }
+}`;
+      userPrompt = `Analyze this website content:\n\n${targetText}`;
+    } else if (competitorUrl && isMidMarket) {
+      systemPrompt = `You are a world-class SEO, AEO, and GEO strategic consultant. This is a $3,000/month premium engagement. Your deliverable is a 10-item Comprehensive Action Plan that demonstrates enterprise-grade expertise. Focus on competitor gap analysis and citability.
 
 FIRST: Cross-reference the TECHNICAL SCHEMA block (delimited by ==== START TECHNICAL SCHEMA ==== and ==== END TECHNICAL SCHEMA ====). You MUST check this block before auditing. If a schema type (e.g., FAQPage, LocalBusiness, Organization, Product) is present in that block, you are STRICTLY FORBIDDEN from flagging it as a "Missing Gap" in your analysis. Only flag schema elements that are ACTUALLY ABSENT from the TECHNICAL SCHEMA block.
 
@@ -162,7 +268,7 @@ FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categoriz
 }`;
       userPrompt = `Analyze and compare these two websites:\n\n=== TARGET [${targetUrl}] ===\n${targetText}\n\n=== COMPETITOR [${competitorUrl}] ===\n${compText}`;
     } else if (isMidMarket) {
-      systemPrompt = `You are a world-class SEO, AEO, and GEO strategic consultant. This is a $3,000/month premium engagement. Your deliverable is a 10-item Comprehensive Action Plan that demonstrates enterprise-grade expertise.
+      systemPrompt = `You are a world-class SEO, AEO, and GEO strategic consultant. This is a $3,000/month premium engagement. Your deliverable is a 10-item Comprehensive Action Plan that demonstrates enterprise-grade expertise. Focus on competitor gap analysis and citability.
 
 FIRST: Cross-reference the TECHNICAL SCHEMA block (delimited by ==== START TECHNICAL SCHEMA ==== and ==== END TECHNICAL SCHEMA ====). You MUST check this block before auditing. If a schema type (e.g., FAQPage, LocalBusiness, Organization, Product) is present in that block, you are STRICTLY FORBIDDEN from flagging it as a "Missing Gap" in your analysis. Only flag schema elements that are ACTUALLY ABSENT from the TECHNICAL SCHEMA block.
 
@@ -196,11 +302,12 @@ FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categoriz
 }`;
       userPrompt = `Analyze this website content:\n\n${targetText}`;
     } else {
-      systemPrompt = `You are a world-class SEO, AEO, and GEO strategic consultant. This is a $3,000/month premium engagement. Your deliverable is a 10-item Comprehensive Action Plan that demonstrates enterprise-grade expertise.
+      // SMB Tier: Basic visibility and FAQ schema focus
+      systemPrompt = `You are a world-class SEO, AEO, and GEO strategic consultant. This is a standard SMB engagement. Focus on basic visibility and FAQ schema optimization.
 
 FIRST: Cross-reference the TECHNICAL SCHEMA block (delimited by ==== START TECHNICAL SCHEMA ==== and ==== END TECHNICAL SCHEMA ====). You MUST check this block before auditing. If a schema type (e.g., FAQPage, LocalBusiness, Organization, Product) is present in that block, you are STRICTLY FORBIDDEN from flagging it as a "Missing Gap" in your analysis. Only flag schema elements that are ACTUALLY ABSENT from the TECHNICAL SCHEMA block.
 
-Provide 3 paragraphs of strategic analysis regarding SEO, AEO, and GEO potential.
+Provide 3 paragraphs of strategic analysis regarding SEO, AEO, and GEO potential with focus on basic visibility improvements.
 
 FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categorized into these EXACT buckets:
 {
