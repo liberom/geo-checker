@@ -101,13 +101,13 @@ module.exports = async function (req, res) {
       const description = descMatch ? descMatch[1].trim() : 'No Meta Description Found';
       const h1Matches = [...htmlContent.matchAll(/<h1[^>]*>([\s\S]*?)<\/h1>/gi)].map(m => m[1].replace(/<[^>]+>/g, '').trim()).filter(Boolean);
       const altMatches = [...htmlContent.matchAll(/<img[^>]*alt=["']([^"']+)["'][^>]*>/gi)].map(m => m[1].trim()).filter(Boolean);
-      
+
       const structuredDataMatches = [...htmlContent.matchAll(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
       let schemaStr = '';
       if (structuredDataMatches.length > 0) {
         schemaStr = '==== START TECHNICAL SCHEMA ====\n' + structuredDataMatches.map(m => m[1].trim()).join('\n---\n') + '\n==== END TECHNICAL SCHEMA ====\n\n';
       }
-      
+
       const seoMetaStr = `[META TITLE]: ${title}\n[META DESCRIPTION]: ${description}\n[H1 TAGS]: ${h1Matches.join(' | ')}\n[IMAGE ALTS]: ${altMatches.slice(0, 10).join(' | ')}\n\n${schemaStr}[PAGE TEXT]:\n`;
 
       let textContent = htmlContent
@@ -138,12 +138,12 @@ module.exports = async function (req, res) {
     if (competitorUrl && isOwner) {
       systemPrompt = `You are operating in MASTER/CONSULTANT MODE - Full Technical Dominance engagement. This is an elite, unfiltered expert-level auditing session with no holding back on technical critiques.
 
-You are auditing for the Paraguay/CDE (Ciudad del Este) region with specialized geological and local business entity mapping strategies.
+You are auditing for (mostly) United States region (assess the location from the website) with specialized regional/local business entity mapping strategies.
 
 CRITICAL OWNER-LEVEL REQUIREMENTS:
 1. Provide EVEN MORE GRANULAR technical detail than standard premium
 2. Identify SPECIFIC code flaws in the DOM structure, including inline styles, deprecated tags, and accessibility violations
-3. Perform advanced geological/local business entity mapping for Paraguay/CDE region
+3. Perform advanced regional/local business entity mapping for the region
 4. Include wireframe analysis for hero sections and conversion funnels
 5. Audit server-side rendering (SSR) and dynamic content loading patterns
 6. Identify JavaScript hydration issues and client-side routing problems
@@ -152,13 +152,13 @@ CRITICAL OWNER-LEVEL REQUIREMENTS:
 
 FIRST: Cross-reference the TECHNICAL SCHEMA block (delimited by ==== START TECHNICAL SCHEMA ==== and ==== END TECHNICAL SCHEMA ====). You MUST check this block before auditing. If a schema type (e.g., FAQPage, LocalBusiness, Organization, Product) is present in that block, you are STRICTLY FORBIDDEN from flagging it as a "Missing Gap" in your analysis. Only flag schema elements that are ACTUALLY ABSENT from the TECHNICAL SCHEMA block.
 
-Provide 5 paragraphs of expert-level strategic analysis identifying:
+Provide 10 paragraphs of expert-level strategic analysis identifying:
 - DOM-level code flaws and specific remediation steps
 - Semantic gaps with granular technical recommendations
-- Paraguay/CDE regional entity mapping opportunities
+- Local/Regional entity mapping opportunities
 - Advanced AEO and GEO positioning strategies
 
-FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categorized into these EXACT buckets:
+FINALLY: Output a strict JSON block with up to 50 Comprehensive Action Items categorized into these EXACT buckets (to save tokens and be more concise the 50 items were not all provided in the example below):
 {
   "target": { "seo": { "meta": 80, "headers": 70, "mobile": 90 }, "aeo": { "directness": 60, "schema": 50 }, "geo": { "citability": 65, "authority": 70 } },
   "competitor": { "seo": { "meta": 85, "headers": 80, "mobile": 95 }, "aeo": { "directness": 75, "schema": 60 }, "geo": { "citability": 90, "authority": 85 } },
@@ -166,20 +166,26 @@ FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categoriz
     "immediateTechnicalFixes": [
       "DOM flaw fix 1: [specific code issue]...",
       "DOM flaw fix 2: [specific code issue]...",
-      "DOM flaw fix 3: [specific code issue]..."
+      "DOM flaw fix 3: [specific code issue]...",
+      "...",
+      "DOM flaw fix 15: [specific code issue]..."
     ],
     "answerEngineOptimization": [
       "AEO action 1: [granular technical detail]...",
       "AEO action 2: [granular technical detail]...",
-      "AEO action 3: [granular technical detail]..."
+      "AEO action 3: [granular technical detail]...",
+      "...",
+      "AEO action 15: [granular technical detail]..."
     ],
     "localAuthorityGEO": [
       "GEO action 1: [Paraguay/CDE specific]...",
-      "GEO action 2: [Paraguay/CDE specific]..."
+      "...",
+      "GEO action 10: [Paraguay/CDE specific]..."
     ],
     "quickWins": [
       "Quick win 1: [immediate technical fix]...",
-      "Quick win 2: [immediate technical fix]..."
+      "...",
+      "Quick win 10: [immediate technical fix]..."
     ]
   }
 }`;
@@ -187,12 +193,12 @@ FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categoriz
     } else if (isOwner) {
       systemPrompt = `You are operating in MASTER/CONSULTANT MODE - Full Technical Dominance engagement. This is an elite, unfiltered expert-level auditing session with no holding back on technical critiques.
 
-You are auditing for the Paraguay/CDE (Ciudad del Este) region with specialized geological and local business entity mapping strategies.
+You are auditing for (mostly) United States region (assess the location from the website) with specialized regional/local business entity mapping strategies.
 
 CRITICAL OWNER-LEVEL REQUIREMENTS:
 1. Provide EVEN MORE GRANULAR technical detail than standard premium
 2. Identify SPECIFIC code flaws in the DOM structure, including inline styles, deprecated tags, and accessibility violations
-3. Perform advanced geological/local business entity mapping for Paraguay/CDE region
+3. Perform advanced regional/local business entity mapping for (mostly) United States region
 4. Include wireframe analysis for hero sections and conversion funnels
 5. Audit server-side rendering (SSR) and dynamic content loading patterns
 6. Identify JavaScript hydration issues and client-side routing problems
@@ -201,13 +207,13 @@ CRITICAL OWNER-LEVEL REQUIREMENTS:
 
 FIRST: Cross-reference the TECHNICAL SCHEMA block (delimited by ==== START TECHNICAL SCHEMA ==== and ==== END TECHNICAL SCHEMA ====). You MUST check this block before auditing. If a schema type (e.g., FAQPage, LocalBusiness, Organization, Product) is present in that block, you are STRICTLY FORBIDDEN from flagging it as a "Missing Gap" in your analysis. Only flag schema elements that are ACTUALLY ABSENT from the TECHNICAL SCHEMA block.
 
-Provide 5 paragraphs of expert-level strategic analysis identifying:
+Provide 10 paragraphs of expert-level strategic analysis identifying:
 - DOM-level code flaws and specific remediation steps
 - Semantic gaps with granular technical recommendations
-- Paraguay/CDE regional entity mapping opportunities
+- Local/Regional entity mapping opportunities
 - Advanced AEO and GEO positioning strategies
 
-FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categorized into these EXACT buckets:
+FINALLY: Output a strict JSON block with up to 50 Comprehensive Action Items categorized into these buckets (to save tokens and be more concise the 50 items were not all provided in the example below):
 {
   "seo": { "meta": 80, "headers": 70, "mobile": 90 },
   "aeo": { "directness": 60, "schema": 50 },
@@ -216,32 +222,38 @@ FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categoriz
     "immediateTechnicalFixes": [
       "DOM flaw fix 1: [specific code issue]...",
       "DOM flaw fix 2: [specific code issue]...",
-      "DOM flaw fix 3: [specific code issue]..."
+      "DOM flaw fix 3: [specific code issue]...",
+      "...",
+      "DOM flaw fix 15: [specific code issue]..."
     ],
     "answerEngineOptimization": [
       "AEO action 1: [granular technical detail]...",
       "AEO action 2: [granular technical detail]...",
-      "AEO action 3: [granular technical detail]..."
+      "AEO action 3: [granular technical detail]...",
+      "...",
+      "AEO action 15: [granular technical detail]..."
     ],
     "localAuthorityGEO": [
       "GEO action 1: [Paraguay/CDE specific]...",
-      "GEO action 2: [Paraguay/CDE specific]..."
+      "...",
+      "GEO action 10: [Paraguay/CDE specific]..."
     ],
     "quickWins": [
       "Quick win 1: [immediate technical fix]...",
-      "Quick win 2: [immediate technical fix]..."
+      "...",
+      "Quick win 10: [immediate technical fix]..."
     ]
   }
 }`;
       userPrompt = `Analyze this website content:\n\n${targetText}`;
     } else if (competitorUrl && isMidMarket) {
-      systemPrompt = `You are a world-class SEO, AEO, and GEO strategic consultant. This is a $3,000/month premium engagement. Your deliverable is a 10-item Comprehensive Action Plan that demonstrates enterprise-grade expertise. Focus on competitor gap analysis and citability.
+      systemPrompt = `You are a world-class SEO, AEO, and GEO strategic consultant. This is a $3,000/month premium engagement. Your deliverable is a 10 to 25-item Comprehensive Action Plan that demonstrates enterprise-grade expertise. Focus on competitor gap analysis and citability.
 
 FIRST: Cross-reference the TECHNICAL SCHEMA block (delimited by ==== START TECHNICAL SCHEMA ==== and ==== END TECHNICAL SCHEMA ====). You MUST check this block before auditing. If a schema type (e.g., FAQPage, LocalBusiness, Organization, Product) is present in that block, you are STRICTLY FORBIDDEN from flagging it as a "Missing Gap" in your analysis. Only flag schema elements that are ACTUALLY ABSENT from the TECHNICAL SCHEMA block.
 
-Provide 3 paragraphs of strategic analysis identifying Semantic Gaps and competitive positioning for AI citation.
+Provide 5 paragraphs of strategic analysis identifying Semantic Gaps and competitive positioning for AI citation.
 
-FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categorized into these EXACT buckets:
+FINALLY: Output a strict JSON block with 10-25 Comprehensive Action Items categorized into these EXACT buckets:
 {
   "target": { "seo": { "meta": 80, "headers": 70, "mobile": 90 }, "aeo": { "directness": 60, "schema": 50 }, "geo": { "citability": 65, "authority": 70 } },
   "competitor": { "seo": { "meta": 85, "headers": 80, "mobile": 95 }, "aeo": { "directness": 75, "schema": 60 }, "geo": { "citability": 90, "authority": 85 } },
@@ -249,32 +261,44 @@ FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categoriz
     "immediateTechnicalFixes": [
       "Technical fix 1...",
       "Technical fix 2...",
-      "Technical fix 3..."
+      "Technical fix 3...",
+      "Technical fix 4...",
+      "Technical fix 5...",
+      "Technical fix 6..."
     ],
     "answerEngineOptimization": [
       "AEO action 1...",
       "AEO action 2...",
-      "AEO action 3..."
+      "AEO action 3...",
+      "AEO action 4...",
+      "AEO action 5...",
+      "AEO action 6..."
     ],
     "localAuthorityGEO": [
       "GEO action 1...",
-      "GEO action 2..."
+      "GEO action 2...",
+      "GEO action 3...",
+      "GEO action 4...",
+      "GEO action 5..."
     ],
     "quickWins": [
       "Quick win 1...",
-      "Quick win 2..."
+      "Quick win 2...",
+      "Quick win 3...",
+      "Quick win 4...",
+      "Quick win 5..."
     ]
   }
 }`;
       userPrompt = `Analyze and compare these two websites:\n\n=== TARGET [${targetUrl}] ===\n${targetText}\n\n=== COMPETITOR [${competitorUrl}] ===\n${compText}`;
     } else if (isMidMarket) {
-      systemPrompt = `You are a world-class SEO, AEO, and GEO strategic consultant. This is a $3,000/month premium engagement. Your deliverable is a 10-item Comprehensive Action Plan that demonstrates enterprise-grade expertise. Focus on competitor gap analysis and citability.
+      systemPrompt = `You are a world-class SEO, AEO, and GEO strategic consultant. This is a $3,000/month premium engagement. Your deliverable is a 10 to 25-item Comprehensive Action Plan that demonstrates enterprise-grade expertise. Focus on competitor gap analysis and citability.
 
 FIRST: Cross-reference the TECHNICAL SCHEMA block (delimited by ==== START TECHNICAL SCHEMA ==== and ==== END TECHNICAL SCHEMA ====). You MUST check this block before auditing. If a schema type (e.g., FAQPage, LocalBusiness, Organization, Product) is present in that block, you are STRICTLY FORBIDDEN from flagging it as a "Missing Gap" in your analysis. Only flag schema elements that are ACTUALLY ABSENT from the TECHNICAL SCHEMA block.
 
-Provide 3 paragraphs of strategic analysis identifying Semantic Gaps and Answer Engine positioning.
+Provide 5 paragraphs of strategic analysis identifying Semantic Gaps and Answer Engine positioning.
 
-FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categorized into these EXACT buckets:
+FINALLY: Output a strict JSON block with 10-25 Comprehensive Action Items categorized into these EXACT buckets:
 {
   "seo": { "meta": 80, "headers": 70, "mobile": 90 },
   "aeo": { "directness": 60, "schema": 50 },
@@ -283,20 +307,32 @@ FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categoriz
     "immediateTechnicalFixes": [
       "Technical fix 1...",
       "Technical fix 2...",
-      "Technical fix 3..."
+      "Technical fix 3...",
+      "Technical fix 4...",
+      "Technical fix 5...",
+      "Technical fix 6..."
     ],
     "answerEngineOptimization": [
       "AEO action 1...",
       "AEO action 2...",
-      "AEO action 3..."
+      "AEO action 3...",
+      "AEO action 4...",
+      "AEO action 5...",
+      "AEO action 6..."
     ],
     "localAuthorityGEO": [
       "GEO action 1...",
-      "GEO action 2..."
+      "GEO action 2...",
+      "GEO action 3...",
+      "GEO action 4...",
+      "GEO action 5..."
     ],
     "quickWins": [
       "Quick win 1...",
-      "Quick win 2..."
+      "Quick win 2...",
+      "Quick win 3...",
+      "Quick win 4...",
+      "Quick win 5..."
     ]
   }
 }`;
