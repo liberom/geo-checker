@@ -58,8 +58,9 @@
       body {
         background: white !important;
         color: black !important;
-        padding-top: 0 !important;
+        padding-top: 30px !important;
         padding-bottom: 0 !important;
+        margin: 0 !important;
         font-family: 'Georgia', 'Times New Roman', serif !important;
       }
 
@@ -189,14 +190,18 @@
       }
 
       /* Hide only the visual gauge elements and form, keep print sections visible */
-      #results-dashboard > .glass-card,
-      #results-dashboard > h2,
-      #results-dashboard > .grid:not(#results-dashboard-comp) {
+      #results-dashboard>.glass-card,
+      #results-dashboard>h2,
+      #results-dashboard>.grid:not(#results-dashboard-comp) {
         display: none !important;
       }
 
       #results-dashboard-comp {
         display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
 
       /* ==================== GLASS CARD REMOVAL ==================== */
@@ -211,7 +216,7 @@
       }
 
       /* ==================== PRINT SCORES SECTION (All-In-One Summary) ==================== */
-      
+
       #print-scores-section {
         display: block !important;
         visibility: visible !important;
@@ -238,6 +243,36 @@
         padding: 0.25rem 0;
         font-size: 11px;
         color: black !important;
+      }
+
+      /* ==================== STRATEGIC ANALYSIS SECTION ==================== */
+
+      #print-analysis-section {
+        display: block !important;
+        visibility: visible !important;
+        background: #f9f9f9 !important;
+        border: 2px solid #ccc !important;
+        padding: 1.5rem !important;
+        margin-top: 1.5rem !important;
+        margin-bottom: 1.5rem !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      #print-analysis-section h4 {
+        color: black !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        margin-bottom: 1rem !important;
+        border-bottom: 1px solid #ccc !important;
+      }
+
+      #print-analysis-content p {
+        color: black !important;
+        font-size: 11px !important;
+        line-height: 1.5 !important;
+        margin-bottom: 0.5rem !important;
+        text-align: justify !important;
       }
 
       /* ==================== TEXT ANALYSIS LOG ==================== */
@@ -359,8 +394,9 @@
         padding: 1.5rem !important;
         margin-top: 2rem !important;
         margin-bottom: 2rem !important;
-        page-break-inside: avoid;
-        break-inside: avoid;
+        page-break-before: avoid !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
       }
 
       #print-explanations-section>* {
@@ -374,6 +410,7 @@
         font-weight: bold !important;
         margin-bottom: 1rem !important;
         border-bottom: 1px solid #ccc !important;
+        page-break-after: avoid !important;
       }
 
       #print-explanations-section p {
@@ -390,11 +427,12 @@
 
       /* ==================== PAGE BREAK HANDLING ==================== */
 
+      /* Body padding already set above, no need to override */
       /* Remove padding on body for print to prevent blank pages */
-      body {
+      /* body {
         padding-top: 0 !important;
         padding-bottom: 0 !important;
-      }
+      } */
 
       /* Ensure paragraphs don't get cut in half */
       #analysis-log p,
@@ -910,8 +948,15 @@
       </div>
     </div>
 
-    <!-- Print-Only Explanations Section - Hidden on Screen, Visible in PDF -->
+    <!-- Strategic Analysis Section - Hidden on Screen, Visible in PDF -->
+    <div id="print-analysis-section" class="hidden print:block mt-8 p-6 bg-gray-50 border-2 border-gray-300">
+      <h4 class="text-black font-bold border-b border-gray-400 pb-2 mb-4 text-lg">Strategic Analysis</h4>
+      <div id="print-analysis-content" class="text-black text-sm leading-relaxed space-y-3">
+        <!-- Analysis paragraphs will be inserted here -->
+      </div>
+    </div>
 
+    <!-- Strategic Roadmap Section - Hidden on Screen, Visible in PDF -->
     <div id="strategic-roadmap" class="hidden print:block mt-12 glass-card p-10 rounded-3xl border border-blue-500/30">
       <h3 class="text-2xl font-extrabold mb-6 text-white flex items-center gap-3">
         <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1067,7 +1112,7 @@
     </div>
 
 
-    <div class="mt-12 flex justify-center pb-4 gap-4 no-print">
+    <div class="mt-12 flex justify-center pb-4 no-print">
       <button id="btn-copy-report"
         class="bg-slate-800 hover:bg-slate-700 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-3 backdrop-blur-md shadow-lg shadow-black/20 group">
         <svg class="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor"
@@ -1078,15 +1123,8 @@
         </svg>
         Copy Report to Clipboard
       </button>
-      <button id="btn-print-report"
-        class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-3 backdrop-blur-md shadow-lg shadow-blue-500/20 group">
-        <svg class="w-5 h-5 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor"
-          viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
-          </path>
-        </svg>
-        Download PDF Report
+      <button id="btn-print-report" style="display: none;">
+        Hidden Print Button
       </button>
     </div>
   </section>
@@ -1972,48 +2010,48 @@
                   // Build Educational Appendix (matching printed Metrics Explained section exactly)
                   const appendix = `\n## 💡 REFERENCE GUIDE\n` +
                     `### SEO (Search Engine Optimization)\n` +
-                    `**What is it?** The practice of improving website visibility in traditional search engine results through technical HTML structure and metadata.\n\n` +
-                    `**What does it mean?** Measures how well your site is optimized for classic Google algorithms.\n\n` +
-                    `**Good SEO:** Unique titles, clear header hierarchy, mobile-optimized design.\n\n` +
+                    `**What is it?** The practice of improving website visibility in traditional search engine results through technical HTML structure and metadata.\n` +
+                    `**What does it mean?** Measures how well your site is optimized for classic Google algorithms.\n` +
+                    `**Good SEO:** Unique titles, clear header hierarchy, mobile-optimized design.\n` +
                     `### Meta Tags\n` +
-                    `**What is it?** HTML elements providing metadata about a webpage (title, description, canonical URLs).\n\n` +
-                    `**What does it mean?** How well page metadata communicates content relevance to search engines.\n\n` +
-                    `**Good Meta:** Unique title under 60 chars, compelling description, proper canonical URLs.\n\n` +
+                    `**What is it?** HTML elements providing metadata about a webpage (title, description, canonical URLs).\n` +
+                    `**What does it mean?** How well page metadata communicates content relevance to search engines.\n` +
+                    `**Good Meta:** Unique title under 60 chars, compelling description, proper canonical URLs.\n` +
                     `### Headers (H1-H6)\n` +
-                    `**What is it?** HTML elements defining hierarchical structure and outline of content.\n\n` +
-                    `**What does it mean?** How well content is organized for search engines and users.\n\n` +
-                    `**Good Headers:** One H1 per page, logical hierarchy, accurately describe content.\n\n` +
+                    `**What is it?** HTML elements defining hierarchical structure and outline of content.\n` +
+                    `**What does it mean?** How well content is organized for search engines and users.\n` +
+                    `**Good Headers:** One H1 per page, logical hierarchy, accurately describe content.\n` +
                     `### Mobile\n` +
-                    `**What is it?** How well your site performs on mobile devices including Core Web Vitals.\n\n` +
-                    `**What does it mean?** Whether your site provides fast, accessible mobile experience.\n\n` +
-                    `**Good Mobile:** Responsive design, fast loading, touch-friendly interface.\n\n` +
+                    `**What is it?** How well your site performs on mobile devices including Core Web Vitals.\n` +
+                    `**What does it mean?** Whether your site provides fast, accessible mobile experience.\n` +
+                    `**Good Mobile:** Responsive design, fast loading, touch-friendly interface.\n` +
                     `### AEO (Answer Engine Optimization)\n` +
-                    `**What is it?** Optimizing content to appear in direct answers, featured snippets, and voice search.\n\n` +
-                    `**What does it mean?** How effectively content answers direct questions for "position zero" results.\n\n` +
-                    `**Good AEO:** Direct, concise answers, proper FAQ/HowTo schema, clear content structure.\n\n` +
+                    `**What is it?** Optimizing content to appear in direct answers, featured snippets, and voice search.\n` +
+                    `**What does it mean?** How effectively content answers direct questions for "position zero" results.\n` +
+                    `**Good AEO:** Direct, concise answers, proper FAQ/HowTo schema, clear content structure.\n` +
                     `### Directness\n` +
-                    `**What is it?** How effectively content provides immediate, clear answers without fluff.\n\n` +
-                    `**What does it mean?** Whether content immediately answers queries in concise, extractable form.\n\n` +
-                    `**Good Directness:** Answers at beginning, concise language, structured data for snippets.\n\n` +
+                    `**What is it?** How effectively content provides immediate, clear answers without fluff.\n` +
+                    `**What does it mean?** Whether content immediately answers queries in concise, extractable form.\n` +
+                    `**Good Directness:** Answers at beginning, concise language, structured data for snippets.\n` +
                     `### Schema\n` +
-                    `**What is it?** Structured data code (Schema.org) helping search engines understand content context.\n\n` +
-                    `**What does it mean?** How well content is marked up with structured data types.\n\n` +
-                    `**Good Schema:** Relevant schema types, complete data fields, valid JSON-LD.\n\n` +
+                    `**What is it?** Structured data code (Schema.org) helping search engines understand content context.\n` +
+                    `**What does it mean?** How well content is marked up with structured data types.\n` +
+                    `**Good Schema:** Relevant schema types, complete data fields, valid JSON-LD.\n` +
                     `### GEO (Generative Engine Optimization)\n` +
-                    `**What is it?** Optimizing content for AI-powered search engines and Large Language Models.\n\n` +
-                    `**What does it mean?** Probability of being cited by AI models like ChatGPT and Claude.\n\n` +
-                    `**Good GEO:** Authoritative content, strong entity signals, structured data for LLMs.\n\n` +
+                    `**What is it?** Optimizing content for AI-powered search engines and Large Language Models.\n` +
+                    `**What does it mean?** Probability of being cited by AI models like ChatGPT and Claude.\n` +
+                    `**Good GEO:** Authoritative content, strong entity signals, structured data for LLMs.\n` +
                     `### Citability\n` +
-                    `**What is it?** Likelihood your content will be referenced by AI language models.\n\n` +
-                    `**What does it mean?** Whether content has characteristics LLMs look for in sources.\n\n` +
-                    `**Good Citability:** Well-researched content, clear authorship, unique value.\n\n` +
+                    `**What is it?** Likelihood your content will be referenced by AI language models.\n` +
+                    `**What does it mean?** Whether content has characteristics LLMs look for in sources.\n` +
+                    `**Good Citability:** Well-researched content, clear authorship, unique value.\n` +
                     `### Authority (E-E-A-T)\n` +
-                    `**What is it?** Expertise, experience, authoritativeness, and trustworthiness signals.\n\n` +
-                    `**What does it mean?** Whether content demonstrates topical expertise and trust signals.\n\n` +
-                    `**Good Authority:** Demonstrated expertise, credible backlinks, transparent author info.\n\n` +
+                    `**What is it?** Expertise, experience, authoritativeness, and trustworthiness signals.\n` +
+                    `**What does it mean?** Whether content demonstrates topical expertise and trust signals.\n` +
+                    `**Good Authority:** Demonstrated expertise, credible backlinks, transparent author info.\n` +
                     `### LLM Citation Share\n` +
-                    `**What is it?** Estimated percentage of AI responses referencing your content.\n\n` +
-                    `**What does it mean?** How often AI systems reference your content in responses.\n\n` +
+                    `**What is it?** Estimated percentage of AI responses referencing your content.\n` +
+                    `**What does it mean?** How often AI systems reference your content in responses.\n` +
                     `**Good LLM Citation:** Higher percentage = more AI visibility, well-structured content.`;
 
                   // Build the complete report with Markdown headers and clean formatting
@@ -2052,6 +2090,14 @@
                   const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                   document.getElementById('print-date-display').textContent = `Date: ${dateStr}`;
                   document.getElementById('print-url-display').textContent = `URL: ${targetUrl}`;
+
+                  // Populate strategic analysis section for print
+                  const printAnalysisDiv = document.getElementById('print-analysis-content');
+                  if (printAnalysisDiv && textAnalysis) {
+                    // Convert textAnalysis paragraphs to HTML
+                    const paragraphs = textAnalysis.split('\n\n').filter(p => p.trim().length > 0);
+                    printAnalysisDiv.innerHTML = paragraphs.map(p => `<p>${p.trim()}</p>`).join('');
+                  }
 
                   // Prepare print content by filtering out JSON
                   const logDiv = document.getElementById('analysis-log');
