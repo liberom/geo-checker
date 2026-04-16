@@ -199,7 +199,11 @@
         padding-bottom: 10px;
         border-bottom: 2px solid black;
         z-index: 1000;
-        color: black;
+        color: black !important;
+      }
+
+      .print-header * {
+        color: black !important;
       }
 
       .print-footer {
@@ -785,7 +789,7 @@
           <div class="score-item"><span>Overall GEO:</span><span id="print-geo-overall">0 / 100</span></div>
           <div class="score-item"><span>Citability:</span><span id="print-geo-citability">0 / 100</span></div>
           <div class="score-item"><span>Authority:</span><span id="print-geo-authority">0 / 100</span></div>
-          <div class="score-item"><span>LLM Citability:</span><span id="print-geo-llm-citability">0 / 100</span></div>
+          <div class="score-item"><span>LLM Citation Share:</span><span id="print-geo-llm-citation-share"></span></div>
         </div>
       </div>
     </div>
@@ -1394,11 +1398,15 @@
                   document.getElementById('print-geo-citability').innerText = `${gCitability} / 100`;
                   document.getElementById('print-geo-authority').innerText = `${gAuthority} / 100`;
 
-                  // LLM Citability - use citation share if available, otherwise use citability score
-                  const llmCitability = document.getElementById('txt-citation-share')?.innerText !== 'Probing...' 
-                    ? document.getElementById('txt-citation-share')?.innerText 
-                    : `${gCitability} / 100`;
-                  document.getElementById('print-geo-llm-citability').innerText = llmCitability;
+                  // LLM Citation Share - only show if available (not "Probing...")
+                  const citationShareEl = document.getElementById('print-geo-llm-citation-share');
+                  const shareText = document.getElementById('txt-citation-share')?.innerText;
+                  if (shareText && shareText !== 'Probing...' && shareText !== 'N/A') {
+                    citationShareEl.innerText = shareText;
+                  } else {
+                    // Hide the row if citation share is not available
+                    citationShareEl.parentElement.style.display = 'none';
+                  }
                 };
                 updatePrintScores();
 
@@ -1530,8 +1538,8 @@
                 document.getElementById('btn-print-report').onclick = () => {
                   const now = new Date();
                   const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                  document.getElementById('print-date-display').innerText = `Date: ${dateStr}`;
-                  document.getElementById('print-url-display').innerText = `Target: ${targetUrl}`;
+                  document.getElementById('print-date-display').innerText = `Current Date: ${dateStr}`;
+                  document.getElementById('print-url-display').innerText = `Target URL: ${targetUrl}`;
                   window.print();
                 };
 
