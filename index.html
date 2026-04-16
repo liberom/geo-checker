@@ -60,6 +60,34 @@
         color: black !important;
         padding-top: 100px;
         padding-bottom: 60px;
+        font-family: 'Georgia', 'Times New Roman', serif !important;
+      }
+
+      /* Hide all SVG gauge containers and dials in results dashboard */
+      #results-dashboard #svg-seo,
+      #results-dashboard #svg-aeo,
+      #results-dashboard #svg-geo,
+      #results-dashboard-comp #svg-seo-comp,
+      #results-dashboard-comp #svg-aeo-comp,
+      #results-dashboard-comp #svg-geo-comp,
+      #results-dashboard .glass-card > .relative.w-32.h-32,
+      #results-dashboard-comp .glass-card > .relative.w-24.h-24 {
+        display: none !important;
+      }
+
+      /* Also hide the gauge score numbers (0/100) in visual cards */
+      #score-seo,
+      #score-aeo,
+      #score-geo,
+      #score-seo-comp,
+      #score-aeo-comp,
+      #score-geo-comp {
+        display: none !important;
+      }
+
+      /* Show print-only text scores section */
+      #print-scores-section {
+        display: block !important;
       }
 
       *,
@@ -75,7 +103,10 @@
       #features,
       .app-footer,
       .no-print,
-      #auditForm {
+      #auditForm,
+      #btn-copy-report,
+      #btn-print-report,
+      .vynix-gradient {
         display: none !important;
       }
 
@@ -110,27 +141,43 @@
         color: black !important;
       }
 
-      /* Force SVG gauge strokes visible */
-      #svg-seo,
-      #svg-aeo,
-      #svg-geo {
-        stroke: #2563eb !important;
+      /* Ensure print scores section is visible and styled */
+      #print-scores-section {
+        background: white !important;
+        border: 2px solid black !important;
+        padding: 1.5rem !important;
+        margin-bottom: 2rem !important;
+        page-break-inside: avoid;
       }
 
-      /* Also fix competitor gauge SVGs */
-      #svg-seo-comp,
-      #svg-aeo-comp,
-      #svg-geo-comp {
-        stroke: #2563eb !important;
+      #print-scores-section h4 {
+        color: black !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        margin-bottom: 0.5rem !important;
+        border-bottom: 1px solid #ccc !important;
+        padding-bottom: 0.25rem !important;
+      }
+
+      #print-scores-section .score-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.25rem 0;
+        font-size: 11px;
+        color: black !important;
       }
 
       #analysis-log {
         height: auto !important;
+        max-height: none !important;
         overflow: visible !important;
         background: transparent !important;
         border: 1px solid #ccc !important;
         color: black !important;
         padding: 1rem !important;
+        font-family: 'Georgia', 'Times New Roman', serif !important;
+        font-size: 12px !important;
+        line-height: 1.6 !important;
       }
 
       h1,
@@ -215,18 +262,16 @@
         line-height: 1.3 !important;
       }
 
-      /* Fix gauge backgrounds and ensure circles are visible */
-      svg circle {
-        stroke: currentColor !important;
+      /* Page break before strategic roadmap */
+      #strategic-roadmap {
+        page-break-before: always;
+        break-before: page;
       }
 
-      svg circle.text-slate-800 {
-        stroke: #e5e5e5 !important;
-      }
-
-      /* Ensure all SVG elements have black strokes */
-      svg {
-        stroke: black !important;
+      /* Clean up any remaining visual elements */
+      .w-14.h-14,
+      .absolute.top-0.right-0 {
+        display: none !important;
       }
     }
   </style>
@@ -238,11 +283,11 @@
     <div class="flex items-center gap-3">
       <img src="https://liberom.github.io/vynix-sys/assets/Vynix-Logo.png" alt="Vynix Logo"
         class="h-8 object-contain filter grayscale brightness-0">
-      <h1 class="text-2xl font-black uppercase tracking-tight m-0 leading-none">Vynix Systems | Digital Visibility Audit
+      <h1 class="text-2xl font-black uppercase tracking-tight m-0 leading-none">Advanced Digital Entity Audit
       </h1>
     </div>
     <div class="flex justify-between mt-3 font-bold text-sm pt-2 border-t border-slate-300">
-      <span id="print-date-display"></span>
+      <span id="print-date-display">Date: </span>
       <span id="print-url-display"></span>
     </div>
   </div>
@@ -716,6 +761,35 @@
       </div>
     </div>
 
+    <!-- Print-Only Text Scoring Section - Hidden on Screen, Visible in PDF -->
+    <div id="print-scores-section" class="hidden mt-8 p-4 bg-white border-2 border-black">
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- SEO Scores -->
+        <div>
+          <h4 class="text-black font-bold border-b border-gray-400 pb-1 mb-2">SEO Score Breakdown</h4>
+          <div class="score-item"><span>Overall SEO:</span><span id="print-seo-overall">0 / 100</span></div>
+          <div class="score-item"><span>Meta:</span><span id="print-seo-meta">0 / 100</span></div>
+          <div class="score-item"><span>Headers:</span><span id="print-seo-headers">0 / 100</span></div>
+          <div class="score-item"><span>Mobile:</span><span id="print-seo-mobile">0 / 100</span></div>
+        </div>
+        <!-- AEO Scores -->
+        <div>
+          <h4 class="text-black font-bold border-b border-gray-400 pb-1 mb-2">AEO Score Breakdown</h4>
+          <div class="score-item"><span>Overall AEO:</span><span id="print-aeo-overall">0 / 100</span></div>
+          <div class="score-item"><span>Directness:</span><span id="print-aeo-directness">0 / 100</span></div>
+          <div class="score-item"><span>Schema:</span><span id="print-aeo-schema">0 / 100</span></div>
+        </div>
+        <!-- GEO Scores -->
+        <div>
+          <h4 class="text-black font-bold border-b border-gray-400 pb-1 mb-2">GEO Score Breakdown</h4>
+          <div class="score-item"><span>Overall GEO:</span><span id="print-geo-overall">0 / 100</span></div>
+          <div class="score-item"><span>Citability:</span><span id="print-geo-citability">0 / 100</span></div>
+          <div class="score-item"><span>Authority:</span><span id="print-geo-authority">0 / 100</span></div>
+          <div class="score-item"><span>LLM Citability:</span><span id="print-geo-llm-citability">0 / 100</span></div>
+        </div>
+      </div>
+    </div>
+
     <div id="strategic-roadmap" class="mt-12 glass-card p-10 rounded-3xl border border-blue-500/30">
       <h3 class="text-2xl font-extrabold mb-6 text-white flex items-center gap-3">
         <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1151,6 +1225,32 @@
                     const data = parsed.target ? parsed.target : parsed;
                     animateFromData(data);
 
+                    // Update print scores in real-time
+                    const sMeta = data.seo?.meta || 0;
+                    const sHeaders = data.seo?.headers || 0;
+                    const sMobile = data.seo?.mobile || 0;
+                    const aDirect = data.aeo?.directness || 0;
+                    const aSchema = data.aeo?.schema || 0;
+                    const gCitability = data.geo?.citability || 0;
+                    const gAuthority = data.geo?.authority || 0;
+                    const seoScore = Math.round((sMeta + sHeaders + sMobile) / 3) || 0;
+                    const aeoScore = Math.round((aDirect + aSchema) / 2) || 0;
+                    const geoScore = Math.round((gCitability + gAuthority) / 2) || 0;
+
+                    const printEl = document.getElementById('print-seo-overall');
+                    if (printEl) {
+                      document.getElementById('print-seo-overall').innerText = `${seoScore} / 100`;
+                      document.getElementById('print-seo-meta').innerText = `${sMeta} / 100`;
+                      document.getElementById('print-seo-headers').innerText = `${sHeaders} / 100`;
+                      document.getElementById('print-seo-mobile').innerText = `${sMobile} / 100`;
+                      document.getElementById('print-aeo-overall').innerText = `${aeoScore} / 100`;
+                      document.getElementById('print-aeo-directness').innerText = `${aDirect} / 100`;
+                      document.getElementById('print-aeo-schema').innerText = `${aSchema} / 100`;
+                      document.getElementById('print-geo-overall').innerText = `${geoScore} / 100`;
+                      document.getElementById('print-geo-citability').innerText = `${gCitability} / 100`;
+                      document.getElementById('print-geo-authority').innerText = `${gAuthority} / 100`;
+                    }
+
                     if (parsed.priorities) {
                       renderPriorities(parsed.priorities);
                     }
@@ -1279,6 +1379,29 @@
                   document.getElementById(`txt-${id}`).innerText = `${val}%`;
                 };
 
+                // Update print-only text scores
+                const updatePrintScores = () => {
+                  document.getElementById('print-seo-overall').innerText = `${seoScore} / 100`;
+                  document.getElementById('print-seo-meta').innerText = `${sMeta} / 100`;
+                  document.getElementById('print-seo-headers').innerText = `${sHeaders} / 100`;
+                  document.getElementById('print-seo-mobile').innerText = `${sMobile} / 100`;
+
+                  document.getElementById('print-aeo-overall').innerText = `${aeoScore} / 100`;
+                  document.getElementById('print-aeo-directness').innerText = `${aDirect} / 100`;
+                  document.getElementById('print-aeo-schema').innerText = `${aSchema} / 100`;
+
+                  document.getElementById('print-geo-overall').innerText = `${geoScore} / 100`;
+                  document.getElementById('print-geo-citability').innerText = `${gCitability} / 100`;
+                  document.getElementById('print-geo-authority').innerText = `${gAuthority} / 100`;
+
+                  // LLM Citability - use citation share if available, otherwise use citability score
+                  const llmCitability = document.getElementById('txt-citation-share')?.innerText !== 'Probing...' 
+                    ? document.getElementById('txt-citation-share')?.innerText 
+                    : `${gCitability} / 100`;
+                  document.getElementById('print-geo-llm-citability').innerText = llmCitability;
+                };
+                updatePrintScores();
+
                 animateGauge('seo', Math.min(100, Math.max(0, seoScore)));
                 animateBar('seo-meta', sMeta);
                 animateBar('seo-headers', sHeaders);
@@ -1406,8 +1529,9 @@
                 // Enable PDF Print Button
                 document.getElementById('btn-print-report').onclick = () => {
                   const now = new Date();
-                  document.getElementById('print-date-display').innerText = `Generated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
-                  document.getElementById('print-url-display').innerText = `Target: ${targetUrl} ${compUrl ? ' | Comp: ' + compUrl : ''}`;
+                  const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                  document.getElementById('print-date-display').innerText = `Date: ${dateStr}`;
+                  document.getElementById('print-url-display').innerText = `Target: ${targetUrl}`;
                   window.print();
                 };
 
