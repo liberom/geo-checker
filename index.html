@@ -58,8 +58,8 @@
       body {
         background: white !important;
         color: black !important;
-        padding-top: 80px;
-        padding-bottom: 40px;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
         font-family: 'Georgia', 'Times New Roman', serif !important;
       }
 
@@ -179,18 +179,11 @@
       /* ==================== RESULTS DASHBOARD ==================== */
 
       #results-dashboard {
-        display: block !important;
-        opacity: 1 !important;
-        border: none !important;
-        padding-top: 0 !important;
-        background: white !important;
+        display: none !important;
       }
 
       #results-dashboard-comp {
-        display: block !important;
-        border: 1px solid #ccc !important;
-        margin-top: 1rem !important;
-        margin-bottom: 2rem !important;
+        display: none !important;
       }
 
       /* ==================== GLASS CARD REMOVAL ==================== */
@@ -270,8 +263,6 @@
         padding: 1.5rem !important;
         margin-top: 2rem !important;
         margin-bottom: 2rem !important;
-        page-break-before: always;
-        break-before: page;
         break-inside: avoid;
         background: white !important;
       }
@@ -284,13 +275,25 @@
         margin-bottom: 1rem !important;
       }
 
-      /* Hide section category headers in print, show items only */
+      /* Show section category headers in print */
       #priorities-container {
         display: block !important;
       }
 
+      #priorities-immediate,
+      #priorities-aeo,
+      #priorities-geo,
+      #priorities-quickwins {
+        display: block !important;
+      }
+
       #priorities-container h4 {
-        display: none !important;
+        display: block !important;
+        color: black !important;
+        font-size: 12px !important;
+        font-weight: bold !important;
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.25rem !important;
       }
 
       #priorities-immediate,
@@ -339,8 +342,13 @@
         border: 2px solid black !important;
         padding: 1.5rem !important;
         margin-top: 2rem !important;
-        page-break-before: always;
-        break-before: page;
+        margin-bottom: 2rem !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      
+      #print-explanations-section > * {
+        page-break-inside: avoid;
         break-inside: avoid;
       }
 
@@ -366,6 +374,12 @@
 
       /* ==================== PAGE BREAK HANDLING ==================== */
 
+      /* Remove padding on body for print to prevent blank pages */
+      body {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+      }
+
       /* Ensure paragraphs don't get cut in half */
       #analysis-log p,
       #priorities-list-immediate li,
@@ -386,6 +400,11 @@
 </head>
 
 <body class="bg-slate-900 text-slate-100 font-sans antialiased">
+
+  <!-- Print Header - Hidden on screen, visible in PDF -->
+  <div id="print-header-info" class="hidden print:block fixed top-0 left-0 right-0 bg-white p-2 text-center text-xs z-50" style="border-bottom: 1px solid #ccc;">
+    <span id="print-date-display"></span> | <span id="print-url-display"></span>
+  </div>
 
   <header id="app-header"
     class="border-b border-slate-800 py-5 px-6 sticky top-0 bg-slate-900/80 backdrop-blur-md z-50">
@@ -1268,7 +1287,7 @@
           </div>
           <h3 class="text-xl font-bold mb-4 text-purple-300">GEO Score (Generative Engine Optimization)</h3>
           <p class="text-slate-400 text-sm leading-relaxed mb-3">The frontier of AI search. Measures your brand's
-            citability in large language models like ChatGPT, Claude, and Gemini—optimizing for generative answer
+            citability in large language models like ChatGPT, Claude, and Gemini-optimizing for generative answer
             citations.</p>
           <div class="space-y-2 text-xs text-slate-500">
             <div class="flex justify-between"><span>Citability:</span><span class="text-purple-200">LLM citation
@@ -1932,21 +1951,65 @@
                     });
                   }
 
-                  // Build Educational Appendix
+                  // Build Educational Appendix (matching printed Metrics Explained section exactly)
                   const appendix = `\n## 💡 REFERENCE GUIDE\n` +
-                    `**SEO (Search Engine Optimization):** The practice of improving website visibility in traditional search engine results through technical HTML structure and metadata quality.\n\n` +
-                    `**AEO (Answer Engine Optimization):** Optimizing content to appear in direct answers, featured snippets, and voice search results.\n\n` +
-                    `**GEO (Generative Engine Optimization):** Optimizing content for AI-powered search engines and Large Language Models to appear in AI-generated citations.`;
+                    `### SEO (Search Engine Optimization)\n` +
+                    `**What is it?** The practice of improving website visibility in traditional search engine results through technical HTML structure and metadata.\n\n` +
+                    `**What does it mean?** Measures how well your site is optimized for classic Google algorithms.\n\n` +
+                    `**Good SEO:** Unique titles, clear header hierarchy, mobile-optimized design.\n\n` +
+                    `### Meta Tags\n` +
+                    `**What is it?** HTML elements providing metadata about a webpage (title, description, canonical URLs).\n\n` +
+                    `**What does it mean?** How well page metadata communicates content relevance to search engines.\n\n` +
+                    `**Good Meta:** Unique title under 60 chars, compelling description, proper canonical URLs.\n\n` +
+                    `### Headers (H1-H6)\n` +
+                    `**What is it?** HTML elements defining hierarchical structure and outline of content.\n\n` +
+                    `**What does it mean?** How well content is organized for search engines and users.\n\n` +
+                    `**Good Headers:** One H1 per page, logical hierarchy, accurately describe content.\n\n` +
+                    `### Mobile\n` +
+                    `**What is it?** How well your site performs on mobile devices including Core Web Vitals.\n\n` +
+                    `**What does it mean?** Whether your site provides fast, accessible mobile experience.\n\n` +
+                    `**Good Mobile:** Responsive design, fast loading, touch-friendly interface.\n\n` +
+                    `### AEO (Answer Engine Optimization)\n` +
+                    `**What is it?** Optimizing content to appear in direct answers, featured snippets, and voice search.\n\n` +
+                    `**What does it mean?** How effectively content answers direct questions for "position zero" results.\n\n` +
+                    `**Good AEO:** Direct, concise answers, proper FAQ/HowTo schema, clear content structure.\n\n` +
+                    `### Directness\n` +
+                    `**What is it?** How effectively content provides immediate, clear answers without fluff.\n\n` +
+                    `**What does it mean?** Whether content immediately answers queries in concise, extractable form.\n\n` +
+                    `**Good Directness:** Answers at beginning, concise language, structured data for snippets.\n\n` +
+                    `### Schema\n` +
+                    `**What is it?** Structured data code (Schema.org) helping search engines understand content context.\n\n` +
+                    `**What does it mean?** How well content is marked up with structured data types.\n\n` +
+                    `**Good Schema:** Relevant schema types, complete data fields, valid JSON-LD.\n\n` +
+                    `### GEO (Generative Engine Optimization)\n` +
+                    `**What is it?** Optimizing content for AI-powered search engines and Large Language Models.\n\n` +
+                    `**What does it mean?** Probability of being cited by AI models like ChatGPT and Claude.\n\n` +
+                    `**Good GEO:** Authoritative content, strong entity signals, structured data for LLMs.\n\n` +
+                    `### Citability\n` +
+                    `**What is it?** Likelihood your content will be referenced by AI language models.\n\n` +
+                    `**What does it mean?** Whether content has characteristics LLMs look for in sources.\n\n` +
+                    `**Good Citability:** Well-researched content, clear authorship, unique value.\n\n` +
+                    `### Authority (E-E-A-T)\n` +
+                    `**What is it?** Expertise, experience, authoritativeness, and trustworthiness signals.\n\n` +
+                    `**What does it mean?** Whether content demonstrates topical expertise and trust signals.\n\n` +
+                    `**Good Authority:** Demonstrated expertise, credible backlinks, transparent author info.\n\n` +
+                    `### LLM Citation Share\n` +
+                    `**What is it?** Estimated percentage of AI responses referencing your content.\n\n` +
+                    `**What does it mean?** How often AI systems reference your content in responses.\n\n` +
+                    `**Good LLM Citation:** Higher percentage = more AI visibility, well-structured content.`;
 
                   // Build the complete report with Markdown headers and clean formatting
                   // Extract business name from target URL
                   const businessName = targetUrl.replace(/^https?:\/\/(www\.)?/, '').split('/')[0].toUpperCase();
-                  const reportData = `## ADVANCED DIGITAL ENTITY AUDIT: ${businessName}\n` +
+                  // Add additional markdown headers to strategic analysis section (before STRATEGIC ROADMAP)
+                  const enhancedTextAnalysis = textAnalysis.replace(/^## /gm, '### ').replace(/^### /gm, '#### ');
+                  const reportData = `# ADVANCED DIGITAL ENTITY AUDIT: ${businessName}\n` +
                     `**Target URL:** ${targetUrl}\n` +
                     `${compUrl ? '**Competitor URL:** ' + compUrl + '\n' : ''}` +
                     `**Date:** ${dateStr}\n\n` +
                     `${summaryScores}\n\n` +
-                    `${textAnalysis}\n\n` +
+                    `#### 📝 COMPREHENSIVE SEO, AEO, AND GEO STRATEGIC ANALYSIS\n` +
+                    `${enhancedTextAnalysis}\n\n` +
                     `${roadmap}\n` +
                     `${appendix}`;
 
@@ -1957,12 +2020,22 @@
                   setTimeout(() => btnNode.innerHTML = origHTML, 3000);
                 };
 
-                // Strip the exact raw JSON block from the screen log
-                const textAnalysis = logDiv.innerText.replace(match[0], '').trim();
+                // Strip the exact raw JSON block and code fences from the screen log
+                const textAnalysis = logDiv.innerText
+                  .replace(match[0], '')
+                  .replace(/```json[\s\S]*?```/gi, '')
+                  .replace(/```[\s\S]*?```/gi, '')
+                  .trim();
                 logDiv.innerHTML = logDiv.innerHTML.replace(match[0], '<br/><br/><span class="text-blue-500 italic">Analysis successfully parsed. Strategic Roadmap populated below.</span>');
 
                 // Enable PDF Print Button
                 document.getElementById('btn-print-report').onclick = () => {
+                  // Populate print header with date and URL
+                  const now = new Date();
+                  const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                  document.getElementById('print-date-display').textContent = `Date: ${dateStr}`;
+                  document.getElementById('print-url-display').textContent = `URL: ${targetUrl}`;
+                  
                   // Prepare print content by filtering out JSON
                   const logDiv = document.getElementById('analysis-log');
                   if (logDiv) {
@@ -1970,12 +2043,12 @@
                     const jsonRegex = /\{[\s\S]*"seo"[\s\S]*"aeo"[\s\S]*"geo"[\s\S]*\}/gi;
                     logDiv.innerHTML = logDiv.innerHTML.replace(jsonRegex, '<span class="text-blue-500 italic">[Analysis data captured in report]</span>');
                   }
-
+                  
                   // Remove any glass-card elements from print view
                   document.querySelectorAll('.glass-card').forEach(el => {
                     el.classList.add('print:shadow-none', 'print:border-gray-300', 'print:bg-white');
                   });
-
+                  
                   window.print();
                 };
 
