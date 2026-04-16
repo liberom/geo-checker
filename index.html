@@ -71,7 +71,7 @@
       }
 
       /* ==================== CLEANUP: Hide Web Elements ==================== */
-      
+
       /* Hide navbar */
       #app-header {
         display: none !important;
@@ -104,7 +104,7 @@
       }
 
       /* ==================== GAUGE VISUAL CLEANUP ==================== */
-      
+
       /* Hide all SVG gauge containers and dials */
       #results-dashboard #svg-seo,
       #results-dashboard #svg-aeo,
@@ -134,7 +134,7 @@
       }
 
       /* ==================== SHRINK HEADER ==================== */
-      
+
       .print-header {
         display: block !important;
         position: fixed;
@@ -159,7 +159,7 @@
       }
 
       /* ==================== FOOTER ==================== */
-      
+
       .print-footer {
         display: block !important;
         position: fixed;
@@ -177,7 +177,7 @@
       }
 
       /* ==================== RESULTS DASHBOARD ==================== */
-      
+
       #results-dashboard {
         display: block !important;
         opacity: 1 !important;
@@ -194,7 +194,7 @@
       }
 
       /* ==================== GLASS CARD REMOVAL ==================== */
-      
+
       .glass-card {
         background: white !important;
         border: 1px solid #ccc !important;
@@ -205,7 +205,7 @@
       }
 
       /* ==================== PRINT SCORES SECTION (All-In-One Summary) ==================== */
-      
+
       #print-scores-section {
         display: block !important;
         background: white !important;
@@ -234,7 +234,7 @@
       }
 
       /* ==================== TEXT ANALYSIS LOG ==================== */
-      
+
       #analysis-log {
         height: auto !important;
         max-height: none !important;
@@ -263,7 +263,7 @@
       }
 
       /* ==================== STRATEGIC ROADMAP ==================== */
-      
+
       #strategic-roadmap {
         display: block !important;
         border: 2px solid black !important;
@@ -332,7 +332,7 @@
       }
 
       /* ==================== EDUCATIONAL APPENDIX ==================== */
-      
+
       #print-explanations-section {
         display: block !important;
         background: white !important;
@@ -365,7 +365,7 @@
       }
 
       /* ==================== PAGE BREAK HANDLING ==================== */
-      
+
       /* Ensure paragraphs don't get cut in half */
       #analysis-log p,
       #priorities-list-immediate li,
@@ -1837,7 +1837,7 @@
                 }
 
                 // Compile Priorities for Clipboard Report (now with all 10 items)
-                let compiledPrioritiesString = '\n\n## Strategic Roadmap (10 Priority Actions):\n';
+                let compiledPrioritiesString = '\n\n## Strategic Roadmap (Priority Actions):\n';
 
                 const flattenPriorities = (p) => {
                   const items = [];
@@ -1860,13 +1860,20 @@
                 document.getElementById('btn-copy-report').onclick = () => {
                   const now = new Date();
                   const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                  
+
                   // Build Summary Scores with text format (SCORE / 100)
                   let summaryScores = `## 📊 EXECUTIVE SCORING SUMMARY\n`;
-                  summaryScores += `- **OVERALL SEO: ${seoScore} / 100** (Meta: ${sMeta}, Headers: ${sHeaders}, Mobile: ${sMobile})\n`;
-                  summaryScores += `- **OVERALL AEO: ${aeoScore} / 100** (Directness: ${aDirect}, Schema: ${aSchema})\n`;
-                  summaryScores += `- **OVERALL GEO: ${geoScore} / 100** (Citability: ${gCitability}, Authority: ${gAuthority})`;
-                  
+                  summaryScores += `- **OVERALL SEO: ${seoScore} / 100**\n`;
+                  summaryScores += `  * Meta: ${sMeta} / 100\n`;
+                  summaryScores += `  * Headers: ${sHeaders} / 100\n`;
+                  summaryScores += `  * Mobile: ${sMobile} / 100\n`;
+                  summaryScores += `- **OVERALL AEO: ${aeoScore} / 100**\n`;
+                  summaryScores += `  * Directness: ${aDirect} / 100\n`;
+                  summaryScores += `  * Schema: ${aSchema} / 100\n`;
+                  summaryScores += `- **OVERALL GEO: ${geoScore} / 100**\n`;
+                  summaryScores += `  * Citability: ${gCitability} / 100\n`;
+                  summaryScores += `  * Authority: ${gAuthority} / 100\n`;
+
                   // Add LLM Citation Share if available
                   if (key.startsWith('mid_')) {
                     const shareTxt = document.getElementById('txt-citation-share').innerText;
@@ -1887,7 +1894,7 @@
                     const cSeo = Math.round((cMeta + cHeaders + cMobile) / 3) || 0;
                     const cAeo = Math.round((caDirect + caSchema) / 2) || 0;
                     const cGeo = Math.round((cgCitability + cgAuthority) / 2) || 0;
-                    
+
                     summaryScores += `\n\n## 🏆 COMPETITOR SCORING SUMMARY\n`;
                     summaryScores += `- **COMPETITOR SEO: ${cSeo} / 100** (Meta: ${cMeta}, Headers: ${cHeaders}, Mobile: ${cMobile})\n`;
                     summaryScores += `- **COMPETITOR AEO: ${cAeo} / 100** (Directness: ${caDirect}, Schema: ${caSchema})\n`;
@@ -1895,29 +1902,29 @@
                   }
 
                   // Build Strategic Roadmap with categorized priorities
-                  let roadmap = `\n\n## 🚀 STRATEGIC ROADMAP (10 PRIORITIES)\n`;
-                  
+                  let roadmap = `\n\n## 🚀 STRATEGIC ROADMAP (PRIORITIES)\n`;
+
                   if (priorities.immediateTechnicalFixes && priorities.immediateTechnicalFixes.length > 0) {
                     roadmap += `\n### Immediate Technical Fixes\n`;
                     priorities.immediateTechnicalFixes.forEach(item => {
                       if (item) roadmap += `- [ ] ${item}\n`;
                     });
                   }
-                  
+
                   if (priorities.answerEngineOptimization && priorities.answerEngineOptimization.length > 0) {
                     roadmap += `\n### Answer Engine Optimization (AEO)\n`;
                     priorities.answerEngineOptimization.forEach(item => {
                       if (item) roadmap += `- [ ] ${item}\n`;
                     });
                   }
-                  
+
                   if (priorities.localAuthorityGEO && priorities.localAuthorityGEO.length > 0) {
                     roadmap += `\n### Local Authority & GEO\n`;
                     priorities.localAuthorityGEO.forEach(item => {
                       if (item) roadmap += `- [ ] ${item}\n`;
                     });
                   }
-                  
+
                   if (priorities.quickWins && priorities.quickWins.length > 0) {
                     roadmap += `\n### Quick Wins\n`;
                     priorities.quickWins.forEach(item => {
@@ -1933,13 +1940,13 @@
 
                   // Build the complete report with Markdown headers and clean formatting
                   // Extract business name from target URL
-                  const businessName = targetUrl.replace(/https?:\\/(www\\.)?\\//, '').split('/')[0].toUpperCase();
+                  const businessName = targetUrl.replace(/^https?:\/\/(www\.)?/, '').split('/')[0].toUpperCase();
                   const reportData = `## ADVANCED DIGITAL ENTITY AUDIT: ${businessName}\n` +
                     `**Target URL:** ${targetUrl}\n` +
                     `${compUrl ? '**Competitor URL:** ' + compUrl + '\n' : ''}` +
                     `**Date:** ${dateStr}\n\n` +
                     `${summaryScores}\n\n` +
-                    `## 📝 STRATEGIC ANALYSIS\n${textAnalysis}\n\n` +
+                    `${textAnalysis}\n\n` +
                     `${roadmap}\n` +
                     `${appendix}`;
 
@@ -1963,12 +1970,12 @@
                     const jsonRegex = /\{[\s\S]*"seo"[\s\S]*"aeo"[\s\S]*"geo"[\s\S]*\}/gi;
                     logDiv.innerHTML = logDiv.innerHTML.replace(jsonRegex, '<span class="text-blue-500 italic">[Analysis data captured in report]</span>');
                   }
-                  
+
                   // Remove any glass-card elements from print view
                   document.querySelectorAll('.glass-card').forEach(el => {
                     el.classList.add('print:shadow-none', 'print:border-gray-300', 'print:bg-white');
                   });
-                  
+
                   window.print();
                 };
 

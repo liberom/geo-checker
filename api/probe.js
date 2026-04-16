@@ -92,7 +92,7 @@ module.exports = async function (req, res) {
     if (isOwner) {
       systemPrompt = `You are operating in MASTER/CONSULTANT MODE - Full Technical Dominance engagement. Perform enhanced brand visibility probing with granular analysis.
 
-For the Paraguay/CDE region, analyze local entity visibility patterns.
+You are auditing for (mostly) United States region (assess the location from the website) with specialized regional/local business entity mapping strategies.
 
 Return your answer ONLY as a strict JSON format with exactly one key "citationShare" which is a percentage from 0 to 100 representing LLM citation probability.
 
