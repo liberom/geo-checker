@@ -58,12 +58,54 @@
       body {
         background: white !important;
         color: black !important;
-        padding-top: 100px;
-        padding-bottom: 60px;
+        padding-top: 80px;
+        padding-bottom: 40px;
         font-family: 'Georgia', 'Times New Roman', serif !important;
       }
 
-      /* Hide all SVG gauge containers and dials in results dashboard */
+      *,
+      *::before,
+      *::after {
+        background: white !important;
+        color: black !important;
+      }
+
+      /* ==================== CLEANUP: Hide Web Elements ==================== */
+      
+      /* Hide navbar */
+      #app-header {
+        display: none !important;
+      }
+
+      /* Hide URL input forms */
+      #auditForm,
+      #competitor-ui {
+        display: none !important;
+      }
+
+      /* Hide "How It Works" section (3-Step Analysis) */
+      #how {
+        display: none !important;
+      }
+
+      /* Hide hero section */
+      .hero-section {
+        display: none !important;
+      }
+
+      /* Hide non-essential elements */
+      #features,
+      .app-footer,
+      .no-print,
+      #btn-copy-report,
+      #btn-print-report,
+      .vynix-gradient {
+        display: none !important;
+      }
+
+      /* ==================== GAUGE VISUAL CLEANUP ==================== */
+      
+      /* Hide all SVG gauge containers and dials */
       #results-dashboard #svg-seo,
       #results-dashboard #svg-aeo,
       #results-dashboard #svg-geo,
@@ -75,7 +117,7 @@
         display: none !important;
       }
 
-      /* Also hide the gauge score numbers (0/100) in visual cards */
+      /* Hide the gauge score numbers (0/100) in visual cards */
       #score-seo,
       #score-aeo,
       #score-geo,
@@ -85,34 +127,58 @@
         display: none !important;
       }
 
-      /* Show print-only text scores section */
-      #print-scores-section {
-        display: block !important;
-      }
-
-      *,
-      *::before,
-      *::after {
-        background: white !important;
-        color: black !important;
-      }
-
-      /* Hide non-essential elements */
-      #app-header,
-      .hero-section,
-      #features,
-      .app-footer,
-      .no-print,
-      #auditForm,
-      #btn-copy-report,
-      #btn-print-report,
-      .vynix-gradient {
+      /* Hide progress bars in dashboard cards */
+      #results-dashboard .w-full.space-y-4,
+      #results-dashboard-comp .w-full.space-y-4 {
         display: none !important;
       }
 
-      /* Force visibility for dashboard sections */
-      #results-dashboard,
-      #results-dashboard-comp {
+      /* ==================== SHRINK HEADER ==================== */
+      
+      .print-header {
+        display: block !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding-bottom: 10px;
+        border-bottom: 2px solid black;
+        z-index: 1000;
+        color: black !important;
+      }
+
+      .print-header * {
+        color: black !important;
+      }
+
+      .print-header h1 {
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.05em !important;
+      }
+
+      /* ==================== FOOTER ==================== */
+      
+      .print-footer {
+        display: block !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding-top: 10px;
+        border-top: 1px solid black;
+        text-align: center;
+        font-weight: bold;
+        font-size: 12px;
+        z-index: 1000;
+        color: black;
+      }
+
+      /* ==================== RESULTS DASHBOARD ==================== */
+      
+      #results-dashboard {
         display: block !important;
         opacity: 1 !important;
         border: none !important;
@@ -120,18 +186,15 @@
         background: white !important;
       }
 
-      #strategic-roadmap {
+      #results-dashboard-comp {
         display: block !important;
-        opacity: 1 !important;
-        page-break-before: always;
-        break-before: page;
-        margin-top: 0 !important;
-        padding-top: 2rem !important;
-        border: none !important;
-        background: white !important;
+        border: 1px solid #ccc !important;
+        margin-top: 1rem !important;
+        margin-bottom: 2rem !important;
       }
 
-      /* Remove backdrop-filter and glass-card effects */
+      /* ==================== GLASS CARD REMOVAL ==================== */
+      
       .glass-card {
         background: white !important;
         border: 1px solid #ccc !important;
@@ -141,11 +204,14 @@
         color: black !important;
       }
 
-      /* Ensure print scores section is visible and styled */
+      /* ==================== PRINT SCORES SECTION (All-In-One Summary) ==================== */
+      
       #print-scores-section {
+        display: block !important;
         background: white !important;
         border: 2px solid black !important;
         padding: 1.5rem !important;
+        margin-top: 2rem !important;
         margin-bottom: 2rem !important;
         page-break-inside: avoid;
       }
@@ -167,34 +233,8 @@
         color: black !important;
       }
 
-      /* Ensure print explanations section is visible and styled */
-      #print-explanations-section {
-        display: block !important;
-        background: white !important;
-        border: 2px solid black !important;
-        padding: 1.5rem !important;
-        margin-bottom: 2rem !important;
-        page-break-inside: avoid;
-      }
-
-      #print-explanations-section h4 {
-        color: black !important;
-        font-size: 14px !important;
-        font-weight: bold !important;
-        margin-bottom: 1rem !important;
-      }
-
-      #print-explanations-section p {
-        color: black !important;
-        font-size: 10px !important;
-        line-height: 1.4 !important;
-        margin-bottom: 0.25rem !important;
-      }
-
-      #print-explanations-section strong {
-        color: black !important;
-      }
-
+      /* ==================== TEXT ANALYSIS LOG ==================== */
+      
       #analysis-log {
         height: auto !important;
         max-height: none !important;
@@ -206,53 +246,51 @@
         font-family: 'Georgia', 'Times New Roman', serif !important;
         font-size: 12px !important;
         line-height: 1.6 !important;
+        page-break-inside: avoid;
+        margin-bottom: 1.5rem !important;
       }
 
       h1,
       h2,
       h3,
+      h4,
+      h5,
+      h6,
       p,
       span,
       div {
         color: black !important;
       }
 
-      .print-header {
+      /* ==================== STRATEGIC ROADMAP ==================== */
+      
+      #strategic-roadmap {
         display: block !important;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        background: white;
-        padding-bottom: 10px;
-        border-bottom: 2px solid black;
-        z-index: 1000;
+        border: 2px solid black !important;
+        padding: 1.5rem !important;
+        margin-top: 2rem !important;
+        margin-bottom: 2rem !important;
+        page-break-before: always;
+        break-before: page;
+        break-inside: avoid;
+        background: white !important;
+      }
+
+      #strategic-roadmap h3 {
         color: black !important;
+        font-size: 16px !important;
+        border-bottom: 1px solid #ccc !important;
+        padding-bottom: 0.5rem !important;
+        margin-bottom: 1rem !important;
       }
 
-      .print-header * {
-        color: black !important;
-      }
-
-      .print-footer {
-        display: block !important;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: white;
-        padding-top: 10px;
-        border-top: 1px solid black;
-        text-align: center;
-        font-weight: bold;
-        font-size: 12px;
-        z-index: 1000;
-        color: black;
-      }
-
-      /* Priorities container - hide section headers in print, show items */
+      /* Hide section category headers in print, show items only */
       #priorities-container {
         display: block !important;
+      }
+
+      #priorities-container h4 {
+        display: none !important;
       }
 
       #priorities-immediate,
@@ -262,21 +300,19 @@
         margin-bottom: 1rem !important;
       }
 
-      #priorities-container h4 {
-        display: none !important;
-      }
-
       #priorities-list-immediate li,
       #priorities-list-aeo li,
       #priorities-list-geo li,
       #priorities-list-quickwins li {
         display: list-item !important;
-        list-style-type: disc !important;
+        list-style-type: decimal !important;
         margin-left: 1.5rem !important;
+        margin-bottom: 0.5rem !important;
         border: none !important;
         background: none !important;
         padding: 0.25rem 0 !important;
-        font-size: 10px !important;
+        font-size: 11px !important;
+        color: black !important;
       }
 
       #priorities-list-immediate li .flex-shrink-0,
@@ -290,14 +326,54 @@
       #priorities-list-aeo li p,
       #priorities-list-geo li p,
       #priorities-list-quickwins li p {
-        font-size: 10px !important;
+        font-size: 11px !important;
         line-height: 1.3 !important;
+        color: black !important;
       }
 
-      /* Page break before strategic roadmap */
-      #strategic-roadmap {
+      /* ==================== EDUCATIONAL APPENDIX ==================== */
+      
+      #print-explanations-section {
+        display: block !important;
+        background: white !important;
+        border: 2px solid black !important;
+        padding: 1.5rem !important;
+        margin-top: 2rem !important;
         page-break-before: always;
         break-before: page;
+        break-inside: avoid;
+      }
+
+      #print-explanations-section h4 {
+        color: black !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        margin-bottom: 1rem !important;
+        border-bottom: 1px solid #ccc !important;
+      }
+
+      #print-explanations-section p {
+        color: black !important;
+        font-size: 10px !important;
+        line-height: 1.4 !important;
+        margin-bottom: 0.25rem !important;
+      }
+
+      #print-explanations-section strong {
+        color: black !important;
+        font-weight: bold !important;
+      }
+
+      /* ==================== PAGE BREAK HANDLING ==================== */
+      
+      /* Ensure paragraphs don't get cut in half */
+      #analysis-log p,
+      #priorities-list-immediate li,
+      #priorities-list-aeo li,
+      #priorities-list-geo li,
+      #priorities-list-quickwins li {
+        page-break-inside: avoid;
+        break-inside: avoid;
       }
 
       /* Clean up any remaining visual elements */
@@ -823,6 +899,62 @@
     </div>
 
     <!-- Print-Only Explanations Section - Hidden on Screen, Visible in PDF -->
+
+    <div id="strategic-roadmap" class="mt-12 glass-card p-10 rounded-3xl border border-blue-500/30">
+      <h3 class="text-2xl font-extrabold mb-6 text-white flex items-center gap-3">
+        <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Strategic Roadmap: Priority Actions
+      </h3>
+      <div id="priorities-container">
+        <div id="priorities-immediate" class="mb-8 hidden">
+          <h4 class="text-sm font-bold text-red-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"></path>
+            </svg>
+            Immediate Technical Fixes
+          </h4>
+          <ul id="priorities-list-immediate" class="space-y-3 text-slate-300 font-medium"></ul>
+        </div>
+        <div id="priorities-aeo" class="mb-8 hidden">
+          <h4 class="text-sm font-bold text-indigo-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"></path>
+            </svg>
+            Answer Engine Optimization (AEO)
+          </h4>
+          <ul id="priorities-list-aeo" class="space-y-3 text-slate-300 font-medium"></ul>
+        </div>
+        <div id="priorities-geo" class="mb-8 hidden">
+          <h4 class="text-sm font-bold text-purple-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"></path>
+            </svg>
+            Local Authority (GEO)
+          </h4>
+          <ul id="priorities-list-geo" class="space-y-3 text-slate-300 font-medium"></ul>
+        </div>
+        <div id="priorities-quickwins" class="hidden">
+          <h4 class="text-sm font-bold text-green-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"></path>
+            </svg>
+            Quick Wins
+          </h4>
+          <ul id="priorities-list-quickwins" class="space-y-3 text-slate-300 font-medium"></ul>
+        </div>
+      </div>
+    </div>
     <div id="print-explanations-section" class="hidden mt-8 p-6 bg-white border-2 border-black">
       <h4 class="text-black font-bold border-b border-gray-400 pb-2 mb-4 text-lg">Metrics Explanations</h4>
       <div class="grid md:grid-cols-2 gap-6 text-black">
@@ -922,61 +1054,6 @@
       </div>
     </div>
 
-    <div id="strategic-roadmap" class="mt-12 glass-card p-10 rounded-3xl border border-blue-500/30">
-      <h3 class="text-2xl font-extrabold mb-6 text-white flex items-center gap-3">
-        <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Strategic Roadmap: Priority Actions
-      </h3>
-      <div id="priorities-container">
-        <div id="priorities-immediate" class="mb-8 hidden">
-          <h4 class="text-sm font-bold text-red-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clip-rule="evenodd"></path>
-            </svg>
-            Immediate Technical Fixes
-          </h4>
-          <ul id="priorities-list-immediate" class="space-y-3 text-slate-300 font-medium"></ul>
-        </div>
-        <div id="priorities-aeo" class="mb-8 hidden">
-          <h4 class="text-sm font-bold text-indigo-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clip-rule="evenodd"></path>
-            </svg>
-            Answer Engine Optimization (AEO)
-          </h4>
-          <ul id="priorities-list-aeo" class="space-y-3 text-slate-300 font-medium"></ul>
-        </div>
-        <div id="priorities-geo" class="mb-8 hidden">
-          <h4 class="text-sm font-bold text-purple-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clip-rule="evenodd"></path>
-            </svg>
-            Local Authority (GEO)
-          </h4>
-          <ul id="priorities-list-geo" class="space-y-3 text-slate-300 font-medium"></ul>
-        </div>
-        <div id="priorities-quickwins" class="hidden">
-          <h4 class="text-sm font-bold text-green-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clip-rule="evenodd"></path>
-            </svg>
-            Quick Wins
-          </h4>
-          <ul id="priorities-list-quickwins" class="space-y-3 text-slate-300 font-medium"></ul>
-        </div>
-      </div>
-    </div>
 
     <div class="mt-12 flex justify-center pb-4 gap-4 no-print">
       <button id="btn-copy-report"
@@ -1804,16 +1881,90 @@
                   });
                 }
 
-                // Enable Copy Report Button
+                // Enable Copy Report Button - Executive Report Format
                 document.getElementById('btn-copy-report').onclick = () => {
-                  const scoresText = `## TARGET SEO: ${seoScore}% (Meta: ${sMeta}%, Headers: ${sHeaders}%, Mobile: ${sMobile}%)\n## TARGET AEO: ${aeoScore}% (Directness: ${aDirect}%, Schema: ${aSchema}%)\n## TARGET GEO: ${geoScore}% (Citability: ${gCitability}%, Authority: ${gAuthority}%)`;
-                  let cShareAdd = '';
+                  const now = new Date();
+                  const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                  
+                  // Build Summary Scores with text format (SCORE / 100)
+                  let summaryScores = `## 📊 EXECUTIVE SCORING SUMMARY\n`;
+                  summaryScores += `- **OVERALL SEO: ${seoScore} / 100** (Meta: ${sMeta}, Headers: ${sHeaders}, Mobile: ${sMobile})\n`;
+                  summaryScores += `- **OVERALL AEO: ${aeoScore} / 100** (Directness: ${aDirect}, Schema: ${aSchema})\n`;
+                  summaryScores += `- **OVERALL GEO: ${geoScore} / 100** (Citability: ${gCitability}, Authority: ${gAuthority})`;
+                  
+                  // Add LLM Citation Share if available
                   if (key.startsWith('mid_')) {
                     const shareTxt = document.getElementById('txt-citation-share').innerText;
-                    if (shareTxt !== 'Probing...') cShareAdd = `\n## LLM Citation Share: ${shareTxt}\n`;
+                    if (shareTxt && shareTxt !== 'Probing...' && shareTxt !== 'N/A') {
+                      summaryScores += `\n- **LLM Citation Share: ${shareTxt}**`;
+                    }
                   }
 
-                  const reportData = `# Vynix Analytics AI Report\n**Target URL:** ${targetUrl}\n${compUrl ? '**Competitor URL:** ' + compUrl + '\n' : ''}\n## AI Analysis\n${textAnalysis}${compiledPrioritiesString}\n\n${scoresText}${compScoresText}${cShareAdd}`;
+                  // Add competitor scores if available
+                  if (isCompMode && r.competitor) {
+                    const cMeta = r.competitor.seo?.meta || 0;
+                    const cHeaders = r.competitor.seo?.headers || 0;
+                    const cMobile = r.competitor.seo?.mobile || 0;
+                    const caDirect = r.competitor.aeo?.directness || 0;
+                    const caSchema = r.competitor.aeo?.schema || 0;
+                    const cgCitability = r.competitor.geo?.citability || 0;
+                    const cgAuthority = r.competitor.geo?.authority || 0;
+                    const cSeo = Math.round((cMeta + cHeaders + cMobile) / 3) || 0;
+                    const cAeo = Math.round((caDirect + caSchema) / 2) || 0;
+                    const cGeo = Math.round((cgCitability + cgAuthority) / 2) || 0;
+                    
+                    summaryScores += `\n\n## 🏆 COMPETITOR SCORING SUMMARY\n`;
+                    summaryScores += `- **COMPETITOR SEO: ${cSeo} / 100** (Meta: ${cMeta}, Headers: ${cHeaders}, Mobile: ${cMobile})\n`;
+                    summaryScores += `- **COMPETITOR AEO: ${cAeo} / 100** (Directness: ${caDirect}, Schema: ${caSchema})\n`;
+                    summaryScores += `- **COMPETITOR GEO: ${cGeo} / 100** (Citability: ${cgCitability}, Authority: ${cgAuthority})`;
+                  }
+
+                  // Build Strategic Roadmap with categorized priorities
+                  let roadmap = `\n\n## 🚀 STRATEGIC ROADMAP (10 PRIORITIES)\n`;
+                  
+                  if (priorities.immediateTechnicalFixes && priorities.immediateTechnicalFixes.length > 0) {
+                    roadmap += `\n### Immediate Technical Fixes\n`;
+                    priorities.immediateTechnicalFixes.forEach(item => {
+                      if (item) roadmap += `- [ ] ${item}\n`;
+                    });
+                  }
+                  
+                  if (priorities.answerEngineOptimization && priorities.answerEngineOptimization.length > 0) {
+                    roadmap += `\n### Answer Engine Optimization (AEO)\n`;
+                    priorities.answerEngineOptimization.forEach(item => {
+                      if (item) roadmap += `- [ ] ${item}\n`;
+                    });
+                  }
+                  
+                  if (priorities.localAuthorityGEO && priorities.localAuthorityGEO.length > 0) {
+                    roadmap += `\n### Local Authority & GEO\n`;
+                    priorities.localAuthorityGEO.forEach(item => {
+                      if (item) roadmap += `- [ ] ${item}\n`;
+                    });
+                  }
+                  
+                  if (priorities.quickWins && priorities.quickWins.length > 0) {
+                    roadmap += `\n### Quick Wins\n`;
+                    priorities.quickWins.forEach(item => {
+                      if (item) roadmap += `- [ ] ${item}\n`;
+                    });
+                  }
+
+                  // Build Educational Appendix
+                  const appendix = `\n## 💡 REFERENCE GUIDE\n` +
+                    `**SEO (Search Engine Optimization):** The practice of improving website visibility in traditional search engine results through technical HTML structure and metadata quality.\n\n` +
+                    `**AEO (Answer Engine Optimization):** Optimizing content to appear in direct answers, featured snippets, and voice search results.\n\n` +
+                    `**GEO (Generative Engine Optimization):** Optimizing content for AI-powered search engines and Large Language Models to appear in AI-generated citations.`;
+
+                  // Build the complete report with Markdown headers and clean formatting
+                  const reportData = `# ADVANCED DIGITAL ENTITY AUDIT\n` +
+                    `**Target URL:** ${targetUrl}\n` +
+                    `${compUrl ? '**Competitor URL:** ' + compUrl + '\n' : ''}` +
+                    `**Date:** ${dateStr}\n\n` +
+                    `${summaryScores}\n\n` +
+                    `## 📝 STRATEGIC ANALYSIS\n${textAnalysis}\n\n` +
+                    `${roadmap}\n` +
+                    `${appendix}`;
 
                   navigator.clipboard.writeText(reportData);
                   const btnNode = document.getElementById('btn-copy-report');
