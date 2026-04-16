@@ -135,17 +135,19 @@
 
       /* ==================== SHRINK HEADER ==================== */
 
-      .print-header {
+      .print-header,
+      #print-header-info {
         display: block !important;
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         background: white;
-        padding-bottom: 10px;
-        border-bottom: 2px solid black;
+        padding: 5px 0;
+        border-bottom: 1px solid #ccc;
         z-index: 1000;
         color: black !important;
+        font-size: 10px !important;
       }
 
       .print-header * {
@@ -179,6 +181,17 @@
       /* ==================== RESULTS DASHBOARD ==================== */
 
       #results-dashboard {
+        display: block !important;
+        opacity: 1 !important;
+        border: none !important;
+        padding-top: 0 !important;
+        background: white !important;
+      }
+
+      /* Hide only the visual gauge elements and form, keep print sections visible */
+      #results-dashboard > .glass-card,
+      #results-dashboard > h2,
+      #results-dashboard > .grid:not(#results-dashboard-comp) {
         display: none !important;
       }
 
@@ -198,9 +211,10 @@
       }
 
       /* ==================== PRINT SCORES SECTION (All-In-One Summary) ==================== */
-
+      
       #print-scores-section {
         display: block !important;
+        visibility: visible !important;
         background: white !important;
         border: 2px solid black !important;
         padding: 1.5rem !important;
@@ -259,6 +273,7 @@
 
       #strategic-roadmap {
         display: block !important;
+        visibility: visible !important;
         border: 2px solid black !important;
         padding: 1.5rem !important;
         margin-top: 2rem !important;
@@ -338,6 +353,7 @@
 
       #print-explanations-section {
         display: block !important;
+        visibility: visible !important;
         background: white !important;
         border: 2px solid black !important;
         padding: 1.5rem !important;
@@ -346,8 +362,8 @@
         page-break-inside: avoid;
         break-inside: avoid;
       }
-      
-      #print-explanations-section > * {
+
+      #print-explanations-section>* {
         page-break-inside: avoid;
         break-inside: avoid;
       }
@@ -402,7 +418,9 @@
 <body class="bg-slate-900 text-slate-100 font-sans antialiased">
 
   <!-- Print Header - Hidden on screen, visible in PDF -->
-  <div id="print-header-info" class="hidden print:block fixed top-0 left-0 right-0 bg-white p-2 text-center text-xs z-50" style="border-bottom: 1px solid #ccc;">
+  <div id="print-header-info"
+    class="hidden print:block fixed top-0 left-0 right-0 bg-white p-2 text-center text-xs z-50"
+    style="border-bottom: 1px solid #ccc;">
     <span id="print-date-display"></span> | <span id="print-url-display"></span>
   </div>
 
@@ -894,7 +912,7 @@
 
     <!-- Print-Only Explanations Section - Hidden on Screen, Visible in PDF -->
 
-    <div id="strategic-roadmap" class="mt-12 glass-card p-10 rounded-3xl border border-blue-500/30">
+    <div id="strategic-roadmap" class="hidden print:block mt-12 glass-card p-10 rounded-3xl border border-blue-500/30">
       <h3 class="text-2xl font-extrabold mb-6 text-white flex items-center gap-3">
         <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -2002,13 +2020,12 @@
                   // Extract business name from target URL
                   const businessName = targetUrl.replace(/^https?:\/\/(www\.)?/, '').split('/')[0].toUpperCase();
                   // Add additional markdown headers to strategic analysis section (before STRATEGIC ROADMAP)
-                  const enhancedTextAnalysis = textAnalysis.replace(/^## /gm, '### ').replace(/^### /gm, '#### ');
+                  const enhancedTextAnalysis = textAnalysis.replace(/^### /gm, '#### ').replace(/^## /gm, '### ').replace(/^# /gm, '## ');
                   const reportData = `# ADVANCED DIGITAL ENTITY AUDIT: ${businessName}\n` +
                     `**Target URL:** ${targetUrl}\n` +
                     `${compUrl ? '**Competitor URL:** ' + compUrl + '\n' : ''}` +
                     `**Date:** ${dateStr}\n\n` +
                     `${summaryScores}\n\n` +
-                    `#### 📝 COMPREHENSIVE SEO, AEO, AND GEO STRATEGIC ANALYSIS\n` +
                     `${enhancedTextAnalysis}\n\n` +
                     `${roadmap}\n` +
                     `${appendix}`;
@@ -2035,7 +2052,7 @@
                   const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                   document.getElementById('print-date-display').textContent = `Date: ${dateStr}`;
                   document.getElementById('print-url-display').textContent = `URL: ${targetUrl}`;
-                  
+
                   // Prepare print content by filtering out JSON
                   const logDiv = document.getElementById('analysis-log');
                   if (logDiv) {
@@ -2043,12 +2060,12 @@
                     const jsonRegex = /\{[\s\S]*"seo"[\s\S]*"aeo"[\s\S]*"geo"[\s\S]*\}/gi;
                     logDiv.innerHTML = logDiv.innerHTML.replace(jsonRegex, '<span class="text-blue-500 italic">[Analysis data captured in report]</span>');
                   }
-                  
+
                   // Remove any glass-card elements from print view
                   document.querySelectorAll('.glass-card').forEach(el => {
                     el.classList.add('print:shadow-none', 'print:border-gray-300', 'print:bg-white');
                   });
-                  
+
                   window.print();
                 };
 
