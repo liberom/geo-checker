@@ -167,6 +167,34 @@
         color: black !important;
       }
 
+      /* Ensure print explanations section is visible and styled */
+      #print-explanations-section {
+        display: block !important;
+        background: white !important;
+        border: 2px solid black !important;
+        padding: 1.5rem !important;
+        margin-bottom: 2rem !important;
+        page-break-inside: avoid;
+      }
+
+      #print-explanations-section h4 {
+        color: black !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        margin-bottom: 1rem !important;
+      }
+
+      #print-explanations-section p {
+        color: black !important;
+        font-size: 10px !important;
+        line-height: 1.4 !important;
+        margin-bottom: 0.25rem !important;
+      }
+
+      #print-explanations-section strong {
+        color: black !important;
+      }
+
       #analysis-log {
         height: auto !important;
         max-height: none !important;
@@ -794,6 +822,73 @@
       </div>
     </div>
 
+    <!-- Print-Only Explanations Section - Hidden on Screen, Visible in PDF -->
+    <div id="print-explanations-section" class="hidden mt-8 p-6 bg-white border-2 border-black">
+      <h4 class="text-black font-bold border-b border-gray-400 pb-2 mb-4 text-lg">Metrics Explanations</h4>
+      <div class="grid md:grid-cols-2 gap-6 text-black">
+        <!-- SEO Explanations -->
+        <div>
+          <p class="font-bold mb-1">SEO (Search Engine Optimization):</p>
+          <p class="text-sm mb-2"><strong>What is it?</strong> The practice of improving website visibility in traditional search engine results through technical HTML structure and metadata.</p>
+          <p class="text-sm mb-2"><strong>What does it mean?</strong> Measures how well your site is optimized for classic Google algorithms.</p>
+          <p class="text-sm mb-3"><strong>Good SEO:</strong> Unique titles, clear header hierarchy, mobile-optimized design.</p>
+          
+          <p class="font-bold mb-1">Meta Tags:</p>
+          <p class="text-sm mb-2"><strong>What is it?</strong> HTML elements providing metadata about a webpage (title, description, canonical URLs).</p>
+          <p class="text-sm mb-2"><strong>What does it mean?</strong> How well page metadata communicates content relevance to search engines.</p>
+          <p class="text-sm mb-3"><strong>Good Meta:</strong> Unique title under 60 chars, compelling description, proper canonical URLs.</p>
+          
+          <p class="font-bold mb-1">Headers (H1-H6):</p>
+          <p class="text-sm mb-2"><strong>What is it?</strong> HTML elements defining hierarchical structure and outline of content.</p>
+          <p class="text-sm mb-2"><strong>What does it mean?</strong> How well content is organized for search engines and users.</p>
+          <p class="text-sm mb-3"><strong>Good Headers:</strong> One H1 per page, logical hierarchy, accurately describe content.</p>
+          
+          <p class="font-bold mb-1">Mobile:</p>
+          <p class="text-sm mb-2"><strong>What is it?</strong> How well your site performs on mobile devices including Core Web Vitals.</p>
+          <p class="text-sm mb-2"><strong>What does it mean?</strong> Whether your site provides fast, accessible mobile experience.</p>
+          <p class="text-sm mb-3"><strong>Good Mobile:</strong> Responsive design, fast loading, touch-friendly interface.</p>
+        </div>
+        
+        <!-- AEO & GEO Explanations -->
+        <div>
+          <p class="font-bold mb-1">AEO (Answer Engine Optimization):</p>
+          <p class="text-sm mb-2"><strong>What is it?</strong> Optimizing content to appear in direct answers, featured snippets, and voice search.</p>
+          <p class="text-sm mb-2"><strong>What does it mean?</strong> How effectively content answers direct questions for "position zero" results.</p>
+          <p class="text-sm mb-3"><strong>Good AEO:</strong> Direct, concise answers, proper FAQ/HowTo schema, clear content structure.</p>
+          
+          <p class="font-bold mb-1">Directness:</p>
+          <p class="text-sm mb-2"><strong>What is it?</strong> How effectively content provides immediate, clear answers without fluff.</p>
+          <p class="text-sm mb-2"><strong>What does it mean?</strong> Whether content immediately answers queries in concise, extractable form.</p>
+          <p class="text-sm mb-3"><strong>Good Directness:</strong> Answers at beginning, concise language, structured data for snippets.</p>
+          
+          <p class="font-bold mb-1">Schema:</p>
+          <p class="text-sm mb-2"><strong>What is it?</strong> Structured data code (Schema.org) helping search engines understand content context.</p>
+          <p class="text-sm mb-2"><strong>What does it mean?</strong> How well content is marked up with structured data types.</p>
+          <p class="text-sm mb-3"><strong>Good Schema:</strong> Relevant schema types, complete data fields, valid JSON-LD.</p>
+          
+          <p class="font-bold mb-1">GEO (Generative Engine Optimization):</p>
+          <p class="text-sm mb-2"><strong>What is it?</strong> Optimizing content for AI-powered search and Large Language Models.</p>
+          <p class="text-sm mb-2"><strong>What does it mean?</strong> Probability of being cited by AI models like ChatGPT and Claude.</p>
+          <p class="text-sm mb-3"><strong>Good GEO:</strong> Authoritative content, strong entity signals, structured data for LLMs.</p>
+          
+          <p class="font-bold mb-1">Citability:</p>
+          <p class="text-sm mb-2"><strong>What is it?</strong> Likelihood your content will be referenced by AI language models.</p>
+          <p class="text-sm mb-2"><strong>What does it mean?</strong> Whether content has characteristics LLMs look for in sources.</p>
+          <p class="text-sm mb-3"><strong>Good Citability:</strong> Well-researched content, clear authorship, unique value.</p>
+          
+          <p class="font-bold mb-1">Authority (E-E-A-T):</p>
+          <p class="text-sm mb-2"><strong>What is it?</strong> Expertise, experience, authoritativeness, and trustworthiness signals.</p>
+          <p class="text-sm mb-2"><strong>What does it mean?</strong> Whether content demonstrates topical expertise and trust signals.</p>
+          <p class="text-sm mb-3"><strong>Good Authority:</strong> Demonstrated expertise, credible backlinks, transparent author info.</p>
+          
+          <p class="font-bold mb-1">LLM Citation Share:</p>
+          <p class="text-sm mb-2"><strong>What is it?</strong> Estimated percentage of AI responses referencing your content.</p>
+          <p class="text-sm mb-2"><strong>What does it mean?</strong> How often AI systems reference your content in responses.</p>
+          <p class="text-sm mb-3"><strong>Good LLM Citation:</strong> Higher percentage = more AI visibility, well-structured content.</p>
+        </div>
+      </div>
+    </div>
+
     <div id="strategic-roadmap" class="mt-12 glass-card p-10 rounded-3xl border border-blue-500/30">
       <h3 class="text-2xl font-extrabold mb-6 text-white flex items-center gap-3">
         <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -871,6 +966,168 @@
         </svg>
         Download PDF Report
       </button>
+    </div>
+  </section>
+
+  <!-- Explanations Section - Front-End Only (at bottom, not mixed with gauges) -->
+  <section id="explanations-section" class="max-w-5xl mx-auto px-6 py-16 border-t border-slate-800 no-print">
+    <h2 class="text-3xl font-extrabold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+      Audit Metrics Explained
+    </h2>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- SEO -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-700/50">
+        <h3 class="text-lg font-bold text-blue-300 mb-3">What is SEO?</h3>
+        <p class="text-slate-400 text-sm mb-4">Search Engine Optimization (SEO) is the practice of improving a website's visibility in traditional search engine results through technical HTML structure and metadata quality.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What does it mean?</h4>
+        <p class="text-slate-400 text-sm mb-4">SEO measures how well your site is optimized for classic Google search algorithms through technical foundations like meta tags, header structure, and mobile responsiveness.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What constitutes good SEO?</h4>
+        <ul class="text-slate-400 text-sm list-disc pl-5 space-y-1">
+          <li>Unique, descriptive title and meta description tags</li>
+          <li>Clear H1-H6 header hierarchy with semantic structure</li>
+          <li>Mobile-optimized design with fast loading times</li>
+        </ul>
+      </div>
+
+      <!-- AEO -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-700/50">
+        <h3 class="text-lg font-bold text-indigo-300 mb-3">What is AEO?</h3>
+        <p class="text-slate-400 text-sm mb-4">Answer Engine Optimization (AEO) is the practice of optimizing content to appear in direct answer boxes, featured snippets, and voice search results.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What does it mean?</h4>
+        <p class="text-slate-400 text-sm mb-4">AEO measures how effectively your content answers direct questions and powers "position zero" results in search engines through structured, concise information.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What constitutes good AEO?</h4>
+        <ul class="text-slate-400 text-sm list-disc pl-5 space-y-1">
+          <li>Direct, concise answers to common questions</li>
+          <li>Proper FAQ and HowTo schema implementation</li>
+          <li>Clear content structure that search engines can parse</li>
+        </ul>
+      </div>
+
+      <!-- GEO -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-700/50">
+        <h3 class="text-lg font-bold text-purple-300 mb-3">What is GEO?</h3>
+        <p class="text-slate-400 text-sm mb-4">Generative Engine Optimization (GEO) is the practice of optimizing content for AI-powered search engines and Large Language Models to appear in AI-generated citations.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What does it mean?</h4>
+        <p class="text-slate-400 text-sm mb-4">GEO measures your brand's probability of being cited by AI models like ChatGPT, Claude, and Gemini when they generate responses to user queries.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What constitutes good GEO?</h4>
+        <ul class="text-slate-400 text-sm list-disc pl-5 space-y-1">
+          <li>Authoritative, well-cited content with clear sources</li>
+          <li>Strong entity signals and topical expertise</li>
+          <li>Structured data that LLMs can easily parse and reference</li>
+        </ul>
+      </div>
+
+      <!-- Meta -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-700/50">
+        <h3 class="text-lg font-bold text-blue-300 mb-3">What is Meta?</h3>
+        <p class="text-slate-400 text-sm mb-4">Meta tags are HTML elements that provide metadata about a webpage, including title, description, and canonical URLs.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What does it mean?</h4>
+        <p class="text-slate-400 text-sm mb-4">Meta scoring evaluates how well your page's title, description, and other metadata communicate content relevance to search engines.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What constitutes good Meta?</h4>
+        <ul class="text-slate-400 text-sm list-disc pl-5 space-y-1">
+          <li>Unique, descriptive title under 60 characters</li>
+          <li>Compelling meta description with target keywords</li>
+          <li>Proper canonical URLs to avoid duplicate content</li>
+        </ul>
+      </div>
+
+      <!-- Headers -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-700/50">
+        <h3 class="text-lg font-bold text-blue-300 mb-3">What are Headers?</h3>
+        <p class="text-slate-400 text-sm mb-4">Headers (H1-H6) are HTML elements that define the hierarchical structure and outline of your webpage content.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What does it mean?</h4>
+        <p class="text-slate-400 text-sm mb-4">Header scoring assesses how well your content is organized into a logical hierarchy that search engines can understand and users can navigate.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What constitutes good Headers?</h4>
+        <ul class="text-slate-400 text-sm list-disc pl-5 space-y-1">
+          <li>One clear H1 tag per page with primary keyword</li>
+          <li>Logical H2-H6 hierarchy without skipping levels</li>
+          <li>Headers accurately describe the content that follows</li>
+        </ul>
+      </div>
+
+      <!-- Mobile -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-700/50">
+        <h3 class="text-lg font-bold text-blue-300 mb-3">What is Mobile?</h3>
+        <p class="text-slate-400 text-sm mb-4">Mobile optimization refers to how well your website performs and displays on mobile devices, including Core Web Vitals and responsive design.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What does it mean?</h4>
+        <p class="text-slate-400 text-sm mb-4">Mobile scoring evaluates whether your site provides a fast, accessible experience on smartphones and tablets, which is critical since most searches now occur on mobile.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What constitutes good Mobile?</h4>
+        <ul class="text-slate-400 text-sm list-disc pl-5 space-y-1">
+          <li>Responsive design that adapts to all screen sizes</li>
+          <li>Fast loading times (Core Web Vitals scores)</li>
+          <li>Touch-friendly buttons and readable text sizes</li>
+        </ul>
+      </div>
+
+      <!-- Directness -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-700/50">
+        <h3 class="text-lg font-bold text-indigo-300 mb-3">What is Directness?</h3>
+        <p class="text-slate-400 text-sm mb-4">Directness measures how effectively your content provides immediate, clear answers to user questions without unnecessary fluff or ambiguity.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What does it mean?</h4>
+        <p class="text-slate-400 text-sm mb-4">Directness scoring evaluates whether your content immediately answers the user's query in a concise, authoritative manner that can be extracted for featured snippets.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What constitutes good Directness?</h4>
+        <ul class="text-slate-400 text-sm list-disc pl-5 space-y-1">
+          <li>Answers positioned at the beginning of content</li>
+          <li>Clear, concise language without unnecessary jargon</li>
+          <li>Structured data that search engines can parse for snippets</li>
+        </ul>
+      </div>
+
+      <!-- Schema -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-700/50">
+        <h3 class="text-lg font-bold text-indigo-300 mb-3">What is Schema?</h3>
+        <p class="text-slate-400 text-sm mb-4">Schema markup (Schema.org) is structured data code that helps search engines understand the context and meaning of your content.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What does it mean?</h4>
+        <p class="text-slate-400 text-sm mb-4">Schema scoring assesses how well your content is marked up with structured data types like FAQ, LocalBusiness, Organization, and Product schemas.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What constitutes good Schema?</h4>
+        <ul class="text-slate-400 text-sm list-disc pl-5 space-y-1">
+          <li>Relevant schema types matching your content</li>
+          <li>Complete, accurate data fields within each schema</li>
+          <li>Valid JSON-LD implementation without syntax errors</li>
+        </ul>
+      </div>
+
+      <!-- Citability -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-700/50">
+        <h3 class="text-lg font-bold text-purple-300 mb-3">What is Citability?</h3>
+        <p class="text-slate-400 text-sm mb-4">Citability measures the likelihood that your content will be referenced or cited by AI language models when generating responses.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What does it mean?</h4>
+        <p class="text-slate-400 text-sm mb-4">Citability scoring evaluates whether your content has the characteristics that LLMs look for when selecting sources for AI-generated answers.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What constitutes good Citability?</h4>
+        <ul class="text-slate-400 text-sm list-disc pl-5 space-y-1">
+          <li>Well-researched, factually accurate content</li>
+          <li>Clear authorship and publication authority</li>
+          <li>Content that provides unique value or insights</li>
+        </ul>
+      </div>
+
+      <!-- Authority -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-700/50">
+        <h3 class="text-lg font-bold text-purple-300 mb-3">What is Authority?</h3>
+        <p class="text-slate-400 text-sm mb-4">Authority (E-E-A-T) measures the expertise, experience, authoritativeness, and trustworthiness of your content and brand.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What does it mean?</h4>
+        <p class="text-slate-400 text-sm mb-4">Authority scoring evaluates whether your content demonstrates topical expertise and trust signals that search engines and AI models recognize as credible.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What constitutes good Authority?</h4>
+        <ul class="text-slate-400 text-sm list-disc pl-5 space-y-1">
+          <li>Demonstrated expertise in your field</li>
+          <li>Credible backlinks and citations from authoritative sources</li>
+          <li>Clear author bios and organizational transparency</li>
+        </ul>
+      </div>
+
+      <!-- LLM Citation Share -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-700/50">
+        <h3 class="text-lg font-bold text-pink-300 mb-3">What is LLM Citation Share?</h3>
+        <p class="text-slate-400 text-sm mb-4">LLM Citation Share is the estimated percentage of AI-generated responses that reference your content when answering related queries.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What does it mean?</h4>
+        <p class="text-slate-400 text-sm mb-4">This metric uses model probing to estimate how often AI systems like ChatGPT, Claude, and Gemini reference your content in their responses.</p>
+        <h4 class="text-sm font-semibold text-slate-300 mb-2">What constitutes good LLM Citation Share?</h4>
+        <ul class="text-slate-400 text-sm list-disc pl-5 space-y-1">
+          <li>Higher percentage = more AI visibility</li>
+          <li>Content that answers common industry questions</li>
+          <li>Well-structured, authoritative information</li>
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -1540,6 +1797,11 @@
                   const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                   document.getElementById('print-date-display').innerText = `Current Date: ${dateStr}`;
                   document.getElementById('print-url-display').innerText = `Target URL: ${targetUrl}`;
+                  // Ensure print sections are visible
+                  const printScores = document.getElementById('print-scores-section');
+                  const printExplanations = document.getElementById('print-explanations-section');
+                  if (printScores) printScores.classList.remove('hidden');
+                  if (printExplanations) printExplanations.classList.remove('hidden');
                   window.print();
                 };
 
