@@ -785,7 +785,7 @@
                 class="animate-pulse">Probing...</span></div>
             <div
               class="h-3.5 bg-slate-950 rounded-full border border-pink-500/30 overflow-hidden shadow-lg relative cursor-help"
-              title="Model Probing triggered for mid_ access tier">
+              title="Model Probing triggered for mid_, owner_, or big_ access tier">
               <div
                 class="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-600 via-pink-500 to-rose-500 w-0 transition-all duration-[2000ms] shadow-[0_0_15px_rgba(236,72,153,0.8)]"
                 id="bar-citation-share"></div>
@@ -1388,7 +1388,7 @@
       const btn = document.querySelector('#main-submit');
       const formContainer = document.getElementById('auditForm').parentElement;
 
-      if (key && (key.startsWith('mid_') || key.startsWith('owner_'))) {
+      if (key && (key.startsWith('mid_') || key.startsWith('owner_') || key.startsWith('big_'))) {
         document.getElementById('competitor-ui').classList.remove('hidden');
       }
 
@@ -1409,6 +1409,20 @@
 
         btn.innerHTML = 'Analyzing...';
         btn.classList.add('animate-pulse');
+
+        // Reset citation share UI for new analysis
+        const citationUI = document.getElementById('citation-tier-ui');
+        if (citationUI) {
+          citationUI.classList.add('hidden');
+          citationUI.classList.remove('flex');
+        }
+        const citationTxt = document.getElementById('txt-citation-share');
+        if (citationTxt) {
+          citationTxt.innerText = 'Probing...';
+          citationTxt.classList.add('animate-pulse');
+        }
+        const citationBar = document.getElementById('bar-citation-share');
+        if (citationBar) citationBar.style.width = '0%';
 
         const input = document.getElementById('target-url-input');
         const compInput = document.getElementById('competitor-url-input');
@@ -1906,8 +1920,8 @@
                   if (shareText && shareText !== 'Probing...' && shareText !== 'N/A') {
                     citationShareEl.innerText = shareText;
                   } else {
-                    // Hide the row if citation share is not available
-                    citationShareEl.parentElement.style.display = 'none';
+                    // Don't hide yet — the probe may still be running; leave placeholder
+                    citationShareEl.innerText = 'Pending...';
                   }
                 };
                 updatePrintScores();
@@ -1969,26 +1983,43 @@
                   compScoresText = `\n\n## Competitor Scores\nSEO: ${cSeo}% | AEO: ${cAeo}% | GEO: ${cGeo}%`;
                 }
 
-                // Tiering Logic - Model Probing for mid_ and owner_ keys
-                if (key.startsWith('mid_') || key.startsWith('owner_')) {
+                // Tiering Logic - Model Probing for mid_, owner_, and big_ keys
+                if (key.startsWith('mid_') || key.startsWith('owner_') || key.startsWith('big_')) {
                   document.getElementById('citation-tier-ui').classList.remove('hidden');
                   document.getElementById('citation-tier-ui').classList.add('flex');
 
-                  const probeUrl = new URL('/api/probe', window.location.origin);
-                  probeUrl.searchParams.append('key', key);
-                  probeUrl.searchParams.append('url', targetUrl);
+                  try {
+                    const probeUrl = new URL('/api/probe', window.location.origin);
+                    probeUrl.searchParams.append('key', key);
+                    probeUrl.searchParams.append('url', targetUrl);
 
-                  const probeRes = await fetch(probeUrl);
+                    const probeRes = await fetch(probeUrl);
 
-                  if (probeRes.ok) {
-                    const probeData = await probeRes.json();
-                    const cShare = probeData.citationShare;
-                    setTimeout(() => {
-                      document.getElementById('bar-citation-share').style.width = `${cShare}%`;
-                      document.getElementById('txt-citation-share').innerText = `${cShare}%`;
+                    if (probeRes.ok) {
+                      const probeData = await probeRes.json();
+                      const cShare = probeData.citationShare;
+                      if (typeof cShare === 'number' && !isNaN(cShare)) {
+                        setTimeout(() => {
+                          document.getElementById('bar-citation-share').style.width = `${cShare}%`;
+                          document.getElementById('txt-citation-share').innerText = `${cShare}%`;
+                          document.getElementById('txt-citation-share').classList.remove('animate-pulse');
+                          // Also update the print report citation share
+                          const printCitationEl = document.getElementById('print-geo-llm-citation-share');
+                          if (printCitationEl) {
+                            printCitationEl.innerText = `${cShare}%`;
+                            printCitationEl.parentElement.style.display = '';
+                          }
+                        }, 800);
+                      } else {
+                        document.getElementById('txt-citation-share').innerText = 'N/A';
+                        document.getElementById('txt-citation-share').classList.remove('animate-pulse');
+                      }
+                    } else {
+                      document.getElementById('txt-citation-share').innerText = 'N/A';
                       document.getElementById('txt-citation-share').classList.remove('animate-pulse');
-                    }, 800);
-                  } else {
+                    }
+                  } catch (probeErr) {
+                    console.error('Probe fetch error:', probeErr);
                     document.getElementById('txt-citation-share').innerText = 'N/A';
                     document.getElementById('txt-citation-share').classList.remove('animate-pulse');
                   }
@@ -2033,7 +2064,7 @@
                   summaryScores += `  * Authority: ${gAuthority} / 100\n`;
 
                   // Add LLM Citation Share if available
-                  if (key.startsWith('mid_')) {
+                  if (key.startsWith('mid_') || key.startsWith('owner_') || key.startsWith('big_')) {
                     const shareTxt = document.getElementById('txt-citation-share').innerText;
                     if (shareTxt && shareTxt !== 'Probing...' && shareTxt !== 'N/A') {
                       summaryScores += `\n- **LLM Citation Share: ${shareTxt}**`;
