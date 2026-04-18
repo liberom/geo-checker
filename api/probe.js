@@ -152,9 +152,16 @@ JSON:`;
       }
 
       const result = await response.json();
-      let content = result.choices[0].message.content;
-      content = content.replace(/```json/g, '').replace(/```/g, '').trim();
-      const parsed = JSON.parse(content);
+      const content = result.choices?.[0]?.message?.content;
+      if (!content) {
+        throw new Error('QUERY_GENERATION_NO_CONTENT');
+      }
+      // Extract JSON block (LLM may include conversational text around it)
+      const jsonMatch = content.match(/\{[\s\S]*"brand"[\s\S]*"queries"[\s\S]*\}/i);
+      if (!jsonMatch) {
+        throw new Error('QUERY_GENERATION_NO_JSON');
+      }
+      const parsed = JSON.parse(jsonMatch[0]);
       return { brand: parsed.brand, queries: parsed.queries };
     }
 
@@ -195,16 +202,20 @@ Example: {"citationShare": 75}`;
       }
 
       const data = await response.json();
-      let text = data.choices[0].message.content;
-      text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-      const match = text.match(/\{[\s\S]*"citationShare"[\s\S]*}/);
-      if (!match) {
-        throw new Error('PARSE_ERROR');
+      const content = data.choices?.[0]?.message?.content;
+      if (!content) {
+        throw new Error(`PROBING_NO_CONTENT_${model}`);
       }
-      const parsed = JSON.parse(match[0]);
+      // Extract JSON block (LLM may wrap in markdown or conversational text)
+      let jsonStr = content.replace(/```json/g, '').replace(/```/g, '').trim();
+      const jsonMatch = jsonStr.match(/\{[\s\S]*?"citationShare"[\s\S]*?\}/i);
+      if (!jsonMatch) {
+        throw new Error(`PARSE_ERROR_${model}`);
+      }
+      const parsed = JSON.parse(jsonMatch[0]);
       const share = Number(parsed.citationShare);
       if (isNaN(share)) {
-        throw new Error('PARSE_ERROR');
+        throw new Error(`PARSE_ERROR_INVALID_NUMBER_${model}`);
       }
       return Math.min(100, Math.max(0, share));
     }
