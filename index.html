@@ -1625,6 +1625,88 @@
               }
             };
 
+            // Helper: extract JSON block from raw text, handling markdown fences and finding the correct block
+            const extractJSONFromText = (text) => {
+              // Strip markdown code fences first
+              let clean = text.replace(/```json\s*/gi, '').replace(/```\s*/gi, '');
+              // Try to find the JSON block containing our required keys using a non-greedy match
+              // from the last occurrence of a { before "seo" to ensure we get the actual JSON
+              const seoIdx = clean.lastIndexOf('"seo"');
+              if (seoIdx === -1) return null;
+              // Walk backwards from "seo" to find its opening {
+              let braceStart = clean.lastIndexOf('{', seoIdx);
+              if (braceStart === -1) return null;
+              // From braceStart, find the matching closing brace by counting depth
+              let depth = 0;
+              let braceEnd = -1;
+              for (let i = braceStart; i < clean.length; i++) {
+                if (clean[i] === '{') depth++;
+                else if (clean[i] === '}') {
+                  depth--;
+                  if (depth === 0) {
+                    braceEnd = i;
+                    break;
+                  }
+                }
+              }
+              if (braceEnd === -1) return null;
+              return clean.slice(braceStart, braceEnd + 1);
+            };
+
+            // Helper: attempt to repair JSON with unescaped double quotes inside string values
+            // The LLM often outputs HTML attributes like name="description" inside JSON strings,
+            // which creates unescaped quotes that break JSON.parse
+            const repairJSON = (jsonStr) => {
+              // First try parsing as-is
+              try { return JSON.parse(jsonStr); } catch(e) {}
+
+              // If that fails, try to fix unescaped quotes inside string values
+              // Strategy: walk through the string character by character, tracking whether we're
+              // inside a string, and escape any unescaped quotes that appear inside strings
+              let result = '';
+              let inString = false;
+              let i = 0;
+              while (i < jsonStr.length) {
+                const ch = jsonStr[i];
+                if (inString) {
+                  if (ch === '\\') {
+                    // Escaped character — take both the backslash and the next char
+                    result += ch + (jsonStr[i + 1] || '');
+                    i += 2;
+                    continue;
+                  }
+                  if (ch === '"') {
+                    // Check if this quote ends the string or is an unescaped quote inside it
+                    // Look ahead: if the next non-whitespace char is : or , or } or ], it's a closing quote
+                    let lookAhead = i + 1;
+                    while (lookAhead < jsonStr.length && /\s/.test(jsonStr[lookAhead])) lookAhead++;
+                    const nextSignificant = jsonStr[lookAhead];
+                    if (nextSignificant === ':' || nextSignificant === ',' || nextSignificant === '}' || nextSignificant === ']') {
+                      // This is a legitimate closing quote
+                      inString = false;
+                      result += ch;
+                      i++;
+                    } else {
+                      // This is an unescaped quote inside a string — escape it
+                      result += '\\"';
+                      i++;
+                    }
+                  } else {
+                    result += ch;
+                    i++;
+                  }
+                } else {
+                  if (ch === '"') {
+                    inString = true;
+                  }
+                  result += ch;
+                  i++;
+                }
+              }
+
+              try { return JSON.parse(result); } catch(e) { return null; }
+            };
+
             // Start real-time JSON parsing as soon as { is detected
             const startRealTimeParsing = () => {
               if (realTimeParseStarted) return;
@@ -1632,12 +1714,11 @@
 
               realTimeParseInterval = setInterval(() => {
                 try {
-                  // Find JSON block in accumulated text
-                  const jsonStart = liveStreamText.indexOf('{');
-                  if (jsonStart === -1) return;
+                  // Extract JSON block from accumulated raw text
+                  const potentialJson = extractJSONFromText(liveStreamText);
+                  if (!potentialJson) return;
 
-                  const potentialJson = liveStreamText.slice(jsonStart);
-                  const parsed = JSON.parse(potentialJson);
+                  const parsed = repairJSON(potentialJson);
 
                   if (parsed && parsed.seo && parsed.aeo && parsed.geo) {
                     capturedJSON = parsed;
@@ -1749,14 +1830,16 @@
             }
 
             // STREAM COMPLETE, RUN FINAL JSON PARSING AND METRICS ANIMATION
-            const fullText = logDiv.innerText;
-            // Uses a permissive regex to find the JSON output at the end of the generator text
-            const match = fullText.match(/\{[\s\S]*"seo"[\s\S]*"aeo"[\s\S]*"geo"[\s\S]*\}/i);
+            // Use liveStreamText (raw) instead of logDiv.innerText (which is corrupted by HTML rendering)
+            const fullText = liveStreamText;
+            // Extract JSON using the robust helper that handles markdown fences and nested braces
+            const jsonStr = extractJSONFromText(fullText);
+            const match = jsonStr ? [jsonStr] : null;
 
             if (match) {
               try {
                 // Use capturedJSON from real-time parsing if available, otherwise parse fresh
-                const r = capturedJSON || JSON.parse(match[0]);
+                const r = capturedJSON || repairJSON(match[0]);
                 console.log('Final Extracted JSON:', r);
 
                 const data = r.target ? r.target : r;
@@ -2075,13 +2158,21 @@
                   setTimeout(() => btnNode.innerHTML = origHTML, 3000);
                 };
 
-                // Strip the exact raw JSON block and code fences from the screen log
-                const textAnalysis = logDiv.innerText
+                // Strip the exact raw JSON block and code fences from the raw stream text
+                const textAnalysis = liveStreamText
                   .replace(match[0], '')
                   .replace(/```json[\s\S]*?```/gi, '')
                   .replace(/```[\s\S]*?```/gi, '')
                   .trim();
-                logDiv.innerHTML = logDiv.innerHTML.replace(match[0], '<br/><br/><span class="text-blue-500 italic">Analysis successfully parsed. Strategic Roadmap populated below.</span>');
+                // Replace JSON in the displayed log by removing the code fence and JSON block
+                // Since innerHTML may have rendered HTML tags inside JSON strings, use a broader regex cleanup
+                const logHTML = logDiv.innerHTML;
+                const jsonInHTML = logHTML.match(/\{[\s\S]*?"seo"[\s\S]*?"aeo"[\s\S]*?"geo"[\s\S]*?\}/i);
+                if (jsonInHTML) {
+                  logDiv.innerHTML = logHTML.replace(jsonInHTML[0], '<br/><br/><span class="text-blue-500 italic">Analysis successfully parsed. Strategic Roadmap populated below.</span>');
+                } else {
+                  logDiv.innerHTML = logHTML.replace(/```json[\s\S]*?```/gi, '<br/><br/><span class="text-blue-500 italic">Analysis successfully parsed. Strategic Roadmap populated below.</span>');
+                }
 
                 // Enable PDF Print Button
                 document.getElementById('btn-print-report').onclick = () => {
@@ -2103,7 +2194,7 @@
                   const logDiv = document.getElementById('analysis-log');
                   if (logDiv) {
                     // Remove any JSON blocks from the visible log before printing
-                    const jsonRegex = /\{[\s\S]*"seo"[\s\S]*"aeo"[\s\S]*"geo"[\s\S]*\}/gi;
+                    const jsonRegex = /\{[\s\S]*?"seo"[\s\S]*?"aeo"[\s\S]*?"geo"[\s\S]*?\}/gi;
                     logDiv.innerHTML = logDiv.innerHTML.replace(jsonRegex, '<span class="text-blue-500 italic">[Analysis data captured in report]</span>');
                   }
 

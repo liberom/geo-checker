@@ -409,7 +409,7 @@ FINALLY: Output a strict JSON block with 10 Comprehensive Action Items categoriz
 
     const isRetry = req.query.retry === 'true' || (req.body && req.body.retry === 'true');
     if (isRetry) {
-      systemPrompt += `\n\nCRITICAL INSTRUCTION: You MUST include the final JSON block exactly as requested. Failure to do so will break the application. Output the JSON and ONLY the JSON at the very end. DO NOT wrap the JSON in markdown formatting (like \`\`\`json). Just return the raw JSON braces.`;
+      systemPrompt += `\n\nCRITICAL INSTRUCTION: You MUST include the final JSON block exactly as requested. Failure to do so will break the application. Output the JSON and ONLY the JSON at the very end. DO NOT wrap the JSON in markdown formatting (like \`\`\`json). Just return the raw JSON braces. IMPORTANT: If you include HTML code snippets or attribute values inside JSON strings, you MUST escape all double quotes with backslashes (use \\\" instead of \"). For example, write <meta name=\\\"description\\\"> NOT <meta name=\"description\">. Unescaped quotes will break the JSON parser.`;
     }
 
     // 2. Call OpenRouter API with Stream
