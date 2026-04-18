@@ -5,54 +5,87 @@ module.exports = async function (req, res) {
   const manualText = req.body && req.body.manualText;
 
   const validateLicense = (k) => {
-    if (!k || typeof k !== 'string') return { valid: false };
+    console.log('[License] Validating key:', k ? '***' + k.slice(-4) : 'null');
+    if (!k || typeof k !== 'string') {
+      console.log('[License] Invalid: missing or not a string');
+      return { valid: false };
+    }
     const parts = k.split('_');
-    if (parts.length < 2) return { valid: false };
+    if (parts.length < 2) {
+      console.log('[License] Invalid: missing underscore separator');
+      return { valid: false };
+    }
     const prefix = parts[0].toLowerCase();
-    const segments = parts[1].split('-');
-    if (segments.length !== 6) return { valid: false };
+    console.log('[License] Prefix:', prefix);
+    const segmentsString = parts[1];
+    const segments = segmentsString.split('-');
+    console.log('[License] Segments count:', segments.length);
+    if (segments.length !== 6) {
+      console.log('[License] Invalid: expected 6 segments, got', segments.length);
+      return { valid: false };
+    }
 
     const expected = ['v', 'y', 'n', 'i', 'x'];
     for (let i = 0; i < 5; i++) {
       if (!segments[i] || segments[i].charAt(0).toLowerCase() !== expected[i]) {
+        console.log(`[License] Invalid: segment ${i} does not start with '${expected[i]}'`);
         return { valid: false };
       }
     }
+    console.log('[License] Segments validation passed');
 
     const expDateStr = segments[5];
-    if (expDateStr.length !== 4) return { valid: false };
+    if (expDateStr.length !== 4) {
+      console.log('[License] Invalid: expiration date must be 4 digits, got', expDateStr.length);
+      return { valid: false };
+    }
     const expMonth = parseInt(expDateStr.slice(0, 2), 10);
     const expYear = parseInt('20' + expDateStr.slice(2, 4), 10);
+    console.log(`[License] Expiration date: ${expMonth}/${expYear}`);
 
     const now = new Date();
     const currMonth = now.getMonth() + 1;
     const currYear = now.getFullYear();
+    console.log(`[License] Current date: ${currMonth}/${currYear}`);
 
     let expired = false;
     if (currYear > expYear || (currYear === expYear && currMonth > expMonth)) {
       expired = true;
     }
+    console.log('[License] Expired:', expired);
 
-    const isOwner = prefix === 'owner';
+    // Determine flags (extra parts after the second)
+    const flags = parts.slice(2);
+    console.log('[License] Flags:', flags);
+    const isOwner = prefix === 'owner' || flags.includes('owner');
     const isMidMarket = prefix === 'mid';
+    const isBig = prefix === 'big';
     const isSmb = prefix === 'smb';
+    console.log('[License] Tier:', isOwner ? 'owner' : isMidMarket ? 'mid' : isBig ? 'big' : isSmb ? 'smb' : 'unknown');
 
-    return { valid: true, expired, isOwner, isMidMarket, isSmb };
+    return { valid: true, expired, isOwner, isMidMarket, isBig, isSmb };
   };
 
   const license = validateLicense(key);
+  console.log('[License] Result:', license);
   if (!license.valid) {
+    console.log('[License] Invalid license structure, returning 401');
     return res.status(401).json({ error: 'Unauthorized: Invalid license structure' });
   }
   if (license.expired) {
+    console.log('[License] License expired, returning 403');
     return res.status(403).json({ error: 'License Expired' });
   }
+  console.log('[License] Valid license, proceeding');
 
   const isOwner = license.isOwner;
   const isMidMarket = license.isMidMarket;
+  const isBig = license.isBig;
   const isSmb = license.isSmb;
+  console.log('[License] isOwner:', isOwner, 'isMidMarket:', isMidMarket);
 
   if (!targetUrl) {
+    console.log('[License] Missing target URL, returning 400');
     return res.status(400).json({ error: 'Missing target URL' });
   }
 
@@ -64,7 +97,7 @@ module.exports = async function (req, res) {
     const fetchSite = async (urlStr, charLimit, isTarget = true) => {
       let htmlContent = '';
 
-      const renderFlag = isTarget || isMidMarket || isOwner ? 'true' : 'false';
+      const renderFlag = isTarget || isMidMarket || isOwner || isBig ? 'true' : 'false';
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000);
 
@@ -246,7 +279,7 @@ FINALLY: Output a strict JSON block with up to 50 Comprehensive Action Items cat
   }
 }`;
       userPrompt = `Analyze this website content:\n\n${targetText}`;
-    } else if (competitorUrl && isMidMarket) {
+    } else if (competitorUrl && (isMidMarket || isBig)) {
       systemPrompt = `You are a world-class SEO, AEO, and GEO strategic consultant. This is a $3,000/month premium engagement. Your deliverable is a 10 to 25-item Comprehensive Action Plan that demonstrates enterprise-grade expertise. Focus on competitor gap analysis and citability.
 
 FIRST: Cross-reference the TECHNICAL SCHEMA block (delimited by ==== START TECHNICAL SCHEMA ==== and ==== END TECHNICAL SCHEMA ====). You MUST check this block before auditing. If a schema type (e.g., FAQPage, LocalBusiness, Organization, Product) is present in that block, you are STRICTLY FORBIDDEN from flagging it as a "Missing Gap" in your analysis. Only flag schema elements that are ACTUALLY ABSENT from the TECHNICAL SCHEMA block.
@@ -291,7 +324,7 @@ FINALLY: Output a strict JSON block with 10-25 Comprehensive Action Items catego
   }
 }`;
       userPrompt = `Analyze and compare these two websites:\n\n=== TARGET [${targetUrl}] ===\n${targetText}\n\n=== COMPETITOR [${competitorUrl}] ===\n${compText}`;
-    } else if (isMidMarket) {
+    } else if (isMidMarket || isBig) {
       systemPrompt = `You are a world-class SEO, AEO, and GEO strategic consultant. This is a $3,000/month premium engagement. Your deliverable is a 10 to 25-item Comprehensive Action Plan that demonstrates enterprise-grade expertise. Focus on competitor gap analysis and citability.
 
 FIRST: Cross-reference the TECHNICAL SCHEMA block (delimited by ==== START TECHNICAL SCHEMA ==== and ==== END TECHNICAL SCHEMA ====). You MUST check this block before auditing. If a schema type (e.g., FAQPage, LocalBusiness, Organization, Product) is present in that block, you are STRICTLY FORBIDDEN from flagging it as a "Missing Gap" in your analysis. Only flag schema elements that are ACTUALLY ABSENT from the TECHNICAL SCHEMA block.
